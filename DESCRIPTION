@@ -1,0 +1,58 @@
+Package: US-FarmSafetyNet-Lab
+Type: Package
+Title: US Farm Safety Net Lab
+Version: 0.0.0.9000
+Authors@R: 
+    person(
+      given = "Francis", family = "Tsiboe",
+      role = c("aut", "cre"),
+      email = "ftsiboe@hotmail.com",
+      comment = c(ORCID = "0000-0001-5984-1072")
+    )
+Description: |
+    This repository centralizes research outputs, analytical tools, and 
+    resources exploring and evaluating the United States agricultural safety net programs
+    Supported programs include:
+      * Federal Crop Insurance Program (FCIP)
+      * Noninsured Crop Disaster Assistance Program (NAP)
+      * Price Loss Coverage (PLC)
+      * Agricultural Risk Coverage (ARC)
+      * Ad-hoc disaster assistance programs
+    Users can run Monte Carlo experiments to evaluate program
+    payments, subsidies, and election decisions under alternative
+    policy scenarios.
+License: GPL-3
+URL: https://github.com/you/US-FarmSafetyNet-Lab
+BugReports: https://github.com/you/US-FarmSafetyNet-Lab/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+VignetteBuilder: knitr
+Depends:
+    R (>= 3.5)
+Imports:
+    data.table,
+    dplyr,
+    magrittr,
+    purrr,
+    rfcip,
+    readr,
+    rvest,
+    stringr,
+    xml2,
+    stats,
+    utils,
+    matrixStats,
+    doBy,
+    tidyr,
+    crayon,
+    rmaADM,
+    moments,
+    DEoptim,
+    future,
+    future.apply
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+LazyData: true

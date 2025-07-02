@@ -1,0 +1,51 @@
+---
+title: "rfcipSim (R FCIP Simulator)"
+
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE,
+                      echo = TRUE,
+                        fig.path = "man/figures/")
+library(knitr)
+library(dplyr)
+library(devtools)
+load_all()
+```
+
+# Introduction
+`rFarmPolicySim` provides tools to simulate U.S. farm-level revenue, revenue variability, and payment calculations under major federal farm programs. Supported programs include: 
+    
+- Federal Crop Insurance Program (FCIP)
+- Noninsured Crop Disaster Assistance Program (NAP)
+- Price Loss Coverage (PLC)
+- Agricultural Risk Coverage (ARC)
+- Ad-hoc disaster assistance programs
+      
+Users can run Monte Carlo experiments to evaluate program payments, subsidies, and election decisions under alternative policy scenarios
+
+**Disclaimer:** This product uses data provided by the USDA, but is not endorsed by or affiliated with USDA or the Federal Government.
+
+# Installation
+`rFarmPolicySim` can be installed directly from github using `remotes::install_github("https://github.com/ftsiboe/rFarmPolicySim")`
+
+# Supported Functionalities
+
+
