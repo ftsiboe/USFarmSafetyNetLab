@@ -31,23 +31,6 @@ This dataset provides comprehensive participation information for the FCIP. It c
   - [Historical summary of business by state, county, crop, and coverage](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop_coverage.rds)
   - [Historical summary of business by state, county, and crop](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop.rds)
 
-```{r sob-examples, include=T}
-# Example 1: Accessing SOB data via rfcip
-# rfcip can be installed directly from github using remotes::install_github("https://github.com/dylan-turner25/rfcip")
-df <- rfcip::get_sob_data(year = 2023)
-# df <- rfcip::get_sob_data(year = 2015:2020, crop = "corn")
-# df <- rfcip::get_sob_data(year = 2022, crop = c(41, 81), group_by = "state")
-
-# Example 2: Accessing SOB data via this repository’s release assets
-base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
-version  <- "v0.1.0"
-file <- "historical_summary_of_business_by_state_county_crop.rds"
-url <- paste(base_url, version, file, sep = "/")
-df <- tempfile(fileext = ".rds")
-download.file(url, df, mode = "wb",quiet=TRUE)
-df <- readRDS(df)
-```
-
 ## Federal Crop Insurance Program (FCIP) – Cause of Loss (COL)
 
 This dataset offers summarized information on FCIP participation, segmented by different causes of loss. It can be accessed as follows:
@@ -60,37 +43,49 @@ This dataset offers summarized information on FCIP participation, segmented by d
   - [Historical cause-of-loss indemnities (aggregate)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_indemnities_only.rds)
   - [Historical cause-of-loss premiums and indemnities](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_premimums_and_indemnities.rds)
 
-```{r col-examples, include=T}
-# Example 3: Accessing COL data via rfcip
-# rfcip can be installed directly from github using remotes::install_github("https://github.com/dylan-turner25/rfcip")
-df <- rfcip::get_col_data(year = 2020)
-# df <- rfcip::get_col_data(year = 2019:2021)
-
-# Example 4: Accessing COL data via this repository’s release assets
-base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
-version  <- "v0.1.0"
-file <- "historical_cause_of_loss_premimums_and_indemnities.rds"
-url <- paste(base_url, version, file, sep = "/")
-df <- tempfile(fileext = ".rds")
-download.file(url, df, mode = "wb",quiet=TRUE)
-df <- readRDS(df)
-```
-
 ## Federal Crop Insurance Program (FCIP) – Reinsurance
 
 This dataset provides reinsurance data for the FCIP
 Available through the R package [**rfcip**](https://github.com/dylan-turner25/rfcip).
 
-```{r reinsurance-examples, include=T}
-# Example 2:
-# df <- rfcip::get_insurance_plan_codes()
-# df <- rfcip::get_insurance_plan_codes(year = 2023, plan = "yp")
-# df <- rfcip::get_insurance_plan_codes(year = 2023, plan = 1)
-# df <- rfcip::get_insurance_plan_codes(year = 2023, plan = "yield protection")
-# df <- rfcip::get_insurance_plan_codes(year = 2018:2022, plan = c("yp", "rp"))
-```
-
 ---
 For questions or additional information about these datasets, please open an issue or contact us directly on GitHub.
+
+## Examples in R
+
+```{r examples, include=T}
+# rfcip can be installed directly from github using remotes::install_github("https://github.com/dylan-turner25/rfcip")
+
+# Example 1: Accessing SOB data via rfcip
+sob1 <- rfcip::get_sob_data(year = 2015:2020, crop = "corn")
+head(sob1)
+
+# Example 2: Accessing SOB data via this repository’s release assets
+base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
+version  <- "v0.1.0"
+file <- "historical_summary_of_business_by_state_county_crop.rds"
+url <- paste(base_url, version, file, sep = "/")
+sob2 <- tempfile(fileext = ".rds")
+download.file(url, sob2, mode = "wb",quiet=TRUE)
+sob2 <- readRDS(sob2)
+head(sob2)
+
+# Example 3: Accessing COL data via rfcip
+# rfcip can be installed directly from github using remotes::install_github("https://github.com/dylan-turner25/rfcip")
+col1 <- rfcip::get_col_data(year = 2020)
+head(col1)
+
+# Example 4: Accessing COL data via this repository’s release assets
+file <- "historical_cause_of_loss_premimums_and_indemnities.rds"
+url <- paste(base_url, version, file, sep = "/")
+col2 <- tempfile(fileext = ".rds")
+download.file(url, col2, mode = "wb",quiet=TRUE)
+col2 <- readRDS(col2)
+head(col2)
+
+# Example 5: Accessing Reinsurance data via rfcip
+nationalSRA <- rfcip::nationalSRA
+head(nationalSRA)
+```
 
 
