@@ -1,5 +1,5 @@
 ---
-title: "rfcipSim (R FCIP Simulator)"
+title: "Datasets"
 
 output:
   github_document:
@@ -9,43 +9,60 @@ output:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
-
-
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = FALSE,
-                      echo = TRUE,
-                        fig.path = "man/figures/")
 library(knitr)
 library(dplyr)
 library(devtools)
 load_all()
 ```
 
-# Introduction
-`rFarmPolicySim` provides tools to simulate U.S. farm-level revenue, revenue variability, and payment calculations under major federal farm programs. Supported programs include: 
-    
-- Federal Crop Insurance Program (FCIP)
-- Noninsured Crop Disaster Assistance Program (NAP)
-- Price Loss Coverage (PLC)
-- Agricultural Risk Coverage (ARC)
-- Ad-hoc disaster assistance programs
-      
-Users can run Monte Carlo experiments to evaluate program payments, subsidies, and election decisions under alternative policy scenarios
+# Datasets
 
-**Disclaimer:** This product uses data provided by the USDA, but is not endorsed by or affiliated with USDA or the Federal Government.
+This directory provides guidance on accessing the various datasets used in U.S. farm safety-net research. Below are descriptions of each dataset and instructions on how to access them:
 
-# Installation
-`rFarmPolicySim` can be installed directly from github using `remotes::install_github("https://github.com/ftsiboe/rFarmPolicySim")`
+## Federal Crop Insurance Program (FCIP) – Summary of Business (SOB)
 
-# Supported Functionalities
+This dataset provides comprehensive participation information for the FCIP. It can be accessed via two methods depending on the period of analysis:
+
+- **Recent data (1989–present):**  
+  Available through the R package [**rfcip**](https://github.com/dylan-turner25/rfcip), which offers tools to retrieve SOB, COL, and reinsurance data at various levels of aggregation.
+- **Historical data (pre-1989):**  
+  Download from this repository’s release assets:
+  - [Historical summary of business by state, county, crop, and coverage](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop_coverage.rds)
+  - [Historical summary of business by state, county, and crop](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop.rds)
+
+## Federal Crop Insurance Program (FCIP) – Cause of Loss (COL)
+
+This dataset offers summarized information on FCIP participation, segmented by different causes of loss. It can be accessed as follows:
+
+- **Recent data (1989–present):**  
+  Available through the R package [**rfcip**](https://github.com/dylan-turner25/rfcip).
+- **Historical data (pre-1989):**  
+  Download from this repository’s release assets:
+  - [Historical cause-of-loss indemnities with month](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_indemnities_with_month.rds)
+  - [Historical cause-of-loss indemnities (aggregate)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_indemnities_only.rds)
+  - [Historical cause-of-loss premiums and indemnities](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_premimums_and_indemnities.rds)
+
+## Federal Crop Insurance Program (FCIP) – Reinsurance
+
+This dataset provides reinsurance data for the FCIP. It can be accessed via:
+
+- **Recent data (1989–present):**  
+  Available through the R package [**rfcip**](https://github.com/dylan-turner25/rfcip).
+
+---
+
+```{r examples, include=T}
+# Examples
+version  <- "v0.1.0"
+base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
+file     <- "historical_cause_of_loss_indemnities_with_month.rds"
+url      <- paste(base_url, version, file, sep = "/")
+df       <- tempfile(fileext = ".rds")
+download.file(url, df, mode = "wb")
+df <- readRDS(df)
+```
+---
+For questions or additional information about these datasets, please open an issue or contact us directly on GitHub.
 
 
