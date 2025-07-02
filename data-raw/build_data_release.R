@@ -24,6 +24,21 @@ if (!dir.exists(dir_data_release)) {
   dir.create(dir_data_release, recursive = TRUE)
 }
 
+adm <- as.data.frame(
+  data.table::rbindlist(
+    lapply(
+      list.files(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Output/base_rate/"),recursive = T,full.names = T),
+      function(file){
+        # file <- list.files(paste0(dr_adm,"Output/base_rate/"),recursive = T,full.names = T)[1]
+        adm <- readRDS(file)
+        adm$tau_adm <- adm$Rr + adm$Rf
+        adm <- doBy::summaryBy(tau_adm~crop_yr + state_cd + county_cd + crop_cd,data=adm,FUN=mean,na.rm=T,keep.names = T)
+        return(adm)
+      }), fill = TRUE))
+
+saveRDS(standardize_fcip_column_names(adm),
+        file=paste0(dir_data_release,"/instrumental_variables_fcip_demand_from_actuarial_data_master.rds"))
+
 saveRDS(standardize_fcip_column_names(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaSumOfBussiness/Output/SOBCOV.rds"))),
         file=paste0(dir_data_release,"/historical_summary_of_business_by_state_county_crop_coverage.rds"))
 

@@ -15,6 +15,13 @@ if (!dir.exists(dir_fastscratch)) {
 if (!dir.exists("./data-raw/internal_datasets")) {
   dir.create("./data-raw/internal_datasets", recursive = TRUE)
 }
+
+if(Sys.info()['sysname'] %in% "Windows"){
+  farmpolicylab <- paste0(gsub("OneDrive","Dropbox",Sys.getenv("OneDriveConsumer")),"/farmpolicylab/database/")
+}else{
+  farmpolicylab <- paste0("~/Database/USA/USDA/")
+}
+
 #---------------------------------------------------------
 # Download and cache USDA NASS Quick Stats             ####
 download_raw_data(dir_fastscratch=dir_fastscratch);gc()
