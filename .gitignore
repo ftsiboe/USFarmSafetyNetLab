@@ -2,6 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-US-FarmSafetyNet-Lab.Rproj
+USFarmSafetyNetLab.Rproj
 data-raw/*
 !data-raw/cache_raw_data.R

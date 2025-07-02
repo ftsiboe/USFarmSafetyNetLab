@@ -19,13 +19,16 @@
 ^renv$                   # (if you’re using renv, ignore the project library)
 ^renv\\.lock$            # lockfile for renv
 ^coverage$               # test coverage output
-US-FarmSafetyNet-Lab.Rproj
+USFarmSafetyNetLab.Rproj
 ^LICENSE\.md$
 ^codemeta\.json$
 ^\.github$
 data-raw
+replications
 README.Rmd
-
-
+data/README.Rmd
+data/README.md
+SECURITY.md 
+code_of_conduct.md
 
 

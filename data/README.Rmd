@@ -24,12 +24,12 @@ This directory provides guidance on accessing the various datasets used in U.S. 
 
 This dataset provides comprehensive participation information for the FCIP. It can be accessed via two methods depending on the period of analysis:
 
-- **Recent data (1989–present):**  
+- **Recent data (1988–present):**  
   Available through the R package [**rfcip**](https://github.com/dylan-turner25/rfcip), which offers tools to retrieve SOB, COL, and reinsurance data at various levels of aggregation.
-- **Historical data (pre-1989):**  
+- **Historical data (pre-1988):**  
   Download from this repository’s release assets:
-  - [Historical summary of business by state, county, crop, and coverage](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop_coverage.rds)
-  - [Historical summary of business by state, county, and crop](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop.rds)
+  - [Historical summary of business by state, county, crop, and coverage (1989-present)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop_coverage.rds)
+  - [Historical summary of business by state, county, and crop (1948-2020)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop.rds)
 
 ## Federal Crop Insurance Program (FCIP) – Cause of Loss (COL)
 
