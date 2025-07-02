@@ -38,6 +38,23 @@ analysis:
     -   [Historical summary of business by state, county, and
         crop](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop.rds)
 
+``` r
+# Example 1: Accessing data via rfcip
+# rfcip can be installed directly from github using remotes::install_github("https://github.com/dylan-turner25/rfcip")
+df <- rfcip::get_sob_data(year = 2023)
+# df <- rfcip::get_sob_data(year = 2015:2020, crop = "corn")
+# df <- rfcip::get_sob_data(year = 2022, crop = c(41, 81), group_by = "state")
+
+# Example 2: Accessing data via this repository’s release assets
+base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
+version  <- "v0.1.0"
+file <- "historical_summary_of_business_by_state_county_crop.rds"
+url <- paste(base_url, version, file, sep = "/")
+df <- tempfile(fileext = ".rds")
+download.file(url, df, mode = "wb",quiet=TRUE)
+df <- readRDS(df)
+```
+
 ## Federal Crop Insurance Program (FCIP) – Cause of Loss (COL)
 
 This dataset offers summarized information on FCIP participation,
@@ -55,26 +72,43 @@ segmented by different causes of loss. It can be accessed as follows:
     -   [Historical cause-of-loss premiums and
         indemnities](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_premimums_and_indemnities.rds)
 
+``` r
+# Example 1: Accessing data via rfcip
+# rfcip can be installed directly from github using remotes::install_github("https://github.com/dylan-turner25/rfcip")
+df <- rfcip::get_col_data(year = 2020)
+```
+
+    ## ℹ Locating cause of loss download links on RMA's website.
+
+    ## ✔ Download links located.
+
+    ## ℹ Merging cause of loss files for all specified crop years
+
+``` r
+# df <- rfcip::get_col_data(year = 2019:2021)
+
+# Example 2: Accessing data via this repository’s release assets
+base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
+version  <- "v0.1.0"
+file <- "historical_cause_of_loss_premimums_and_indemnities.rds"
+url <- paste(base_url, version, file, sep = "/")
+df <- tempfile(fileext = ".rds")
+download.file(url, df, mode = "wb",quiet=TRUE)
+df <- readRDS(df)
+```
+
 ## Federal Crop Insurance Program (FCIP) – Reinsurance
 
-This dataset provides reinsurance data for the FCIP. It can be accessed
-via:
-
--   **Recent data (1989–present):**  
-    Available through the R package
-    [**rfcip**](https://github.com/dylan-turner25/rfcip).
-
-------------------------------------------------------------------------
+This dataset provides reinsurance data for the FCIP Available through
+the R package [**rfcip**](https://github.com/dylan-turner25/rfcip).
 
 ``` r
 # Examples
-version  <- "v0.1.0"
-base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
-file     <- "historical_cause_of_loss_indemnities_with_month.rds"
-url      <- paste(base_url, version, file, sep = "/")
-df       <- tempfile(fileext = ".rds")
-download.file(url, df, mode = "wb")
-df <- readRDS(df)
+# df <- rfcip::get_insurance_plan_codes()
+# df <- rfcip::get_insurance_plan_codes(year = 2023, plan = "yp")
+# df <- rfcip::get_insurance_plan_codes(year = 2023, plan = 1)
+# df <- rfcip::get_insurance_plan_codes(year = 2023, plan = "yield protection")
+# df <- rfcip::get_insurance_plan_codes(year = 2018:2022, plan = c("yp", "rp"))
 ```
 
 ------------------------------------------------------------------------
