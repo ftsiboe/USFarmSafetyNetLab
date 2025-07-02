@@ -1,7 +1,7 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
 # US Farm Safety Net Lab
-
+ 
 **Acknowledgment:**  The findings and conclusions in associated publications and their associated replication files and data provided in this repository are those of the author(s) and should not be interpreted as representing the official positions, policies, or determinations of my past or current employers.
 
 This repository centralizes research outputs, analytical tools, and resources exploring and evaluating the United States agricultural safety net programs. These government programs can be categorized into three main groups based on the type and scope of risks they address:
