@@ -82,7 +82,7 @@ sob1 <- rfcip::get_sob_data(year = 2015:2020, crop = "corn")
     ## ■■■■■■■■■■■■■■■■■…
 
 ``` r
-head(sob1)
+head(tibble(sob1))
 ```
 
     ## # A tibble: 6 × 23
@@ -111,58 +111,25 @@ url <- paste(base_url, version, file, sep = "/")
 sob2 <- tempfile(fileext = ".rds")
 download.file(url, sob2, mode = "wb",quiet=TRUE)
 sob2 <- readRDS(sob2)
-head(sob2)
+head(tibble(sob2))
 ```
 
+    ## # A tibble: 6 × 24
     ##   commodity_year state_code state_abbreviation county_code county_name
-    ## 1           1948          1                 AL          21     CHILTON
-    ## 2           1948          1                 AL          49     DE KALB
-    ## 3           1948          1                 AL          69     HOUSTON
-    ## 4           1948          1                 AL          89     MADISON
-    ## 5           1948          1                 AL         109        PIKE
-    ## 6           1948          1                 AL         125  TUSCALOOSA
-    ##   commodity_code commodity_name policies_sold policies_earning_prem
-    ## 1             21         COTTON           348                   232
-    ## 2             21         COTTON          1038                   998
-    ## 3             21         COTTON           356                   324
-    ## 4             21         COTTON           328                   325
-    ## 5             21         COTTON           227                   227
-    ## 6             21         COTTON           264                   233
-    ##   policies_indemnified units_earning_prem units_indemnified
-    ## 1                    0                245                 6
-    ## 2                    0               1240               170
-    ## 3                    0                334                24
-    ## 4                    0                435                22
-    ## 5                    0                234                 8
-    ## 6                    0                302                 4
-    ##   net_reporting_level_amount liability_amount total_premium_amount
-    ## 1                       1247            31179                 1495
-    ## 2                       7567           496744                18392
-    ## 3                       2552           119880                 9247
-    ## 4                       8392           462757                17335
-    ## 5                       1696            51123                 5116
-    ## 6                       2528           128016                10143
-    ##   subsidy_amount indemnity_amount loss_ratio insurance_plan_code
-    ## 1           1495              154       0.10                  NA
-    ## 2          18392            21418       1.16                  NA
-    ## 3           9247              905       0.10                  NA
-    ## 4          17335             4320       0.25                  NA
-    ## 5           5116              344       0.07                  NA
-    ## 6          10143              250       0.02                  NA
-    ##   insurance_plan_abbreviation coverage_type_code delivery_id
-    ## 1                        <NA>               <NA>        <NA>
-    ## 2                        <NA>               <NA>        <NA>
-    ## 3                        <NA>               <NA>        <NA>
-    ## 4                        <NA>               <NA>        <NA>
-    ## 5                        <NA>               <NA>        <NA>
-    ## 6                        <NA>               <NA>        <NA>
-    ##   reporting_level_type endorsed_commodity_reporting_level_amount
-    ## 1                 <NA>                                        NA
-    ## 2                 <NA>                                        NA
-    ## 3                 <NA>                                        NA
-    ## 4                 <NA>                                        NA
-    ## 5                 <NA>                                        NA
-    ## 6                 <NA>                                        NA
+    ##            <dbl>      <dbl> <chr>                    <dbl> <chr>      
+    ## 1           1948          1 AL                          21 CHILTON    
+    ## 2           1948          1 AL                          49 DE KALB    
+    ## 3           1948          1 AL                          69 HOUSTON    
+    ## 4           1948          1 AL                          89 MADISON    
+    ## 5           1948          1 AL                         109 PIKE       
+    ## 6           1948          1 AL                         125 TUSCALOOSA 
+    ## # ℹ 19 more variables: commodity_code <dbl>, commodity_name <chr>,
+    ## #   policies_sold <dbl>, policies_earning_prem <dbl>,
+    ## #   policies_indemnified <dbl>, units_earning_prem <dbl>,
+    ## #   units_indemnified <dbl>, net_reporting_level_amount <dbl>,
+    ## #   liability_amount <dbl>, total_premium_amount <dbl>, subsidy_amount <dbl>,
+    ## #   indemnity_amount <dbl>, loss_ratio <dbl>, insurance_plan_code <dbl>,
+    ## #   insurance_plan_abbreviation <chr>, coverage_type_code <chr>, …
 
 ``` r
 # Example 3: Accessing COL data via rfcip
@@ -175,58 +142,25 @@ col1 <- rfcip::get_col_data(year = 2020)
     ## ℹ Merging cause of loss files for all specified crop years
 
 ``` r
-head(col1)
+head(tibble(col1))
 ```
 
+    ## # A tibble: 6 × 30
     ##   commodity_year state_code state_abbrv county_code county_name commodity_code
-    ## 1           2020          1          AL           1     Autauga             21
-    ## 2           2020          1          AL           1     Autauga             21
-    ## 3           2020          1          AL           1     Autauga             21
-    ## 4           2020          1          AL           1     Autauga             41
-    ## 5           2020          1          AL           1     Autauga             41
-    ## 6           2020          1          AL           1     Autauga             41
-    ##   commodity_name insurance_plan_code insurance_plan_abbrv delivery_type
-    ## 1         Cotton                   2                   RP             A
-    ## 2         Cotton                   2                   RP             A
-    ## 3         Cotton                   2                   RP             A
-    ## 4           Corn                   2                   RP             A
-    ## 5           Corn                   2                   RP             A
-    ## 6           Corn                   2                   RP             A
-    ##   stage_code col_code                           col_name month_of_loss_code
-    ## 1          H       31 Excess Moisture/Precipitation/Rain                  9
-    ## 2          H       92      Hurricane/Tropical Depression                 10
-    ## 3          H       92      Hurricane/Tropical Depression                  9
-    ## 4          H        1                   Decline in Price                  9
-    ## 5          H       11                            Drought                  7
-    ## 6          R       93                           Wildlife                  5
-    ##   month_of_loss_name year_of_loss policies_earning_prem policies_indemnified
-    ## 1                SEP         2020                     1                    1
-    ## 2                OCT         2020                     3                    3
-    ## 3                SEP         2020                     3                    3
-    ## 4                SEP         2020                     1                    1
-    ## 5                JUL         2020                     1                    1
-    ## 6                MAY         2020                     1                    1
-    ##   net_planted_qty net_endorsed_acres  liability total_premium
-    ## 1          38.925                  0  11519.000      1389.000
-    ## 2         992.425                  0 495420.000     38585.500
-    ## 3         392.600                  0 220061.000     17815.500
-    ## 4          12.900                  0   2543.665       437.095
-    ## 5           8.100                  0   1597.185       274.455
-    ## 6          30.000                  0   5915.500      1016.500
-    ##   producer_paid_premium  subsidy state_subsidy addnl_subsidy efa_prem_discount
-    ## 1               570.000   819.00             0             0                 0
-    ## 2              8457.500 30128.00             0             0                 0
-    ## 3              4157.500 13658.00             0             0                 0
-    ## 4               196.725   240.37             0             0                 0
-    ## 5               123.525   150.93             0             0                 0
-    ## 6               457.500   559.00             0             0                 0
-    ##   indemnified_quantity indem_amount loss_ratio
-    ## 1               38.925      1938.00       1.40
-    ## 2              992.425     95015.00       2.46
-    ## 3              392.600     18962.00       1.06
-    ## 4               25.800      1602.18       3.67
-    ## 5               16.200      1006.02       3.67
-    ## 6               14.000       439.00       0.43
+    ##            <dbl>      <dbl> <chr>             <dbl> <chr>                <dbl>
+    ## 1           2020          1 AL                    1 Autauga                 21
+    ## 2           2020          1 AL                    1 Autauga                 21
+    ## 3           2020          1 AL                    1 Autauga                 21
+    ## 4           2020          1 AL                    1 Autauga                 41
+    ## 5           2020          1 AL                    1 Autauga                 41
+    ## 6           2020          1 AL                    1 Autauga                 41
+    ## # ℹ 24 more variables: commodity_name <chr>, insurance_plan_code <dbl>,
+    ## #   insurance_plan_abbrv <chr>, delivery_type <chr>, stage_code <chr>,
+    ## #   col_code <dbl>, col_name <chr>, month_of_loss_code <dbl>,
+    ## #   month_of_loss_name <chr>, year_of_loss <dbl>, policies_earning_prem <dbl>,
+    ## #   policies_indemnified <dbl>, net_planted_qty <dbl>,
+    ## #   net_endorsed_acres <dbl>, liability <dbl>, total_premium <dbl>,
+    ## #   producer_paid_premium <dbl>, subsidy <dbl>, state_subsidy <dbl>, …
 
 ``` r
 # Example 4: Accessing COL data via this repository’s release assets
@@ -235,49 +169,30 @@ url <- paste(base_url, version, file, sep = "/")
 col2 <- tempfile(fileext = ".rds")
 download.file(url, col2, mode = "wb",quiet=TRUE)
 col2 <- readRDS(col2)
-head(col2)
+head(tibble(col2))
 ```
 
+    ## # A tibble: 6 × 21
     ##   commodity_year state_code state_abbreviation county_code county_name
-    ## 1           1948          1                 AL          21     CHILTON
-    ## 2           1948          1                 AL          21     CHILTON
-    ## 3           1948          1                 AL          21     CHILTON
-    ## 4           1948          1                 AL          49     DE KALB
-    ## 5           1948          1                 AL          49     DE KALB
-    ## 6           1948          1                 AL          49     DE KALB
-    ##   commodity_code commodity_name insurance_plan_code insurance_plan_abbreviation
-    ## 1             21         COTTON                  NA                        <NA>
-    ## 2             21         COTTON                  NA                        <NA>
-    ## 3             21         COTTON                  NA                        <NA>
-    ## 4             21         COTTON                  NA                        <NA>
-    ## 5             21         COTTON                  NA                        <NA>
-    ## 6             21         COTTON                  NA                        <NA>
-    ##   coverage_type_code col_code                    col_name policies_earning_prem
-    ## 1                          11                     DROUGHT                     0
-    ## 2                          71                     INSECTS                     0
-    ## 3                          99 OTHER (SNOW-LIGHTNING-ETC.)                     0
-    ## 4                          11                     DROUGHT                     0
-    ## 5                          31 EXCESS MOISTURE/PRECIP/RAIN                     0
-    ## 6                          41                       FROST                     0
-    ##   policies_indemnified net_planted_qty liability_amount total_premium_amount
-    ## 1                    0               0                0                    0
-    ## 2                    0               0                0                    0
-    ## 3                    0               0                0                    0
-    ## 4                    0               0                0                    0
-    ## 5                    0               0                0                    0
-    ## 6                    0               0                0                    0
-    ##   subsidy_amount indemnity_amount loss_ratio         damage_rc
-    ## 1              0               31       0000 Drought/High Temp
-    ## 2              0               45       0000            Biotic
-    ## 3              0               78       0000             Other
-    ## 4              0               44       0000 Drought/High Temp
-    ## 5              0               44       0000             Other
-    ## 6              0            11733       0000          Low Temp
+    ##            <dbl>      <dbl> <chr>                    <dbl> <chr>      
+    ## 1           1948          1 AL                          21 CHILTON    
+    ## 2           1948          1 AL                          21 CHILTON    
+    ## 3           1948          1 AL                          21 CHILTON    
+    ## 4           1948          1 AL                          49 DE KALB    
+    ## 5           1948          1 AL                          49 DE KALB    
+    ## 6           1948          1 AL                          49 DE KALB    
+    ## # ℹ 16 more variables: commodity_code <dbl>, commodity_name <chr>,
+    ## #   insurance_plan_code <dbl>, insurance_plan_abbreviation <chr>,
+    ## #   coverage_type_code <chr>, col_code <dbl>, col_name <chr>,
+    ## #   policies_earning_prem <dbl>, policies_indemnified <dbl>,
+    ## #   net_planted_qty <dbl>, liability_amount <dbl>, total_premium_amount <dbl>,
+    ## #   subsidy_amount <dbl>, indemnity_amount <dbl>, loss_ratio <chr>,
+    ## #   damage_rc <chr>
 
 ``` r
 # Example 5: Accessing Reinsurance data via rfcip
 nationalSRA <- rfcip::nationalSRA
-head(nationalSRA)
+head(tibble(nationalSRA))
 ```
 
     ## # A tibble: 6 × 11
