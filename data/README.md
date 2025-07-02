@@ -1,4 +1,3 @@
-
 # Datasets
 This directory houses or offeres access guidance on the various datasets utilized in U.S farm safety net research. 
 Below are descriptions of each dataset and how ro access them:
