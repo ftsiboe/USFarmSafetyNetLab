@@ -12,6 +12,7 @@ Datasets
         id="toc-federal-crop-insurance-program-fcip--reinsurance">Federal Crop
         Insurance Program (FCIP) – Reinsurance</a>
     -   <a href="#examples-in-r" id="toc-examples-in-r">Examples in R</a>
+    -   <a href="#-citation" id="toc--citation">📚 Citation</a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -27,17 +28,18 @@ This dataset provides comprehensive participation information for the
 FCIP. It can be accessed via two methods depending on the period of
 analysis:
 
--   **Recent data (1989–present):**  
+-   **Recent data (1988–present):**  
     Available through the R package
     [**rfcip**](https://github.com/dylan-turner25/rfcip), which offers
     tools to retrieve SOB, COL, and reinsurance data at various levels
     of aggregation.
--   **Historical data (pre-1989):**  
+-   **Historical data (pre-1988):**  
     Download from this repository’s release assets:
     -   [Historical summary of business by state, county, crop, and
-        coverage](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop_coverage.rds)
-    -   [Historical summary of business by state, county, and
-        crop](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop.rds)
+        coverage
+        (1989-present)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop_coverage.rds)
+    -   [Historical summary of business by state, county, and crop
+        (1948-2020)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop.rds)
 
 ## Federal Crop Insurance Program (FCIP) – Cause of Loss (COL)
 
@@ -133,7 +135,6 @@ head(tibble(sob2))
 
 ``` r
 # Example 3: Accessing COL data via rfcip
-# rfcip can be installed directly from github using remotes::install_github("https://github.com/dylan-turner25/rfcip")
 col1 <- rfcip::get_col_data(year = 2020)
 ```
 
@@ -207,3 +208,12 @@ head(tibble(nationalSRA))
     ## # ℹ 6 more variables: data_release_month <dbl>, data_release_year <dbl>,
     ## #   data_release_day <dbl>, data_release_date <date>, fund_name <chr>,
     ## #   report_type <chr>
+
+## 📚 Citation
+
+If you find this repository useful, please star this project and cite
+our papers listed above.
+
+See the [LICENSE](../LICENSE) file in the repository’s root for details.
+
+*Maintained by [ftsiboe](https://github.com/ftsiboe)*

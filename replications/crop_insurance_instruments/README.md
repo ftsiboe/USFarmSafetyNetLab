@@ -6,10 +6,13 @@ Crop-Insurance-Instruments
     -   <a href="#files-in-this-directory"
         id="toc-files-in-this-directory">Files in this directory</a>
     -   <a
-        href="#definitions-for-each-data-column-in-the-final_fcip_instruments-are-included-below"
-        id="toc-definitions-for-each-data-column-in-the-final_fcip_instruments-are-included-below">Definitions
-        for each data column in the final_fcip_instruments are included
-        below</a>
+        href="#accessing-the-estimated-instrumental-variables-fcip-demand-in-r"
+        id="toc-accessing-the-estimated-instrumental-variables-fcip-demand-in-r">Accessing
+        the estimated instrumental variables fcip demand in R</a>
+    -   <a
+        href="#definitions-for-each-data-column-in-the-data-are-included-below"
+        id="toc-definitions-for-each-data-column-in-the-data-are-included-below">Definitions
+        for each data column in the data are included below</a>
     -   <a href="#-citation" id="toc--citation">📚 Citation</a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -39,7 +42,20 @@ Database was last updated on 2025-06-11
 | `2009 FCIC Rate Methodology Handbook APH.pdf`                                      | 2009 FCIC Rate Methodology Handbook APH published by RMA ([legacy PDF](https://legacy.rma.usda.gov/pubs/2008/ratemethodology.pdf)) |
 | `fcip_instruments_formulation.R`                                                   | Script to formulate the instrument at the county–crop level on a historical basis                                                  |
 
-## Definitions for each data column in the final_fcip_instruments are included below
+## Accessing the estimated instrumental variables fcip demand in R
+
+``` r
+# base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
+# version  <- "v0.1.0"
+# file <- "estimated_instrumental_variables_fcip_demand.rds"
+# url <- paste(base_url, version, file, sep = "/")
+# df <- tempfile(fileext = ".rds")
+# download.file(url, df, mode = "wb",quiet=TRUE)
+# df <- readRDS(df)
+# head(tibble(df))
+```
+
+## Definitions for each data column in the data are included below
 
 | Column               | Definition                                                                                                                                                                                                                                                 |
 |:---------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
