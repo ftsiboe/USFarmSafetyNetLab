@@ -107,7 +107,7 @@ sob[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(sob))) := lapply(
 instruments <- as.data.frame(
   data.table::rbindlist(
     lapply(
-      c((min(sob[["commodity_year"]]) + 22):max(sob[["commodity_year"]]))[1:2],
+      c((min(sob[["commodity_year"]]) + 22):max(sob[["commodity_year"]])),
       estimate_fcip_instruments,
       statplan = sob
     ), fill = TRUE))

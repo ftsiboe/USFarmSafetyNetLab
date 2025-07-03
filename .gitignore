@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+job_**.sbatch
+slurm-*.out
 USFarmSafetyNetLab.Rproj
 data-raw/*
 !data-raw/build_and_try.R
