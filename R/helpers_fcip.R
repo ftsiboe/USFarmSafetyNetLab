@@ -2,6 +2,302 @@
 # remotes::install_github("dylan-turner25/rfcip", force = TRUE,upgrade="never")
 # remotes::install_github("dylan-turner25/rfsa", force = TRUE,upgrade="never")
 
+#' Download and Process RMA Web Data Files
+#'
+#' Fetches one or more years of USDA RMA “Summary of Business” data
+#' (state–county–crop & livestock participation series), unzips,
+#' reads the pipe-delimited text, applies the correct column names,
+#' and saves each year as an \code{.rds} under \code{dest}.
+#'
+#' @param years Integer vector of crop or livestock years to fetch.
+#' @param file_name Character; one of
+#'   \code{"sobcov"}, \code{"sobtpu"}, \code{"lgm"}, \code{"lrp"}, or \code{"colsom"}.
+#'   Determines both the subdirectory and the column schema.
+#' @param dest Character path where the final \code{.rds} files will go.
+#'   Defaults to \code{"./data-raw/data_release"}.
+#' @param url_rma_web_data_files Base URL for USDA RMA web data.
+#'   Defaults to the official RMA “Web_Data_Files” root.
+#' @return Invisibly returns \code{NULL}. Side effect: one \code{.rds}
+#'   per year is written under \code{dest}, named \code{<file_name>_<year>.rds}.
+#' @examples
+#' \dontrun{
+#' # Get sobtpu data for 2018–2022
+#' download_rma_web_data_files(2018:2022, "sobtpu")
+#' }
+#' @export
+download_rma_web_data_files <- function(
+    years,
+    file_name,
+    dest = "./data-raw/data_release",
+    url_rma_web_data_files = "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files"
+) {
+  # 1. Check for existing files in `dest` and drop years already
+  #    downloaded within the last 5 years. This avoids redundant downloads.
+  # List all files matching `file_name` (recursive)
+  existing <- list.files(dest, recursive = TRUE, full.names = TRUE, pattern = file_name)
+  existing <- as.numeric(gsub("[^0-9]","",existing[!grepl("pdf|txt", existing)]))
+  existing <- existing[!existing %in% (as.numeric(format(Sys.Date(), "%Y")) - 5):as.numeric(format(Sys.Date(), "%Y")) ]
+  years <- setdiff(years, existing)
+  
+  # 2. Build the download URLs based on `file_name` category
+  if (file_name %in% c("sobcov", "sobtpu")) {
+    # State–county–crop data
+    download_urls <- data.frame(
+      url  = paste0(
+        url_rma_web_data_files,
+        "/Summary_of_Business/state_county_crop/",
+        file_name, "_", years, ".zip"
+      ),
+      year = years,
+      stringsAsFactors = FALSE
+    )
+  }
+  
+  if (file_name %in% c("colsom")) {
+    download_urls <- data.frame(
+      url  = paste0(
+        url_rma_web_data_files,
+        "/Summary_of_Business/cause_of_loss/",
+        file_name, "_", years, ".zip"
+      ),
+      year = years,
+      stringsAsFactors = FALSE
+    )
+  }
+  
+  if (file_name %in% c("lgm", "lrp")) {
+    # Livestock & dairy participation data
+    download_urls <- data.frame(
+      url  = paste0(
+        url_rma_web_data_files,
+        "/Summary_of_Business/livestock_and_dairy_participation/",
+        file_name, "_", years, ".zip"
+      ),
+      year = years,
+      stringsAsFactors = FALSE
+    )
+  }
+  
+  # 3. Loop over each URL, download, unzip, read, name columns, save .rds
+  lapply(seq_len(nrow(download_urls)), function(i) {
+    tryCatch({
+      # a) Download to a temporary zip file
+      temp_zip <- tempfile(fileext = ".zip")
+      utils::download.file(
+        download_urls$url[i],
+        destfile = temp_zip,
+        mode     = "wb",
+        quiet    = TRUE
+      )
+      
+      # b) Unzip into a temp folder
+      temp_txt <- tempfile()
+      utils::unzip(zipfile = temp_zip, exdir = temp_txt)
+      
+      # c) Read the single pipe-delimited text file
+      data <- utils::read.delim2(
+        file   = list.files(temp_txt, full.names = TRUE),
+        sep    = "|",
+        header = FALSE,
+        skipNul = TRUE
+      )
+      
+      # d) Clean up temp files immediately
+      unlink(temp_zip)
+      unlink(temp_txt, recursive = TRUE)
+      
+      # e) Apply the proper column names per `file_name`
+      if (file_name == "sobtpu") {
+        colnames(data) <- c(
+          "commodity_year",
+          "state_code",
+          "state_name",
+          "state_abbreviation",
+          "county_code",
+          "county_name",
+          "commodity_code",
+          "commodity_name",
+          "insurance_plan_code",
+          "insurance_plan_abbreviation",
+          "coverage_type_code",
+          "coverage_level_percent",
+          "delivery_id",
+          "type_code",
+          "type_name",
+          "practice_code",
+          "practice_name",
+          "unit_structure_code",
+          "unit_structure_name",
+          "net_reporting_level_amount",
+          "reporting_level_type",
+          "liability_amount",
+          "total_premium_amount",
+          "subsidy_amount",
+          "indemnity_amount",
+          "loss_ratio",
+          "endorsed_commodity_reporting_level_amount"
+        )
+      }
+      
+      if (file_name == "sobcov") {
+        colnames(data) <- c(
+          "commodity_year",
+          "state_code",
+          "state_abbreviation",
+          "county_code",
+          "county_name",
+          "commodity_code",
+          "commodity_name",
+          "insurance_plan_code",
+          "insurance_plan_name_abbreviation",
+          "coverage_category",
+          "delivery_type",
+          "coverage_level",
+          "policies_sold_count",
+          "policies_earning_premium_count",
+          "policies_indemnified_count",
+          "units_earning_premium_count",
+          "units_indemnified_count",
+          "quantity_type",
+          "net_reported_quantity",
+          "endorsed/companion_acres",
+          "liability_amount",
+          "total_premium_amount",
+          "subsidy_amount",
+          "state/private_subsidy",
+          "additional_subsidy",
+          "efa_premium_discount",
+          "indemnity_amount",
+          "loss_ratio"
+        )
+      }
+      
+      if (file_name == "colsom") {
+        colnames(data) <- c(
+          "commodity_year",
+          "state_code",
+          "state_abbreviation",
+          "county_code",
+          "county_name",
+          "commodity_code",
+          "commodity_name",
+          "insurance_plan_code",
+          "insurance_plan_name_abbreviation",
+          "coverage_category",
+          "stage_code",
+          "cause_of_loss_code",
+          "cause_of_loss_description",
+          "month_of_loss",
+          "month_of_loss_name",
+          "year_of_loss",
+          "policies_earning_premium",
+          "policies_indemnified",
+          "net_planted_quantity",
+          "net_endorsed_acres",
+          "liability",
+          "total_premium",
+          "producer_paid_premium",
+          "subsidy",
+          "state/private_subsidy",
+          "additional_subsidy",
+          "efa_premium_discount",
+          "net_determined_quantity",
+          "indemnity_amount",
+          "loss_ratio"
+        )
+      }
+      
+      if (file_name == "lgm") {
+        colnames(data) <- c(
+          "reinsurance_year",
+          "commodity_year",
+          "location_state_code",
+          "location_state_abbreviation",
+          "location_county_code",
+          "location_county_name",
+          "commodity_code",
+          "commodity_name",
+          "insurance_plan_code",
+          "insurance_plan_name",
+          "type_code",
+          "type_code_name",
+          "practice_code",
+          "practice_code_name",
+          "sales_effective_date",
+          paste0("target_marketings_", 1:11),
+          paste0("corn_equivalent_", 2:11),
+          paste0("soybean_meal_equivalent_", 2:11),
+          "endorsements_earning_premium",
+          "endorsements_indemnified",
+          "deductible",
+          "live_cattle_target_weight_quantity",
+          "feeder_cattle_target_weight_quantity",
+          "corn_target_weight_quantity",
+          "liability_amount",
+          "total_premium_amount",
+          "subsidy_amount",
+          "producer_premium_amount",
+          "indemnity_amount"
+        )
+      }
+      
+      if (file_name == "lrp") {
+        colnames(data) <- c(
+          "reinsurance_year",
+          "commodity_year",
+          "location_state_code",
+          "location_state_abbreviation",
+          "location_county_code",
+          "location_county_name",
+          "commodity_code",
+          "commodity_name",
+          "insurance_plan_code",
+          "insurance_plan_name",
+          "type_code",
+          "type_code_name",
+          "practice_code",
+          "practice_code_name",
+          "sales_effective_date",
+          "endorsement_length",
+          "coverage_price",
+          "expected_end_value",
+          "coverage_level_percent",
+          "rate",
+          "cost_per_cwt",
+          "end_date",
+          "endorsements_earning_premium",
+          "endorsements_indemnified",
+          "net_number_of_head",
+          "total_weight",
+          "subsidy_amount",
+          "total_premium_amount",
+          "producer_premium_amount",
+          "liability_amount",
+          "indemnity_amount"
+        )
+      }
+      
+      # f) Save the cleaned data to disk
+      data <- as.data.table(data)
+      data[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))) := lapply(
+        .SD, function(x) as.numeric(as.character(x))), 
+        .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))]
+      
+      saveRDS(data,file = file.path(dest, paste0(file_name, "_", download_urls$year[i], ".rds")))
+      
+    }, error = function(e) {
+      # If any single-year download or parsing fails, skip silently
+      message("Warning: failed for ", download_urls$url[i], ": ", e$message)
+    })
+    
+    invisible(NULL)
+  })
+  
+  invisible(NULL)
+}
+
+
+
 #' Standardize FCIP Data Frame Column Names
 #'
 #' Rename a set of common Federal Crop Insurance Program (FCIP) data frame
