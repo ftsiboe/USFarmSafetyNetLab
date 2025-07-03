@@ -573,7 +573,6 @@ estimate_fcip_instruments <- function(year, statplan) {
           estimate_fcip_unloaded_rate(
             statplan = statplan[commodity_year %in% (year-2):(year-21)],
             year   = year,
-            crop   = task_list$commodity_code[i],
             state  = task_list$state_code[i],
             county = task_list$county_code[i])
         }, error = function(e){return(NULL)})
@@ -651,8 +650,7 @@ get_yu2018_instrument <- function(
     file_name         = "historical_summary_of_business_by_state_county_crop_coverage.rds",
     delivery_systems  = c("RBUP", "FBUP"),
     plan_codes        = c(1:3, 90, 44, 25, 42),
-    coverage_levels   = c(65, 75)
-) {
+    coverage_levels   = c(65, 75)) {
   # 1. Download the historical summary‐of‐business RDS to a tempfile
   tmp <- tempfile(fileext = ".rds")
   download.file(url = paste(base_url, version, file_name, sep = "/"),
