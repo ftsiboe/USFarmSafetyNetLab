@@ -587,6 +587,6 @@ get_state_rental_rates <- function(){
          "USDA NASS Quick Stats (annual state cropland cash rent & asset value); missing values filled by panel‐regression bias correction and 5-nearest-neighbor spatial interpolation"
   ]
   
-  return(Land)
+  return(df)
 }
 

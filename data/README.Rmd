@@ -28,7 +28,8 @@ The datasets available via the `USFarmSafetyNetLab` package include:
   - [Index for price recived](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/index_for_price_recived.rda) `USFarmSafetyNetLab::index_for_price_recived`
   - [Marketing year average price](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/marketing_year_avg_price.rda) `USFarmSafetyNetLab::marketing_year_avg_price`
   - [RMA commodity type recodes](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/rma_type_recodes.rda) `USFarmSafetyNetLab::rma_type_recodes`
-  - [FCIP demand instruments](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/fcip_demand_instruments.rda) `USFarmSafetyNetLab::fcip_demand_instruments`
+  - [Contiguous county](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/contiguous_county.rda) `USFarmSafetyNetLab::contiguous_county`
+  - [State rental rates](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/state_rental_rates.rda) `USFarmSafetyNetLab::state_rental_rates`
   
 Below are descriptions of each dataset and instructions on how to access them:
 

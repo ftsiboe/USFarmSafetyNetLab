@@ -40,6 +40,12 @@ Imports:
     xml2,
     stats,
     utils,
+    plm,
+    doBy,
+    terra,
+    tigris,
+    sp,
+    spdep,
     moments
 Suggests:
     knitr,

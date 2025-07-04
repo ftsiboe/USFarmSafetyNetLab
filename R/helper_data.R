@@ -28,3 +28,10 @@
 #' @source USDA-RMA, Summary of business by type, practice, and unit structure
 #' @usage data(rma_type_recodes)
 "rma_type_recodes"
+#' @name state_rental_rates
+#' @title state_rental_rates
+#' @description A combined dataset for state_rental_rates
+#' @format A data frame with 1736 rows and 5 columns covering 1994-2024.
+#' @source USDA NASS Quick Stats (annual state cropland cash rent & asset value); missing values filled by panel‐regression bias correction and 5-nearest-neighbor spatial interpolation
+#' @usage data(state_rental_rates)
+"state_rental_rates"
