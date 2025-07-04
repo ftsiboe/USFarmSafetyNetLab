@@ -149,5 +149,5 @@ instruments <- instruments[!is.na(tau_final) & is.finite(tau_final) & tau_final 
 # Save the processed data to an RDS file for use
 
 instruments[, data_source := "Key instrumental variables for crop insurance demand as discussed in Tsiboe & Turner (2023)"]
-saveRDS(instruments, "./data-raw/internal_datasets/fcip_demand_instruments.rds")
+saveRDS(instruments, "./data-raw/data_release/fcip_demand_instruments.rds")
 
