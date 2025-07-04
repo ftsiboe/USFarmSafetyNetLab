@@ -428,39 +428,32 @@ harmonize_crop_type_codes <- function(){
   ]
   
   # 2) Recode type_name by commodity_code
-  #    use := by reference and fcase (data.table v1.14+)
-  df[commodity_code == 11,  # Wheat
-     type_name := fcase(
-       grepl("DURUM",                           type_name), "DURUM",
-       grepl("KHORASAN",                        type_name), "SPRING",
-       grepl("NTS-HARVEST REVENUE OPTION",      type_name), "NO TYPE SPECIFIED",
-       default = type_name
-     )]
+  # Wheat
+  df[,type_name := ifelse(commodity_code %in% 11 & grepl("DURUM", type_name),"DURUM",type_name)]
+  df[,type_name := ifelse(commodity_code %in% 11 & grepl("KHORASAN", type_name),"SPRING",type_name)]
+  df[,type_name := ifelse(commodity_code %in% 11 & grepl("NTS-HARVEST REVENUE OPTION", type_name),"NO TYPE SPECIFIED",type_name)]
+
   # drop the unwanted wheat rows
-  df <- df[!(commodity_code==11 & type_name=="FORAGE WHEAT FOR SEED")]
+  df <- df[!(commodity_code %in% 11 & type_name %in% "FORAGE WHEAT FOR SEED")]
   
-  df[commodity_code == 91,  # Barley
-     type_name := fcase(
-       grepl("SPRING", type_name), "SPRING",
-       grepl("WINTER", type_name), "WINTER",
-       default = type_name
-     )]
-  
-  df[commodity_code == 18,  # Rice
-     type_name := fcase(
-       grepl("SHORT",      type_name), "SHORT",
-       grepl("LONG",       type_name), "LONG",
-       grepl("MEDIUM",     type_name), "MEDIUM",
-       grepl("ALL OTHERS", type_name), "NO TYPE SPECIFIED",
-       default = type_name
-     )]
+  # Barley
+  df[,type_name := ifelse(commodity_code %in% 91 & grepl("SPRING", type_name),"SPRING",type_name)]
+  df[,type_name := ifelse(commodity_code %in% 91 & grepl("WINTER", type_name),"WINTER",type_name)]
+
+  # Rice
+  df[,type_name := ifelse(commodity_code %in% 18 & grepl("SHORT", type_name),"SHORT",type_name)]
+  df[,type_name := ifelse(commodity_code %in% 18 & grepl("LONG", type_name),"LONG",type_name)]
+  df[,type_name := ifelse(commodity_code %in% 18 & grepl("MEDIUM", type_name),"MEDIUM",type_name)]
+  df[,type_name := ifelse(commodity_code %in% 18 & grepl("ALL OTHERS", type_name),"NO TYPE SPECIFIED",type_name)]
+
   # drop the unwanted rice varieties
   df <- df[!(commodity_code==18 & type_name %in% c("AKITAKOMACHI","HIMENO MOCHI","KOSHIHIKARI"))]
   
   # Other crops
-  df[commodity_code == 41,                              type_name := "GRAIN"]
-  df[commodity_code == 41 & type_code == 26,            type_name := "SILAGE"]
-  df[commodity_code %in% c(75,94,17,81),                 type_name := "ALL"]
+  df[,type_name := ifelse(commodity_code %in% 41,"GRAIN",type_name)]
+  df[,type_name := ifelse(commodity_code %in% 41 & type_code %in% 26,"SILAGE",type_name)]
+  df[,type_name := ifelse(commodity_code %in% c(75,94,17,81),"ALL",type_name)]
+
   
   # 3) Summarize liability by county+type
   county_type <- df[

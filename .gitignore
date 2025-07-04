@@ -6,6 +6,7 @@ job_**.sbatch
 slurm-*.out
 USFarmSafetyNetLab.Rproj
 data-raw/*
+replications/fcip_demand_response/*
 !data-raw/build_and_try.R
 !data-raw/build_data_release.R
 !data-raw/build_internal_datasets.R

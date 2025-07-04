@@ -3,7 +3,7 @@
   options(scipen = 999)
 
   # set global timeout limit
-  options(timeout = 3600)
+  options(timeout = 360000)
 
   calculate_mode <- function(x,na.rm = T){ux <- unique(x); ux[which.max(tabulate(match(x, ux)))]}
 

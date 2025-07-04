@@ -28,7 +28,7 @@ The folder provides data and replication codes for the United States Crop Insura
 
 ## Accessing the estimated instrumental variables fcip demand in R
  - Project package: `USFarmSafetyNetLab::fcip_demand_instruments`
- - Generate from raw data: `fcip_instruments_formulation.R`
+ - Generate from raw data: `generate_fcip_instruments.R`
 
 Database was last updated on 2025-07-04
 
