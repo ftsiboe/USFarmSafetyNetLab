@@ -10,10 +10,9 @@
 # Purpose:
 #   This R script automates the retrieval, processing, and aggregation of
 #   USDA Risk Management Agency (RMA) crop insurance summary-of-business data
-#   from multiple sources (app API and historical releases). It computes key
-#   metrics (insured area, liability, indemnity, and loss cost ratio), and
-#   replicates the key instrumental variables for crop insurance demand as
-#   discussed in Tsiboe & Turner (2023) by combining: 
+#   from multiple sources. It computes key metrics (insured area, liability, indemnity,
+#   and loss cost ratio), and replicates the key instrumental variables for 
+#   crop insurance demand as discussed in Tsiboe & Turner (2023) by combining: 
 #   (1) estimated base rates by mimicking contemporary RMA methods allied to historic data, 
 #   (2) Averages of actual actuarial data master rates, and 
 #   (3) the national subsidy-rate instrument from Yu et al. (2018). 
@@ -25,61 +24,61 @@ rm(list=ls(all=TRUE)); gc(); library(data.table); library(magrittr)
 devtools::document()
 devtools::load_all()
 
-dir_USFarmSafetyNetLab <- getwd()
-
-# Change working directory based on OS:
-setwd(
-  ifelse(
-    Sys.info()['sysname'] == "Windows",
-    "C:/GitHub/US-FarmSafetyNet-Lab/replications/crop_insurance_instruments",
-    paste0("/homes/", Sys.info()['user'], 
-           "/GitHub/US-FarmSafetyNet-Lab/replications/crop_insurance_instruments/")
-  )
-)
-
-base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
-version  <- "v0.1.0"
-
 current_year <- as.numeric(format(Sys.Date(),"%Y")) - 2
 
-# Directory to store cached calibrations
-dir_data_release <- paste0(dir_USFarmSafetyNetLab,"/data-raw/data_release")
-
-# Create the cache directory if it does not already exist
-if (!dir.exists(dir_data_release)) {
-  dir.create(dir_data_release, recursive = TRUE)
-}
-
-# Download and process summary of business from RMA's app
-sobapp <- as.data.table(rfcip::get_sob_data(year = 1990:current_year, group_by = c("county","crop")))
-sobapp[, state_abbreviation := state_abbrv]
-sobapp <- sobapp[, .(
-  insured_area     = sum(ifelse(grepl("Acre", quantity_type), quantity, 0), na.rm = TRUE),
-  liability_amount = sum(liabilities, na.rm = TRUE),
-  indemnity_amount = sum(indemnity, na.rm = TRUE)), 
-  by = c("commodity_year","state_code","state_abbreviation",
-         "county_code","county_name","commodity_code","commodity_name")]
-
-# Download and process Historical summary of business by state, county, and crop
-sobscc <- tempfile(fileext = ".rds")
-download.file(
-  paste(base_url, version,
-        "historical_summary_of_business_by_state_county_crop.rds",
-        sep = "/"),
-  sobscc, mode = "wb", quiet = TRUE)
-sobscc <- as.data.table(readRDS(sobscc))
-sobscc <- sobscc[, .(
-  insured_area     = sum(net_reporting_level_amount, na.rm = TRUE),
+# Download and process Historical summary of business
+sobcov_full <- data.table::rbindlist(
+  lapply(
+    1989:current_year,
+    function(year){
+      tryCatch({
+        sobcov <- tempfile(fileext = ".rds")
+        download.file(
+          paste0("https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/sob/sobcov_",year,".rds"),
+          sobcov, mode = "wb", quiet = TRUE)
+        sobcov <- readRDS(sobcov)
+        # sobcov <- readRDS(paste0("./data-raw/data_release/sobcov_",year,".rds"))
+        return(sobcov)
+      }, error = function(e){return(NULL)})
+    }), fill = TRUE)
+dt <- as.data.table(sobcov_full)
+sobcov <- sobcov_full[, .(
+  insured_area     = sum(net_reported_quantity, na.rm = TRUE),
   liability_amount = sum(liability_amount, na.rm = TRUE),
   indemnity_amount = sum(indemnity_amount, na.rm = TRUE)), 
   by = c("commodity_year","state_code","state_abbreviation",
   "county_code","county_name","commodity_code","commodity_name")]
 
+sobscc <- tempfile(fileext = ".rds")
+download.file(
+  "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/sob/sobscc_1948_1988.rds",
+  sobscc, mode = "wb", quiet = TRUE)
+  sobscc <- readRDS(sobscc)
+# sobscc <- readRDS(paste0("./data-raw/data_release/sobscc_1948_1988.rds"))
+sobscc <- sobscc[, .(
+  insured_area     = sum(net_reported_quantity, na.rm = TRUE),
+  liability_amount = sum(liability_amount, na.rm = TRUE),
+  indemnity_amount = sum(indemnity_amount, na.rm = TRUE)), 
+  by = c("commodity_year","state_code","state_abbreviation",
+         "county_code","county_name","commodity_code","commodity_name")]
+
+sobscc[, .(
+  insured_area     = sum(insured_area, na.rm = TRUE),
+  liability_amount = sum(liability_amount, na.rm = TRUE),
+  indemnity_amount = sum(indemnity_amount, na.rm = TRUE)), 
+  by = c("commodity_year")]
+
+sobcov[, .(
+  insured_area     = sum(insured_area, na.rm = TRUE),
+  liability_amount = sum(liability_amount, na.rm = TRUE),
+  indemnity_amount = sum(indemnity_amount, na.rm = TRUE)), 
+  by = c("commodity_year")]
+
 # Combine datasets
 sob <- rbind(
-  sobapp[commodity_year >= 1990],
-  sobscc[commodity_year <= 1989])
-rm(sobapp, sobscc); gc()
+  sobcov[commodity_year >= 1989],
+  sobscc[commodity_year <= 1988])
+rm(sobcov, sobscc); gc()
 
 # Aggregate over the new dataset without specific crop codes
 sob_all_crops <- sob[, .(
@@ -99,10 +98,6 @@ rm(sob_all_crops); gc()
 # Calculate Loss Cost Ratio (LCR) for risk assessment
 sob[, lcr := indemnity_amount / liability_amount]
 
-sob[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(sob))) := lapply(
-  .SD, function(x) as.numeric(as.character(x))), 
-  .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(sob))]
-
 # Estimate FCIP Instrumental Variables (Unloaded Rates)
 instruments <- as.data.frame(
   data.table::rbindlist(
@@ -115,16 +110,17 @@ instruments <- as.data.frame(
 # merge Instrument (i.e., target rate) aggregated directly from RMA’s actuarial data master 
 adm <- tempfile(fileext = ".rds")
 download.file(
-  paste(base_url, version,
-        "instrumental_variables_fcip_demand_from_actuarial_data_master.rds",
-        sep = "/"),
+  "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/adm/fcip_demand_instruments_from_adm.rds",
   adm, mode = "wb", quiet = TRUE)
-adm <- as.data.table(readRDS(adm))
+adm <- readRDS(adm)
+# adm <- readRDS(paste0("./data-raw/data_release/fcip_demand_instruments_from_adm.rds"))
+adm <- as.data.table(adm)
 
 instruments <- merge( instruments,adm, by= intersect(names(instruments), names(adm)), all  = TRUE)
 instruments <- as.data.table(instruments)
+
 # formulate and merge national subsidy rate instrument as described by (Yu et al., 2018)
-instrument_yu2018 <- get_yu2018_instrument()
+instrument_yu2018 <- get_yu2018_instrument(sobcov_full)
 
 instruments <- merge(instruments,instrument_yu2018,
   by  = intersect(names(instruments), names(instrument_yu2018)),
@@ -142,7 +138,6 @@ instruments <- merge(
                      by  = c("commodity_year","state_code","county_code","commodity_code"),
                      all = TRUE)
 
-
 instruments <- instruments[
   , .SD, .SDcols = 
     c( "commodity_year","state_abbreviation","state_code","county_name","county_code",
@@ -152,5 +147,7 @@ instruments <- instruments[
 instruments <- instruments[!is.na(tau_final) & is.finite(tau_final) & tau_final != 0]
 
 # Save the processed data to an RDS file for use
-saveRDS(instruments, paste0(dir_data_release, "/estimated_instrumental_variables_fcip_demand.rds"))
+
+instruments[, data_source := "Key instrumental variables for crop insurance demand as discussed in Tsiboe & Turner (2023)"]
+saveRDS(instruments, "./data-raw/internal_datasets/fcip_demand_instruments.rds")
 

@@ -74,31 +74,6 @@ utils::download.file(
   "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOB_State_County_Commodity_1948_1988.pdf",
   destfile = "./data-raw/data_release/sobscc_field_description.pdf",mode= "wb",quiet    = TRUE)
 
-tryCatch({
-  piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "SOB")
-}, error = function(e){NULL})
-piggyback::pb_release_create(
-  repo = "ftsiboe/US-FarmSafetyNet-Lab", 
-  tag = "SOB",
-  name = "Summary of Business",
-  body = paste("Summary of Business data breaks out FCIP participation at variaous levels:",
-               paste0("**sobtpu** aggregates loss experience for groups of producers who are ",
-                      "similarly defined by their contract choice (i), the insurance pool they selected (j), ",
-                      "and the crop year (t). Contract choices combine insurance plan (e.g., APH, RP), ",
-                      "coverage level, and unit structure (e.g., Optional [OU], Enterprise [EU]). ",
-                      "Pools are the most granular rate‐setting level and are distinguished by county, commodity, ",
-                      "crop type, and practice (e.g., irrigated, organic).", collapse = ""),
-               paste0("**sobcov** aggregates loss experience for groups of producers who are ",
-                      "similarly defined by their coverage level, county, commodity, and  commodity year.", collapse = ""),
-               paste0("**sobscc** aggregates loss experience for groups of producers who are ",
-                      "similarly defined by their county, commodity, and  commodity year.", collapse = ""),sep = "\n\n"))
-# piggyback::pb_new_release( repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "SOB")
-piggyback::pb_upload(
-  c(list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "sobtpu"),
-    list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "sobcov"),
-    list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "sobscc")),
-  repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "SOB",overwrite = TRUE)
-
 #-------------------------------------------------------------------------------
 # Cause of Loss                                                              ####
 download_rma_web_data_files(1989:as.numeric(format(Sys.Date(),"%Y")), "colsom")
@@ -158,21 +133,6 @@ data <- data[!liability_amount %in% c(0,NA,Inf,-Inf)]
 
 saveRDS(data,file=paste0(dir_data_release,"/col_sob_hist.rds"))
 
-tryCatch({
-  piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "COL")
-}, error = function(e){NULL})
-piggyback::pb_release_create(
-  repo = "ftsiboe/US-FarmSafetyNet-Lab", 
-  tag  = "COL",
-  name = "Cause of Loss",
-  body = "Cause of Loss breaks out FCIP participation by peril")
-# piggyback::pb_new_release( repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "COL")
-piggyback::pb_upload(
-  c(list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "colsom"),
-    list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "col_sob_hist"),
-    list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "stage_code_listing")),
-  repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "COL",overwrite = TRUE)
-
 #-------------------------------------------------------------------------------
 # Miscellaneous                                                              ####
 adm <- as.data.frame(
@@ -188,32 +148,71 @@ adm <- as.data.frame(
       }), fill = TRUE))
 
 saveRDS(standardize_fcip_column_names(adm),
-        file=paste0(dir_data_release,"/fcip_demand_instrumental_from_adm.rds"))
+        file=paste0(dir_data_release,"/fcip_demand_instruments_from_adm.rds"))
 
-saveRDS(rmaADM:::clean_data(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/2025/2025_A01230_ContiguousCounty_YTD.rds"))),
-        file=paste0(dir_data_release,"/contiguous_county_adm.rds"))
+# saveRDS(rmaADM:::clean_data(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/2025/2025_A01230_ContiguousCounty_YTD.rds"))),
+#         file=paste0(dir_data_release,"/contiguous_county_adm.rds"))
+
+#-------------------------------------------------------------------------------
+# Send Releases to Github                                                    ####
 
 tryCatch({
-  piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "ADM")
+  piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "sob")
+}, error = function(e){NULL})
+piggyback::pb_release_create(
+  repo = "ftsiboe/US-FarmSafetyNet-Lab", 
+  tag = "sob",
+  name = "Summary of Business",
+  body = paste("Summary of Business data breaks out FCIP participation at variaous levels:",
+               paste0("**sobtpu** aggregates loss experience for groups of producers who are ",
+                      "similarly defined by their contract choice (i), the insurance pool they selected (j), ",
+                      "and the crop year (t). Contract choices combine insurance plan (e.g., APH, RP), ",
+                      "coverage level, and unit structure (e.g., Optional [OU], Enterprise [EU]). ",
+                      "Pools are the most granular rate‐setting level and are distinguished by county, commodity, ",
+                      "crop type, and practice (e.g., irrigated, organic).", collapse = ""),
+               paste0("**sobcov** aggregates loss experience for groups of producers who are ",
+                      "similarly defined by their coverage level, county, commodity, and  commodity year.", collapse = ""),
+               paste0("**sobscc** aggregates loss experience for groups of producers who are ",
+                      "similarly defined by their county, commodity, and  commodity year.", collapse = ""),sep = "\n\n"))
+piggyback::pb_new_release( repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "sob")
+piggyback::pb_upload(
+  c(list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "sobtpu"),
+    list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "sobcov"),
+    list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "sobscc")),
+  repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "sob",overwrite = TRUE)
+
+
+tryCatch({
+  piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "col")
+}, error = function(e){NULL})
+piggyback::pb_release_create(
+  repo = "ftsiboe/US-FarmSafetyNet-Lab", 
+  tag  = "col",
+  name = "Cause of Loss",
+  body = "Cause of Loss breaks out FCIP participation by peril")
+piggyback::pb_new_release( repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "col")
+piggyback::pb_upload(
+  c(list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "colsom"),
+    list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "col_sob_hist"),
+    list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "stage_code_listing")),
+  repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "col",overwrite = TRUE)
+
+
+tryCatch({
+  piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "adm")
 }, error = function(e){NULL})
 
 piggyback::pb_release_create(
   repo = "ftsiboe/US-FarmSafetyNet-Lab", 
-  tag = "ADM",
+  tag = "adm",
   name = "Actuarial Data Master",
   body = "Various items aggregated from the FCIP's Actuarial Data Master")
-# piggyback::pb_new_release( repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "ADM")
+piggyback::pb_new_release( repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "adm")
 piggyback::pb_upload(
   list.files(dir_data_release, full.names = TRUE, recursive = TRUE,pattern = "_adm"),
-  repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "ADM",overwrite = TRUE)
-
-# piggyback::pb_upload(
-#   list.files(paste0(tools::R_user_dir("rFarmPolicySim", which = "cache"),"/actuarial_data_master/archive/"), 
-#              full.names = TRUE, recursive = TRUE),
-#   repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "ADM",overwrite = TRUE)
+  repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "adm",overwrite = TRUE)
 
 #-------------------------------------------------------------------------------
-
 
 # Livestock Gross Margin – Summary of Business Data 
 # download_rma_web_data_files(2003:as.numeric(format(Sys.Date(),"%Y")), "lgm")

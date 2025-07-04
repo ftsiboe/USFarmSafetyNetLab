@@ -152,7 +152,7 @@ download_rma_web_data_files <- function(
           "insurance_plan_name_abbreviation",
           "coverage_category",
           "delivery_type",
-          "coverage_level",
+          "coverage_level_percent",
           "policies_sold_count",
           "policies_earning_premium_count",
           "policies_indemnified_count",
@@ -160,11 +160,11 @@ download_rma_web_data_files <- function(
           "units_indemnified_count",
           "quantity_type",
           "net_reported_quantity",
-          "endorsed/companion_acres",
+          "endorsed_companion_acres",
           "liability_amount",
           "total_premium_amount",
           "subsidy_amount",
-          "state/private_subsidy",
+          "state_private_subsidy",
           "additional_subsidy",
           "efa_premium_discount",
           "indemnity_amount",
@@ -198,7 +198,7 @@ download_rma_web_data_files <- function(
           "total_premium",
           "producer_paid_premium",
           "subsidy",
-          "state/private_subsidy",
+          "state_private_subsidy",
           "additional_subsidy",
           "efa_premium_discount",
           "net_determined_quantity",
@@ -915,48 +915,37 @@ estimate_fcip_instruments <- function(year, statplan) {
 }
 
 
-#’ Formulate & Merge National Subsidy Rate Instrument (Yu et al., 2018)
-#’
-#’ Downloads the historical “Summary of Business” RDS and computes
-#’ national subsidy‐rate instruments at specified coverage levels,
-#’ following Yu et al. (2018).
-#’
-#’ @param base_url   Character. Base URL for the GitHub release assets.
-#’ @param version    Character. Release tag or version (e.g. "v0.1.0").
-#’ @param file_name  Character. Name of the RDS file to download.
-#’                   Defaults to
-#’                   "historical_summary_of_business_by_state_county_crop_coverage.rds".
-#’ @param delivery_systems Character vector. Delivery systems to include;
-#’                   default \code{c("RBUP","FBUP")}.
-#’ @param plan_codes Integer vector. Insurance plan codes to include;
-#’                   default \code{c(1:3, 90, 44, 25, 42)}.
-#’ @param coverage_levels Numeric vector. Percent coverage levels to keep;
-#’                   default \code{c(65, 75)}.
-#’
-#’ @return A \link[data.table]{data.table} in wide form with:
-#’   \item{crop_yr}{Crop year.}
-#’   \item{subsidy_rate_65}{National subsidy rate at 65\% coverage (if requested).}
-#’   \item{subsidy_rate_75}{National subsidy rate at 75\% coverage (if requested).}
-#’
-#’ @import data.table doBy tidyr
-#’ @export
+#' Formulate & Merge National Subsidy Rate Instrument (Yu et al., 2018)
+#'
+#' Downloads the historical “Summary of Business” RDS and computes
+#' national subsidy‐rate instruments at specified coverage levels,
+#' following Yu et al. (2018).
+#'
+#' @param dt sobcov
+#' @param delivery_systems Character vector. Delivery systems to include;
+#'                   default \code{c("RBUP","FBUP")}.
+#' @param plan_codes Integer vector. Insurance plan codes to include;
+#'                   default \code{c(1:3, 90, 44, 25, 42)}.
+#' @param coverage_levels Numeric vector. Percent coverage levels to keep;
+#'                   default \code{c(65, 75)}.
+#'
+#' @return A \link[data.table]{data.table} in wide form with:
+#'   \item{crop_yr}{Crop year.}
+#'   \item{subsidy_rate_65}{National subsidy rate at 65\% coverage (if requested).}
+#'   \item{subsidy_rate_75}{National subsidy rate at 75\% coverage (if requested).}
+#'
+#' @import data.table doBy tidyr
+#' @export
 get_yu2018_instrument <- function(
-    base_url          = "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download",
-    version           = "v0.1.0",
-    file_name         = "historical_summary_of_business_by_state_county_crop_coverage.rds",
+    dt,
     delivery_systems  = c("RBUP", "FBUP"),
     plan_codes        = c(1:3, 90, 44, 25, 42),
     coverage_levels   = c(65, 75)) {
-  # 1. Download the historical summary‐of‐business RDS to a tempfile
-  tmp <- tempfile(fileext = ".rds")
-  download.file(url = paste(base_url, version, file_name, sep = "/"),
-    destfile = tmp,mode= "wb",quiet= TRUE)
-  
   # 2. Read into data.table
-  dt <- as.data.table(readRDS(tmp))
+  dt <- as.data.table(dt)
   
   # 3. Filter to relevant delivery systems & plan codes
-  dt <- dt[delivery_id %in% delivery_systems]
+  dt <- dt[delivery_type %in% delivery_systems]
   dt <- dt[insurance_plan_code   %in% plan_codes]
   
   # 4. Create a label for each coverage level
