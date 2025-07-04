@@ -18,30 +18,37 @@ load_all()
 
 # Datasets
 
-This directory provides guidance on accessing the various datasets used in U.S. farm safety-net research. Below are descriptions of each dataset and instructions on how to access them:
+This directory provides guidance on accessing the various datasets used in U.S. farm safety-net research. 
+
+Please note that these datasets are based on gatherings from our past and ongoing research. They do not constitute an endorsement of any specific datasets, and we acknowledge that there are many other relevant datasets that may not be included here.
+
+The datasets available via the `USFarmSafetyNetLab` package include:
+
+  - [Contiguous county](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/contiguous_county.rda) `USFarmSafetyNetLab::contiguous_county`
+  - [Index for price recived](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/index_for_price_recived.rda) `USFarmSafetyNetLab::index_for_price_recived`
+  - [Marketing year average price](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/marketing_year_avg_price.rda) `USFarmSafetyNetLab::marketing_year_avg_price`
+  - [RMA commodity type recodes](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/rma_type_recodes.rda) `USFarmSafetyNetLab::rma_type_recodes`
+  - [FCIP demand instruments](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/blob/main/data/fcip_demand_instruments.rda) `USFarmSafetyNetLab::fcip_demand_instruments`
+  
+Below are descriptions of each dataset and instructions on how to access them:
 
 ## Federal Crop Insurance Program (FCIP) – Summary of Business (SOB)
 
 This dataset provides comprehensive participation information for the FCIP. It can be accessed via two methods depending on the period of analysis:
 
-- **Recent data (1988–present):**  
-  Available through the R package [**rfcip**](https://github.com/dylan-turner25/rfcip), which offers tools to retrieve SOB, COL, and reinsurance data at various levels of aggregation.
-- **Historical data (pre-1988):**  
-  Download from this repository’s release assets:
-  - [Historical summary of business by state, county, crop, and coverage (1989-present)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop_coverage.rds)
-  - [Historical summary of business by state, county, and crop (1948-2020)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_summary_of_business_by_state_county_crop.rds)
+- **Available through the R package:**  
+  - [rfcip](https://github.com/dylan-turner25/rfcip), which offers tools to retrieve SOB, COL, and reinsurance data at various levels of aggregation.
+- **Download from this repository’s release assets:**  
+   - [Summary of Business Releases](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/tag/sob)
 
 ## Federal Crop Insurance Program (FCIP) – Cause of Loss (COL)
 
 This dataset offers summarized information on FCIP participation, segmented by different causes of loss. It can be accessed as follows:
 
-- **Recent data (1989–present):**  
-  Available through the R package [**rfcip**](https://github.com/dylan-turner25/rfcip).
-- **Historical data (pre-1989):**  
-  Download from this repository’s release assets:
-  - [Historical cause-of-loss indemnities with month](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_indemnities_with_month.rds)
-  - [Historical cause-of-loss indemnities (aggregate)](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_indemnities_only.rds)
-  - [Historical cause-of-loss premiums and indemnities](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/v0.1.0/historical_cause_of_loss_premimums_and_indemnities.rds)
+- **Available through the R package:**  
+  - [rfcip](https://github.com/dylan-turner25/rfcip).
+- **Download from this repository’s release assets:**  
+   - [Cause of Loss Releases](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/tag/col)
 
 ## Federal Crop Insurance Program (FCIP) – Reinsurance
 
@@ -57,13 +64,13 @@ For questions or additional information about these datasets, please open an iss
 # rfcip can be installed directly from github using remotes::install_github("https://github.com/dylan-turner25/rfcip")
 
 # Example 1: Accessing SOB data via rfcip
-sob1 <- rfcip::get_sob_data(year = 2015:2020, crop = "corn")
+sob1 <- rfcip::get_sob_data(year = 2020, crop = "corn")
 head(tibble(sob1))
 
 # Example 2: Accessing SOB data via this repository’s release assets
 base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
-version  <- "v0.1.0"
-file <- "historical_summary_of_business_by_state_county_crop.rds"
+version  <- "sob"
+file <- "sobcov_2020.rds"
 url <- paste(base_url, version, file, sep = "/")
 sob2 <- tempfile(fileext = ".rds")
 download.file(url, sob2, mode = "wb",quiet=TRUE)
@@ -75,7 +82,8 @@ col1 <- rfcip::get_col_data(year = 2020)
 head(tibble(col1))
 
 # Example 4: Accessing COL data via this repository’s release assets
-file <- "historical_cause_of_loss_premimums_and_indemnities.rds"
+version  <- "col"
+file <- "colsom_2020.rds"
 url <- paste(base_url, version, file, sep = "/")
 col2 <- tempfile(fileext = ".rds")
 download.file(url, col2, mode = "wb",quiet=TRUE)
