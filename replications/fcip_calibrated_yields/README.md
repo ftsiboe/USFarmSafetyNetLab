@@ -7,4 +7,4 @@ Start by reading “fcip_calibrated_yield_readMe.docx”
 
 The findings and conclusions in associated publications and their associated replication files and data provided in this repository are those of the author(s) and should not be construed to represent any official USDA or U.S. Government determination or policy. 
 
-For additional details, please contact Francis Tsiboe at francis.tsiboe@usda.gov or ftsiboe@hotmail.com
+For additional details, please contact Francis Tsiboe at ftsiboe@hotmail.com
