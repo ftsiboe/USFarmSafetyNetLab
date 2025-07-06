@@ -6,13 +6,13 @@
 \usage{
 get_nass_historical_track_record_crop(
   url = "https://usda.library.cornell.edu/concern/publications/c534fn92g?locale=en",
-  dir_dest = "./data-raw/fastscratch/nass/"
+  dir_source = "./data-raw/fastscratch/nass/"
 )
 }
 \arguments{
 \item{url}{Character. URL of the USDA NASS historical track record page.}
 
-\item{dir_dest}{Character. Directory into which to download and extract the ZIP file.
+\item{dir_source}{Character. Directory into which to download and extract the ZIP file.
 Default is \code{"./data-raw/fastscratch/nass/"}. Must exist or be creatable.}
 }
 \value{
@@ -34,7 +34,7 @@ production, yield, price).
 \item Reads all \verb{<a>} hrefs from \code{url}, filters for links containing \code{"c534fn92g"},
 \code{"zip"}, and \code{"croptr"}.
 \item Extracts the year from each filename and selects the link with the maximum year.
-\item Downloads that single ZIP as \code{croptr.zip} into \code{dir_dest}.
+\item Downloads that single ZIP as \code{croptr.zip} into \code{dir_source}.
 }
 \item \strong{Index parsing}
 \itemize{

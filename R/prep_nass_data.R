@@ -10,7 +10,7 @@
 #' production, yield, price).
 #'
 #' @param url Character. URL of the USDA NASS historical track record page.
-#' @param dir_dest Character. Directory into which to download and extract the ZIP file.
+#' @param dir_source Character. Directory into which to download and extract the ZIP file.
 #'   Default is `"./data-raw/fastscratch/nass/"`. Must exist or be creatable.
 #'
 #' @details
@@ -18,7 +18,7 @@
 #'    - Reads all `<a>` hrefs from `url`, filters for links containing `"c534fn92g"`,  
 #'      `"zip"`, and `"croptr"`.  
 #'    - Extracts the year from each filename and selects the link with the maximum year.  
-#'    - Downloads that single ZIP as `croptr.zip` into `dir_dest`.  
+#'    - Downloads that single ZIP as `croptr.zip` into `dir_source`.  
 #'
 #' 2. **Index parsing**  
 #'    - Opens `crop_index.htm` inside the ZIP, extracts the second HTML table as text.  
@@ -61,7 +61,7 @@
 #' @export
 get_nass_historical_track_record_crop <- function(
     url="https://usda.library.cornell.edu/concern/publications/c534fn92g?locale=en", 
-    dir_dest = "./data-raw/fastscratch/nass/"){
+    dir_source = "./data-raw/fastscratch/nass/"){
   
   download_link <- xml2::read_html(url)
   download_link <- rvest::html_attr(rvest::html_nodes(download_link, "a"), "href")
@@ -70,9 +70,9 @@ get_nass_historical_track_record_crop <- function(
   download_link <- download_link[grepl("croptr",download_link)]
   download_link <- download_link[as.numeric(gsub("[^0-9]", "", basename(download_link))) %in% max(as.numeric(gsub("[^0-9]", "", basename(download_link))))][1]
   croptr <- basename(download_link)
-  download.file(download_link,destfile=paste0(dir_dest,"/croptr.zip"),mode="wb")
+  download.file(download_link,destfile=paste0(dir_source,"/croptr.zip"),mode="wb")
   
-  index <- xml2::read_html(unz(paste0(dir_dest,"/croptr.zip"),"crop_index.htm"))  %>% 
+  index <- xml2::read_html(unz(paste0(dir_source,"/croptr.zip"),"crop_index.htm"))  %>% 
     rvest::html_node("table:nth-child(2)") %>%  rvest::html_text()
   index <- map(index, ~ stringr::str_split(.x, "\\r\n\r\n") %>% unlist())
   index <- purrr::reduce(index, c)
@@ -103,9 +103,9 @@ get_nass_historical_track_record_crop <- function(
         function(file){
           # file<- 1
           # print(paste0("************************",file))
-          data <- as.data.frame(readr::read_csv(unz(paste0(dir_dest,"/croptr.zip"),index$File[file])))
+          data <- as.data.frame(readr::read_csv(unz(paste0(dir_source,"/croptr.zip"),index$File[file])))
           skip <- min(c(1:nrow(data))[data[,2] %in% "h"])
-          data <- as.data.frame(readr::read_csv(unz(paste0(dir_dest,"/croptr.zip"),index$File[file]), skip = skip))
+          data <- as.data.frame(readr::read_csv(unz(paste0(dir_source,"/croptr.zip"),index$File[file]), skip = skip))
           h <- data[data[,2] %in% "h",]
           u <- data[data[,2] %in% "u",]
           d <- data[data[,2] %in% "d",]
@@ -1443,13 +1443,12 @@ prep_nass_data <- function(
   
   # Census Data
   get_nass_census_data(censuses = as.numeric(gsub("[^0-9]","",list.files(dir_source,pattern = "census"))),
-                       dir_source = "./data-raw/fastscratch/nass/",
-                       dir_dest = "data-raw/data_release/nass/")
+                       dir_source = dir_source,
+                       dir_dest = dir_dest)
   
   # Historical Track Record Crop Production
-  df <- get_nass_historical_track_record_crop(dir_dest = "./data-raw/fastscratch/nass_qs/")
+  df <- get_nass_historical_track_record_crop(dir_source = dir_source)
   df[, data_source :="USDA NASS Historical Track Record Crop Production"]
-  
   saveRDS(df, file = paste0(dir_dest, "/nass_historical_track_record_crop.rds"));rm(df); gc()
   
   return(list.files(dir_dest))
