@@ -12,7 +12,7 @@ devtools::build_manual()
 devtools::document()
 devtools::check()
 
-
+# tools::showNonASCIIfile("R/prep_nass_data.R")
 
 devtools::build(path ="data-raw/fastscratch")
 remotes::install_local("C:/GitHub/rfcipSim/fastscratch/rfcipSim_0.0.0.9001.tar.gz",

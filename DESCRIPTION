@@ -9,16 +9,13 @@ Authors@R:
       email = "ftsiboe@hotmail.com",
       comment = c(ORCID = "0000-0001-5984-1072")
     )
-Description: |
-    This repository centralizes research outputs, analytical tools, and 
-    resources exploring and evaluating the United States agricultural safety net programs
-    Supported programs include:
-      * Federal Crop Insurance Program (FCIP)
-      * Noninsured Crop Disaster Assistance Program (NAP)
-      * Price Loss Coverage (PLC)
-      * Agricultural Risk Coverage (ARC)
-      * Ad-hoc disaster assistance programs
-License: GPL-3
+Description: This repository centralizes research outputs, analytical tools, and
+ resources for exploring and evaluating the United States agricultural safety net
+ programs. It supports analysis of key programs including the Federal Crop Insurance
+ Program (FCIP), the Noninsured Crop Disaster Assistance Program (NAP), Price Loss
+ Coverage (PLC), Agricultural Risk Coverage (ARC), and various ad-hoc disaster
+ assistance programs.
+License: GPL-3 + file LICENSE
 URL: https://github.com/you/US-FarmSafetyNet-Lab
 BugReports: https://github.com/you/US-FarmSafetyNet-Lab/issues
 Encoding: UTF-8
@@ -45,7 +42,8 @@ Imports:
     terra,
     tigris,
     sp,
-    spdep,
+    spdep, 
+    tidyr,
     moments
 Suggests:
     knitr,

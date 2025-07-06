@@ -19,6 +19,10 @@
 #'   Defaults to the official RMA “Web_Data_Files” root.
 #' @return Invisibly returns \code{NULL}. Side effect: one \code{.rds}
 #'   per year is written under \code{dest}, named \code{<file_name>_<year>.rds}.
+#'   
+#' @import data.table
+#' @importFrom utils unzip download.file
+#'  
 #' @examples
 #' \dontrun{
 #' # Get sobtpu data for 2018–2022
@@ -278,7 +282,7 @@ download_rma_web_data_files <- function(
       }
       
       # f) Save the cleaned data to disk
-      data <- as.data.table(data)
+      data <- data.table::as.data.table(data)
       data[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))) := lapply(
         .SD, function(x) as.numeric(as.character(x))), 
         .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))]
@@ -321,6 +325,7 @@ standardize_fcip_column_names <- function(df) {
   names(df)[names(df) %in% "county"]                <- "county_name"
   names(df)[names(df) %in% "crop_cd"]               <- "commodity_code"
   names(df)[names(df) %in% "crop"]                  <- "commodity_name"
+  names(df)[names(df) %in% "typ_cd"]                  <- "type_code"
   names(df)[names(df) %in% "ins_plan_cd"]           <- "insurance_plan_code"
   names(df)[names(df) %in% "ins_plan_ab"]           <- "insurance_plan_abbreviation"
   names(df)[names(df) %in% "cov_typ"]               <- "coverage_type_code"
@@ -349,7 +354,7 @@ standardize_fcip_column_names <- function(df) {
   names(df)[names(df) %in% "month_ab"]              <- "month_of_loss_name"
   names(df)[names(df) %in% "det_acre_qty"]          <- "indemnified_quantity"
   names(df)[names(df) %in% "pnt_acre_qty"]          <- "net_planted_qty"
-
+  
   df
 }
 
@@ -364,7 +369,7 @@ standardize_fcip_column_names <- function(df) {
 #'
 #' @details
 #' This helper function performs the following steps:
-#' 1. Downloads the raw SOBTPU data via `download_raw_data("sobtpu")` and reads it in.
+#' 1. Downloads the raw SOBTPU data and reads it in.
 #' 2. Filters out rows with missing, zero, infinite, or NaN `liability_amount`, and
 #'    retains only the specified set of commodity codes (wheat, barley, rice, etc.).
 #' 3. Recodes `type_name` by commodity:
@@ -432,20 +437,20 @@ harmonize_crop_type_codes <- function(){
   df[,type_name := ifelse(commodity_code %in% 11 & grepl("DURUM", type_name),"DURUM",type_name)]
   df[,type_name := ifelse(commodity_code %in% 11 & grepl("KHORASAN", type_name),"SPRING",type_name)]
   df[,type_name := ifelse(commodity_code %in% 11 & grepl("NTS-HARVEST REVENUE OPTION", type_name),"NO TYPE SPECIFIED",type_name)]
-
+  
   # drop the unwanted wheat rows
   df <- df[!(commodity_code %in% 11 & type_name %in% "FORAGE WHEAT FOR SEED")]
   
   # Barley
   df[,type_name := ifelse(commodity_code %in% 91 & grepl("SPRING", type_name),"SPRING",type_name)]
   df[,type_name := ifelse(commodity_code %in% 91 & grepl("WINTER", type_name),"WINTER",type_name)]
-
+  
   # Rice
   df[,type_name := ifelse(commodity_code %in% 18 & grepl("SHORT", type_name),"SHORT",type_name)]
   df[,type_name := ifelse(commodity_code %in% 18 & grepl("LONG", type_name),"LONG",type_name)]
   df[,type_name := ifelse(commodity_code %in% 18 & grepl("MEDIUM", type_name),"MEDIUM",type_name)]
   df[,type_name := ifelse(commodity_code %in% 18 & grepl("ALL OTHERS", type_name),"NO TYPE SPECIFIED",type_name)]
-
+  
   # drop the unwanted rice varieties
   df <- df[!(commodity_code==18 & type_name %in% c("AKITAKOMACHI","HIMENO MOCHI","KOSHIHIKARI"))]
   
@@ -453,7 +458,7 @@ harmonize_crop_type_codes <- function(){
   df[,type_name := ifelse(commodity_code %in% 41,"GRAIN",type_name)]
   df[,type_name := ifelse(commodity_code %in% 41 & type_code %in% 26,"SILAGE",type_name)]
   df[,type_name := ifelse(commodity_code %in% c(75,94,17,81),"ALL",type_name)]
-
+  
   
   # 3) Summarize liability by county+type
   county_type <- df[
@@ -722,7 +727,8 @@ get_ice_data <- function(
 #'     \item{state_code, county_code, commodity_code}{Keys identifying county and crop.}
 #'     \item{tau}{Estimated FCIP county “unloaded” rate.}
 #'   }
-#'
+#' @import data.table
+#' 
 #' @details
 #' 1. **Target data** is filtered to the selected state(s)/county(ies).  
 #' 2. **Group data** finds contiguous‐county groupings, unions them with the target.  
@@ -794,7 +800,7 @@ estimate_fcip_unloaded_rate <- function(
   res[, c_K := c_v/c_a]
   res[, c_Z := c_P/(c_P+c_K)]
   res[, tau := c_Z*c_x + (1-c_Z)*c_u] # County Unloaded Rate (same as target rate).
-
+  
   # 8. Filter out invalid or zero tau values
   res <- res[!tau %in% c(NA, Inf, -Inf, NaN, 0), ]
   
@@ -823,6 +829,7 @@ estimate_fcip_unloaded_rate <- function(
 #'       required by \code{estimate_fcip_unloaded_rate()}.}
 #'   }
 #'
+#' @import data.table
 #' @return A data.table with one row per county–crop for the specified \code{year},
 #'   containing:
 #'   \describe{
@@ -900,7 +907,7 @@ estimate_fcip_instruments <- function(year, statplan) {
   rm(contiguous_adm);gc()
   adm <- adm[, setdiff(names(adm), c("tau_c", "tau")), with = FALSE]
   adm <- adm[!tau_sob %in% c(NA, Inf, -Inf, NaN,0)]
-
+  
   # 8. Tag with the target commodity_year and return
   adm[, commodity_year := year]
   gc()
@@ -922,12 +929,10 @@ estimate_fcip_instruments <- function(year, statplan) {
 #' @param coverage_levels Numeric vector. Percent coverage levels to keep;
 #'                   default \code{c(65, 75)}.
 #'
-#' @return A \link[data.table]{data.table} in wide form with:
-#'   \item{crop_yr}{Crop year.}
-#'   \item{subsidy_rate_65}{National subsidy rate at 65\% coverage (if requested).}
-#'   \item{subsidy_rate_75}{National subsidy rate at 75\% coverage (if requested).}
+#' @return A data.table with columns: commodity_year, subsidy_rate_65, subsidy_rate_75.
 #'
-#' @import data.table doBy tidyr
+#' @import data.table
+#' @importFrom tidyr spread
 #' @export
 get_yu2018_instrument <- function(
     dt,
@@ -935,7 +940,7 @@ get_yu2018_instrument <- function(
     plan_codes        = c(1:3, 90, 44, 25, 42),
     coverage_levels   = c(65, 75)) {
   # 2. Read into data.table
-  dt <- as.data.table(dt)
+  dt <- data.table::as.data.table(dt)
   
   # 3. Filter to relevant delivery systems & plan codes
   dt <- dt[delivery_type %in% delivery_systems]
@@ -964,5 +969,238 @@ get_yu2018_instrument <- function(
     tidyr::spread(coverage_level_percent, subsidy_rate)
   
   # 9. Return as data.table
-  return(as.data.table(dt_wide))
+  return(data.table::as.data.table(dt_wide))
 }
+
+
+#' Prepare FCIP Data for Release
+#'
+#' @description
+#' Downloads, processes, and caches multiple Federal Crop Insurance Program (FCIP)
+#' datasets—Summary of Business (SOB), Cause of Loss (COL), and Actuarial Data Master (ADM)—
+#' saving them as RDS files in a local cache directory structure.
+#'
+#' @param dir_dest Character. Base directory under which to store processed FCIP data.
+#'   Defaults to `"data-raw/data_release"`. Subdirectories `sob`, `col`, and `adm`
+#'   will be created within `dir_dest` if they do not already exist.
+#'
+#' @details
+#' 1. **Determine source paths**  
+#'    - On Windows, locates the `farmpolicylab` database under the user's OneDrive→Dropbox folder.  
+#'    - On non-Windows, uses `~/Database/USA/USDA/`.  
+#'
+#' 2. **Setup local cache directories**  
+#'    - Ensures `dir_dest` exists.  
+#'    - Creates subfolders `sob`, `col`, and `adm` if missing.  
+#'
+#' 3. **Summary of Business (SOB)**  
+#'    - Downloads yearly CSV ZIPs via `download_rma_web_data_files()` for `sobtpu`
+#'      and `sobcov`, plus field description PDFs.  
+#'    - Unzips and reads the historic 1948–1988 SOB data, coerces selected columns to
+#'      numeric, and saves as `sobscc_1948_1988.rds`.  
+#'
+#' 4. **Cause of Loss (COL)**  
+#'    - Downloads yearly CSV ZIPs for `colsom`, plus field description PDF and
+#'      Excel code listing.  
+#'    - Unzips and reads historic 1948–1988 COL data, coerces selected columns
+#'      (including `indemnity_amount`) to numeric, computes `loss_ratio`, filters
+#'      invalid rows, and saves as `col_sob_hist.rds`.  
+#'
+#' 5. **Actuarial Data Master (ADM)**  
+#'    - Reads RDS files under `rmaFCIPdata/.../base_rate/`, computes `tau_adm = Rr + Rf`,
+#'      averages by `(crop_yr, state_cd, county_cd, crop_cd)`, and saves
+#'      `fcip_demand_instruments_from_adm.rds`.  
+#'    - Reads ERS price projections RDS, renames price columns, averages by
+#'      `(state_cd, county_cd, typ_cd, crop_yr, crop_cd)`, standardizes column names,
+#'      and saves `fcip_commodity_prices.rds`.  
+#'
+#' @return A list of three character vectors, naming the files saved in:
+#'   - `dir_dest/sob`  
+#'   - `dir_dest/col`  
+#'   - `dir_dest/adm`  
+#'
+#' @import data.table
+#' @importFrom utils download.file unzip read.delim2
+#' @importFrom doBy summaryBy
+#' @export
+prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
+  
+  if(Sys.info()['sysname'] %in% "Windows"){
+    farmpolicylab <- paste0(gsub("OneDrive","Dropbox",Sys.getenv("OneDriveConsumer")),"/farmpolicylab/database/")
+  }else{
+    farmpolicylab <- paste0("~/Database/USA/USDA/")
+  }
+  
+  # Create the cache directory if it does not already exist
+  if (!dir.exists(dir_dest)) {
+    dir.create(dir_dest, recursive = TRUE)
+  }
+  
+  for(dir in c("sob","col","adm")){
+    if (!dir.exists(paste0(dir_dest,"/",dir))){
+      dir.create(paste0(dir_dest,"/",dir), recursive = TRUE)
+    }
+  }
+  
+  #-------------------------------------------------------------------------------
+  # Summary of Business                                                        ####
+  
+  download_rma_web_data_files(
+    years = 1999:as.numeric(format(Sys.Date(),"%Y")), 
+    file_name = "sobtpu",
+    dest = paste0(dir_dest,"/sob"))
+  
+  utils::download.file(
+    "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOBTPU_External_All_Years.pdf",
+    destfile = paste0(dir_dest,"/sob/sobtpu_field_description_all_years.pdf"),mode= "wb",quiet    = TRUE)
+  
+  download_rma_web_data_files(
+    years = 1989:as.numeric(format(Sys.Date(),"%Y")), 
+    file_name = "sobcov",
+    dest = paste0(dir_dest,"/sob"))
+  
+  utils::download.file(
+    "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOB_State_County_Crop_with_Coverage_Level_1989_Forward.pdf",
+    destfile = paste0(dir_dest,"/sob/sobcov_field_description_1989_forward.pdf"),mode= "wb",quiet    = TRUE)
+  
+  temp_zip <- tempfile(fileext = ".zip")
+  utils::download.file(
+    "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/sobscc_1948_1988.zip",
+    destfile = temp_zip,mode     = "wb",quiet    = TRUE)
+  temp_txt <- tempfile()
+  utils::unzip(zipfile = temp_zip, exdir = temp_txt)
+  data <- utils::read.delim2(
+    file= list.files(temp_txt, full.names = TRUE),sep= "|",header = FALSE,skipNul = TRUE)
+  unlink(temp_zip)
+  unlink(temp_txt, recursive = TRUE)
+  colnames(data) <- c(
+    "commodity_year",
+    "state_code",
+    "state_abbreviation",
+    "county_code",
+    "county_name",
+    "commodity_code",
+    "commodity_name",
+    "policies_sold_count",
+    "policies_earning_premium_count",
+    "policies_indemnified_count",
+    "units_earning_premium_count",
+    "units_indemnified_count",
+    "net_reported_quantity",
+    "liability_amount",
+    "total_premium_amount",
+    "subsidy_amount",
+    "indemnity_amount",
+    "loss_ratio")
+
+  data <- as.data.table(data)
+  data[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))) := lapply(
+    .SD, function(x) as.numeric(as.character(x))), 
+    .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))]
+  saveRDS(data,file=paste0(dir_dest,"/sob/sobscc_1948_1988.rds"))
+  
+  utils::download.file(
+    "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOB_State_County_Commodity_1948_1988.pdf",
+    destfile = paste0(dir_dest,"/sob/sobscc_field_description.pdf"),mode= "wb",quiet    = TRUE)
+  
+  #-------------------------------------------------------------------------------
+  # Cause of Loss                                                              ####
+  download_rma_web_data_files(
+    years = 1989:as.numeric(format(Sys.Date(),"%Y")), 
+    file_name = "colsom",
+    dest = paste0(dir_dest,"/col"))
+  
+  utils::download.file(
+    "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/cause_of_loss/COL_Summary_of_Business_with_Month_All_Years.pdf",
+    destfile = paste0(dir_dest,"/col/colsom_field_description.pdf"),mode= "wb",quiet    = TRUE)
+  
+  utils::download.file(
+    "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/cause_of_loss/Stage_Code_Listing.xlsx",
+    destfile = paste0(dir_dest,"/col/stage_code_listing.xlsx"),mode= "wb",quiet    = TRUE)
+  
+  utils::download.file(
+    "https://pubfs-rma.fpac.usda.gov/pub/Miscellaneous_Files/cause_of_loss/prem_and_indem/col%20summary%20of%20business.pdf",
+    destfile = paste0(dir_dest,"/col/col_sob_hist_field_description.pdf"),mode= "wb",quiet    = TRUE)
+  
+  temp_zip <- tempfile(fileext = ".zip")
+  utils::download.file(
+    "https://pubfs-rma.fpac.usda.gov/pub/Miscellaneous_Files/cause_of_loss/prem_and_indem/col_sob_hist.zip",
+    destfile = temp_zip,mode     = "wb",quiet    = TRUE)
+  temp_txt <- tempfile()
+  utils::unzip(zipfile = temp_zip, exdir = temp_txt)
+  data <- utils::read.delim2(
+    file= list.files(temp_txt, full.names = TRUE),sep= "|",header = FALSE,skipNul = TRUE)
+  unlink(temp_zip)
+  unlink(temp_txt, recursive = TRUE)
+  filed_names <-  c(
+    "commodity_year",
+    "state_code",
+    "state_abbreviation",
+    "county_code",
+    "county_name",
+    "commodity_code",
+    "commodity_name",
+    "insurance_plan_code",
+    "insurance_plan_name_abbreviation",
+    "coverage_category",
+    "cause_of_loss_code",
+    "cause_of_loss_description",
+    "policies_earning_premium_count",
+    "policies_indemnified_count",
+    "net_reported_quantity",
+    "liability_amount",
+    "total_premium_amount",
+    "subsidy_amount",
+    "indemnity_amount",
+    "loss_ratio")
+  colnames(data) <- filed_names
+  data <- data[filed_names]
+  data <- as.data.table(data)
+  data[, c(intersect(c(FCIP_FORCE_NUMERIC_KEYS,"indemnity_amount"), names(data))) := lapply(
+    .SD, function(x) as.numeric(as.character(x))), 
+    .SDcols = intersect(c(FCIP_FORCE_NUMERIC_KEYS,"indemnity_amount"), names(data))]
+  
+  data[,loss_ratio := indemnity_amount/total_premium_amount]
+  data <- data[!liability_amount %in% c(0,NA,Inf,-Inf)]
+  
+  saveRDS(data,file=paste0(dir_dest,"/col/col_sob_hist.rds"))
+  
+  #-------------------------------------------------------------------------------
+  # ADM                                                                        ####
+  
+  adm <- as.data.frame(
+    data.table::rbindlist(
+      lapply(
+        list.files(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Output/base_rate/"),recursive = T,full.names = T),
+        function(file){
+          # file <- list.files(paste0(dr_adm,"Output/base_rate/"),recursive = T,full.names = T)[1]
+          adm <- readRDS(file)
+          adm$tau_adm <- adm$Rr + adm$Rf
+          adm <- doBy::summaryBy(tau_adm~crop_yr + state_cd + county_cd + crop_cd,data=adm,FUN=mean,na.rm=T,keep.names = T)
+          return(adm)
+        }), fill = TRUE))
+  
+  saveRDS(standardize_fcip_column_names(adm),
+          file=paste0(dir_dest,"/adm/fcip_demand_instruments_from_adm.rds"))
+  
+  price <- readRDS(file.path(farmpolicylab,
+                             "rmaFCIPdata", "rmaPrices",
+                             "Output", "ersFcipPrices.rds"))
+  price$projecetd_price <- price$Price_Prj
+  price$harvest_price <- price$Price_Hrvst
+  price <- doBy::summaryBy(list(c("projecetd_price", "harvest_price"),c("state_cd","county_cd","typ_cd","crop_yr","crop_cd")),
+                           data=price,FUN=mean,na.rm=T,keep.names = T)
+  price <- standardize_fcip_column_names(price)
+  
+  saveRDS(price,file=paste0(dir_dest,"/adm/fcip_commodity_prices.rds"))
+  
+  # saveRDS(rmaADM:::clean_data(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/2025/2025_A01230_ContiguousCounty_YTD.rds"))),
+  #         file=paste0(dir_dest,"/contiguous_county_adm.rds"))
+  #-------------------------------------------------------------------------------
+  
+  return(c(list.files(paste0(dir_dest,"/sob")),
+           list.files(paste0(dir_dest,"/col")),
+           list.files(paste0(dir_dest,"/adm"))))
+}
+
+

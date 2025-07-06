@@ -6,7 +6,7 @@
 \alias{USFarmSafetyNetLab-package}
 \title{USFarmSafetyNetLab: US Farm Safety Net Lab}
 \description{
-| This repository centralizes research outputs, analytical tools, and resources exploring and evaluating the United States agricultural safety net programs Supported programs include: * Federal Crop Insurance Program (FCIP) * Noninsured Crop Disaster Assistance Program (NAP) * Price Loss Coverage (PLC) * Agricultural Risk Coverage (ARC) * Ad-hoc disaster assistance programs
+This repository centralizes research outputs, analytical tools, and resources for exploring and evaluating the United States agricultural safety net programs. It supports analysis of key programs including the Federal Crop Insurance Program (FCIP), the Noninsured Crop Disaster Assistance Program (NAP), Price Loss Coverage (PLC), Agricultural Risk Coverage (ARC), and various ad-hoc disaster assistance programs.
 }
 \seealso{
 Useful links:

@@ -24,9 +24,6 @@ if(Sys.info()['sysname'] %in% "Windows"){
 }
 Keep.List<-c("Keep.List",ls())
 #---------------------------------------------------------
-# Download and cache USDA NASS Quick Stats             ####
-download_raw_data(dir_fastscratch=dir_fastscratch);gc()
-#---------------------------------------------------------
 # Contiguous county                                    ####
 rm(list= ls()[!(ls() %in% c(Keep.List))])
 contiguous_county <- rmaADM:::clean_data(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/2025/2025_A01230_ContiguousCounty_YTD.rds")))
