@@ -338,6 +338,7 @@ adm_ytd_reader <- function(file_name, adm_ytd_archive){
 #' }
 #'
 #' @import data.table
+#' @importFrom rmaADM get_adm_data
 #' @export
 get_adm_data_extended <- function(year = NULL, dataset = "baserate"){
 
@@ -345,13 +346,13 @@ get_adm_data_extended <- function(year = NULL, dataset = "baserate"){
   # get_adm_ytd_archive(year)
 
   if(dataset %in% "county_yield_history"){
-    df <- as.data.table(rmaADM::get_adm_data(year = year, dataset = dataset))
+    df <- as.data.table(get_adm_data(year = year, dataset = dataset))
 
     df[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(df))) := lapply(
       .SD, function(x) as.numeric(as.character(x))
     ), .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(df))]
   }else{
-    #df <- as.data.table(rmaADM::get_adm_data(year = year, dataset = dataset))
+    #df <- as.data.table(get_adm_data(year = year, dataset = dataset))
 
     df <- adm_ytd_reader(file_name=paste0(year,"_",dataset, "_YTD.txt"),
                          adm_ytd_archive = paste0(tools::R_user_dir("USFarmSafetyNetLab", which = "cache"),
