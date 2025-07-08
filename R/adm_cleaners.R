@@ -1,28 +1,6 @@
 
 # remotes::install_github("dylan-turner25/rmaADM", force = TRUE,upgrade="never")
 
-FCIP_FORCE_NUMERIC_KEYS <- c(
-  "commodity_year",
-  "state_code",
-  "county_code",
-  "sub_county_code",
-  "commodity_code",
-  "type_code",
-  "commodity_type_code",
-  "class_code",
-  "sub_class_code",
-  "intended_use_code",
-  "irrigation_practice_code",
-  "cropping_practice_code",
-  "organic_practice_code",
-  "interval_code",
-  "range_class_code",
-  "practice_code",
-  "record_category_code",
-  "insurance_plan_code",
-  "coverage_level_percent"
-)
-
 #' Download and archive ADM year-to-date data
 #'
 #' @description

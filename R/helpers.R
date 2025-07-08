@@ -1,3 +1,78 @@
+#' Install a GitHub R Package Only If Its R/ Folder Has Newer Changes
+#'
+#' Compares the most recent commit date in the \code{R/} directory of a GitHub repo
+#' against the modification times of your locally installed packages \code{R/*.R} files.
+#' If the GitHub version is newer (or the package is not installed), installs via
+#' \code{remotes::install_github()}.
+#'
+#' @param user   GitHub username or organization (string), e.g. \code{"dylan-turner25"}.
+#' @param repo   Repository name (string), e.g. \code{"rmaADM"}.
+#' @param package   Repository name (string), e.g. \code{"rmaADM"}.
+#'
+#' @return Invisibly returns \code{TRUE} if installation was performed, \code{FALSE} otherwise.
+#'
+#' @details
+#' - Requires the \pkg{gh} package to query GitHub commits API and the \pkg{remotes}
+#'   package to install from GitHub. Installs them if missing.
+#' - If the package \code{repo} is not already installed locally, this function treats
+#'   it as, very out of date, and will install unconditionally.
+#'
+#' @examples
+#' \dontrun{
+#' # Check and update rmaADM from dylan-turner25 if needed:
+#' update_packages(user="dylan-turner25", repo="rmaADM",package="rmaADM")
+#' update_packages(user="dylan-turner25", repo="rfcip",package="rmaADM")
+#' update_packages(user="ftsiboe", repo="US-FarmSafetyNet-Lab",package="USFarmSafetyNetLab")
+#' }
+#'
+#' @export
+#' @importFrom gh gh
+#' @importFrom remotes install_github
+#' @importFrom utils installed.packages install.packages
+update_packages <- function(user, repo, package){
+  pkg_ref <- paste0(user, "/", repo)
+  
+  # Ensure dependencies
+  if(!requireNamespace("gh", quietly = TRUE)) {
+    install.packages("gh")
+  }
+  if(!requireNamespace("remotes", quietly = TRUE)) {
+    install.packages("remotes")
+  }
+  
+  # Determine local R/ timestamp (or epoch if not installed)
+  if(package %in% installed.packages()[, "Package"]){
+    local_R_dir <- system.file("R", package = package)
+    local_files <- list.files(local_R_dir,full.names = TRUE)
+    local_max   <- max(file.info(local_files)$mtime)
+  } else {
+    local_max <- as.POSIXct(0, origin = "1970-01-01", tz = "UTC")
+  }
+  
+  # Fetch latest commit touching R/ on GitHub
+  recent_commit <- gh::gh(
+    "GET /repos/{owner}/{repo}/commits",
+    owner    = user,
+    repo     = repo,
+    path     = "R",
+    per_page = 1
+  )[[1]]$commit$committer$date
+  
+  remote_date <- as.POSIXct(recent_commit,
+                            format = "%Y-%m-%dT%H:%M:%SZ",
+                            tz     = "UTC")
+  
+  # Compare and install if remote is newer
+  if (remote_date > local_max) {
+    message("Installing updates from ", pkg_ref)
+    remotes::install_github(pkg_ref, force = TRUE, upgrade = "never")
+    invisible(TRUE)
+  } else {
+    message("No updates from ", pkg_ref)
+    invisible(FALSE)
+  }
+}
+
 #' Generate a sample farmer-level toy dataset for testing
 #'
 #' @param n Integer number of farmer records to generate. Default 100.
@@ -19,8 +94,7 @@
 #' @param area_share Numeric
 #' @param planted_area Numeric
 #' @param production_history_length Integer vector of indices for actual_farm_yield columns. Default 0:10.
-#' @keywords internal
-#' @noRd
+#' 
 #' @return A \code{data.table} with one row per “farmer” and columns:
 #' \itemize{
 #'   \item \code{farmid}
@@ -351,9 +425,3 @@ build_internal_datasets <- function(dir_source = "./data-raw/internal_datasets",
   }
   
 }
-
-
-
-
-
-

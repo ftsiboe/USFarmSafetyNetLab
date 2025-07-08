@@ -44,7 +44,9 @@ Imports:
     sp,
     spdep, 
     tidyr,
-    moments
+    moments,
+    gh,
+    remotes
 Suggests:
     knitr,
     rmarkdown,
