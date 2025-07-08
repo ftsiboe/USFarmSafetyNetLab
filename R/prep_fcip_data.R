@@ -678,7 +678,7 @@ get_ice_data <- function(
         download_links <- grep("YTD\\.txt$", download_links, value = TRUE)
         
         ## filter by user-supplied patterns, if any
-        if (!is.null(selected_ice)) {
+        if(!is.null(selected_ice)) {
           pattern <- paste(selected_ice, collapse = "|")
           download_links <- grep(pattern, download_links, value = TRUE)
         }
@@ -691,6 +691,7 @@ get_ice_data <- function(
               utils::download.file(download_link, destfile = tmp, mode = "wb")
               dt  <- readr::read_delim(tmp, delim = "|",
                                        col_names = TRUE, show_col_types = FALSE)
+              FCIP_FORCE_NUMERIC_KEYS <- USFarmSafetyNetLab::FCIP_FORCE_NUMERIC_KEYS
               dt  <- rmaADM:::clean_data(dt)
               dt
             }, error = function(e) {NULL})

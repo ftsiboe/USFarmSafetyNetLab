@@ -3,7 +3,7 @@ title: "Datasets"
 
 output:
   github_document:
-    toc: true
+    toc: false
     toc_depth: 3
 ---
 
@@ -15,8 +15,6 @@ library(dplyr)
 library(devtools)
 load_all()
 ```
-
-# Datasets
 
 This directory provides guidance on accessing the various datasets used in U.S. farm safety-net research. 
 
@@ -69,13 +67,7 @@ sob1 <- rfcip::get_sob_data(year = 2020, crop = "corn")
 head(tibble(sob1))
 
 # Example 2: Accessing SOB data via this repository’s release assets
-base_url <- "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download"
-version  <- "sob"
-file <- "sobcov_2020.rds"
-url <- paste(base_url, version, file, sep = "/")
-sob2 <- tempfile(fileext = ".rds")
-download.file(url, sob2, mode = "wb",quiet=TRUE)
-sob2 <- readRDS(sob2)
+sob2 <- get_data_release(name = "sobcov", year = 2020)
 head(tibble(sob2))
 
 # Example 3: Accessing COL data via rfcip
@@ -83,12 +75,7 @@ col1 <- rfcip::get_col_data(year = 2020)
 head(tibble(col1))
 
 # Example 4: Accessing COL data via this repository’s release assets
-version  <- "col"
-file <- "colsom_2020.rds"
-url <- paste(base_url, version, file, sep = "/")
-col2 <- tempfile(fileext = ".rds")
-download.file(url, col2, mode = "wb",quiet=TRUE)
-col2 <- readRDS(col2)
+col2 <- get_data_release(name = "colsom", year = 2020)
 head(tibble(col2))
 
 # Example 5: Accessing Reinsurance data via rfcip

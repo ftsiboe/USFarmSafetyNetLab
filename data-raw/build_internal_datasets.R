@@ -1,7 +1,7 @@
 #---------------------------------------------------------
 # Preliminaries                                        ####
 # load package
-rm(list=ls(all=TRUE))
+rm(list=ls(all=TRUE));gc()
 devtools::document()
 devtools::load_all()
 
@@ -39,7 +39,7 @@ saveRDS(type_recodes,file="./data-raw/internal_datasets/rma_type_recodes.rds");g
 # INDEX FOR PRICE RECEIVED, 2011                       ####
 rm(list= ls()[!(ls() %in% c(Keep.List))])
 df <- process_nass_dataset(
-  dir_nass_qs = paste0(dir_fastscratch,"/nass_qs"),
+  dir_source  = paste0(dir_fastscratch,"/nass"),
   large_dataset = "economics",
   nassqs_params = list(short_desc = "COMMODITY TOTALS - INDEX FOR PRICE RECEIVED, 2011",
                        freq_desc = "ANNUAL"))
@@ -52,7 +52,7 @@ saveRDS(df,file="./data-raw/internal_datasets/index_for_price_recived.rds");rm(d
 # Get Marketing Year Average Price                     ####
 rm(list= ls()[!(ls() %in% c(Keep.List))])
 df <-  get_marketing_year_avg_price(
-  dir_nass_qs = paste0(dir_fastscratch,"/nass_qs"),
+  dir_source = paste0(dir_fastscratch,"/nass"),
   agg_level_desc = c("NATIONAL","STATE"),
   short_desc = c(
     "OATS - PRICE RECEIVED, MEASURED IN $ / BU",

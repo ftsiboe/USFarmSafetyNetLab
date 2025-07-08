@@ -507,7 +507,7 @@ process_nass_dataset <- function(
     # ensure we filter on the requested statistic category
     nassqs_params$statisticcat_desc <- statisticcat_desc
   }
-  
+
   # Apply filters
   if (!is.null(nassqs_params) && length(nassqs_params) > 0) {
     for (col in names(nassqs_params)) {
