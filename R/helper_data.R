@@ -31,7 +31,7 @@
 #' @name state_rental_rates
 #' @title state_rental_rates
 #' @description A combined dataset for state_rental_rates
-#' @format A data frame with 1736 rows and 4 columns covering 1994-2024.
-#' @source 
+#' @format A data frame with 1736 rows and 5 columns covering 1994-2024.
+#' @source Output from get_state_rental_rates() function
 #' @usage data(state_rental_rates)
 "state_rental_rates"

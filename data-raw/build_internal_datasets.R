@@ -85,9 +85,9 @@ saveRDS(df,file="./data-raw/internal_datasets/marketing_year_avg_price.rds");rm(
 #---------------------------------------------------------
 # State rental rates                                   ####
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-
-saveRDS(get_state_rental_rates(), 
-        file = "./data-raw/internal_datasets/state_rental_rates.rds")
+df <- get_state_rental_rates()
+df[, data_source := "Output from get_state_rental_rates() function"]
+saveRDS(df,file = "./data-raw/internal_datasets/state_rental_rates.rds")
 
 #---------------------------------------------------------
 # Build the helper data sets                           ####
