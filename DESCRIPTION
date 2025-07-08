@@ -46,7 +46,8 @@ Imports:
     tidyr,
     moments,
     gh,
-    remotes
+    remotes,
+    piggyback
 Suggests:
     knitr,
     rmarkdown,

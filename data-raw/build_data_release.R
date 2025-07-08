@@ -27,7 +27,7 @@ prep_nass_data(dir_dest = paste0(dir_data_release,"/nass/"),
                dir_source = "./data-raw/fastscratch/nass/")
 
 #-------------------------------------------------------------------------------
-# Send Releases to Github                                                    ####
+# Send Summary of Business to Github                                         ####
 
 tryCatch({
   piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "sob")
@@ -52,7 +52,8 @@ piggyback::pb_upload(
   list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE),
   repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "sob",overwrite = TRUE)
 
-
+#-------------------------------------------------------------------------------
+# Send Cause of Loss to Github                                               ####
 tryCatch({
   piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "col")
 }, error = function(e){NULL})
@@ -66,7 +67,8 @@ piggyback::pb_upload(
   list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE),
   repo = "ftsiboe/US-FarmSafetyNet-Lab", tag  = "col",overwrite = TRUE)
 
-
+#-------------------------------------------------------------------------------
+# Send Actuarial Data Master to Github                                       ####
 tryCatch({
   piggyback::pb_release_delete(repo = "ftsiboe/US-FarmSafetyNet-Lab", tag = "adm")
 }, error = function(e){NULL})

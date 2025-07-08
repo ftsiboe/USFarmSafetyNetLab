@@ -1054,6 +1054,12 @@ prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
     "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOBTPU_External_All_Years.pdf",
     destfile = paste0(dir_dest,"/sob/sobtpu_field_description_all_years.pdf"),mode= "wb",quiet    = TRUE)
   
+  sobtpu_all <- list.files(paste0(dir_dest,"/sob"),pattern = "sobtpu",full.names = T)
+  sobtpu_all <- sobtpu_all[!grepl("pdf|all",sobtpu_all)]
+  sobtpu_all <- data.table::rbindlist(
+    lapply(sobtpu_all,function(i){readRDS(i)}), fill = TRUE)
+  saveRDS(sobtpu_all,paste0(dir_dest,"/sob/sobtpu_all.rds"));rm(sobtpu_all);gc()
+  
   download_rma_web_data_files(
     years = 1989:as.numeric(format(Sys.Date(),"%Y")), 
     file_name = "sobcov",
@@ -1063,17 +1069,23 @@ prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
     "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOB_State_County_Crop_with_Coverage_Level_1989_Forward.pdf",
     destfile = paste0(dir_dest,"/sob/sobcov_field_description_1989_forward.pdf"),mode= "wb",quiet    = TRUE)
   
+  sobcov_all <- list.files(paste0(dir_dest,"/sob"),pattern = "sobcov",full.names = T)
+  sobcov_all <- sobcov_all[!grepl("pdf|all",sobcov_all)]
+  sobcov_all <- data.table::rbindlist(
+    lapply(sobcov_all,function(i){readRDS(i)}), fill = TRUE)
+  saveRDS(sobcov_all,paste0(dir_dest,"/sob/sobcov_all.rds"))
+  
   temp_zip <- tempfile(fileext = ".zip")
   utils::download.file(
     "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/sobscc_1948_1988.zip",
     destfile = temp_zip,mode     = "wb",quiet    = TRUE)
   temp_txt <- tempfile()
   utils::unzip(zipfile = temp_zip, exdir = temp_txt)
-  data <- utils::read.delim2(
+  sobscc_1948_1988 <- utils::read.delim2(
     file= list.files(temp_txt, full.names = TRUE),sep= "|",header = FALSE,skipNul = TRUE)
   unlink(temp_zip)
   unlink(temp_txt, recursive = TRUE)
-  colnames(data) <- c(
+  colnames(sobscc_1948_1988) <- c(
     "commodity_year",
     "state_code",
     "state_abbreviation",
@@ -1093,16 +1105,33 @@ prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
     "indemnity_amount",
     "loss_ratio")
 
-  data <- as.data.table(data)
-  data[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))) := lapply(
+  sobscc_1948_1988 <- as.data.table(sobscc_1948_1988)
+  sobscc_1948_1988[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(sobscc_1948_1988))) := lapply(
     .SD, function(x) as.numeric(as.character(x))), 
-    .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))]
-  saveRDS(data,file=paste0(dir_dest,"/sob/sobscc_1948_1988.rds"))
+    .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(sobscc_1948_1988))]
+  saveRDS(sobscc_1948_1988,file=paste0(dir_dest,"/sob/sobscc_1948_1988.rds"))
   
   utils::download.file(
     "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOB_State_County_Commodity_1948_1988.pdf",
     destfile = paste0(dir_dest,"/sob/sobscc_field_description.pdf"),mode= "wb",quiet    = TRUE)
   
+  sobscc_all <- rbind(sobcov_all[
+    , lapply(.SD, function(x) sum(x, na.rm = TRUE)),
+    by = c("commodity_year","state_code","state_abbreviation",
+           "county_code","county_name","commodity_code","commodity_name"),
+    .SDcols = c("policies_sold_count","policies_earning_premium_count","policies_indemnified_count",
+                "units_earning_premium_count","units_indemnified_count","net_reported_quantity",
+                "liability_amount","total_premium_amount","subsidy_amount","indemnity_amount")],
+    sobscc_1948_1988[
+      , lapply(.SD, function(x) sum(x, na.rm = TRUE)),
+      by = c("commodity_year","state_code","state_abbreviation",
+             "county_code","county_name","commodity_code","commodity_name"),
+      .SDcols = c("policies_sold_count","policies_earning_premium_count","policies_indemnified_count",
+                  "units_earning_premium_count","units_indemnified_count","net_reported_quantity",
+                  "liability_amount","total_premium_amount","subsidy_amount","indemnity_amount")])
+  
+  saveRDS(sobscc_all,file=paste0(dir_dest,"/sob/sobscc_all.rds"))
+
   #-------------------------------------------------------------------------------
   # Cause of Loss                                                              ####
   download_rma_web_data_files(
