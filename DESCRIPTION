@@ -25,29 +25,9 @@ VignetteBuilder: knitr
 Depends:
     R (>= 3.5)
 Imports:
-    rfcip,
-    rmaADM,
-    data.table,
-    dplyr,
-    magrittr,
-    purrr,
-    readr,
-    rvest,
-    stringr,
-    xml2,
-    stats,
-    utils,
-    plm,
-    doBy,
-    terra,
-    tigris,
-    sp,
-    spdep, 
-    tidyr,
-    moments,
-    gh,
-    remotes,
-    piggyback
+    rfcip,rmaADM,data.table,dplyr, doBy, gh, magrittr, piggyback, plm, purrr,
+    readr, remotes, rvest, sp, spdep, stringr, terra, classInt,
+    tidyr, tigris, xml2, moments, stats, sf, utils, urbnmapr
 Suggests:
     knitr,
     rmarkdown,

@@ -28,12 +28,3 @@ remotes::install_local("C:/GitHub/rfcipSim/fastscratch/rfcipSim_0.0.0.9001.tar.g
 
 
 
-
-
-
-
-
-
-
-
-

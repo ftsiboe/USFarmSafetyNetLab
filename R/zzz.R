@@ -12,7 +12,7 @@
   # Install/update Related R Package Only If Its R/ Folder Has Newer Changes
   update_packages(user="dylan-turner25", repo="rmaADM",package="rmaADM")
   update_packages(user="dylan-turner25", repo="rfcip",package="rfcip")
-  
+
   requireNamespace("rmaADM", quietly = TRUE)
   requireNamespace("rfcip", quietly = TRUE)
   
@@ -39,6 +39,7 @@
     insured_share_percent market_price practice_code
     price_election_percent rate_yield record_category_code
     reference_amount_code reported_acres
+    ..final_cols ..keep_cols ALL county_fips estimate_smooth obs
       ",
         "\\s+"
       )[[1]]
