@@ -1,23 +1,7 @@
 Crop-Insurance-Instruments
 ================
 
--   <a href="#crop-insurance-instruments"
-    id="toc-crop-insurance-instruments">Crop-Insurance-Instruments</a>
-    -   <a
-        href="#accessing-the-estimated-instrumental-variables-fcip-demand-in-r"
-        id="toc-accessing-the-estimated-instrumental-variables-fcip-demand-in-r">Accessing
-        the estimated instrumental variables fcip demand in R</a>
-    -   <a href="#files-in-this-directory"
-        id="toc-files-in-this-directory">Files in this directory</a>
-    -   <a
-        href="#definitions-for-each-data-column-in-the-data-are-included-below"
-        id="toc-definitions-for-each-data-column-in-the-data-are-included-below">Definitions
-        for each data column in the data are included below</a>
-    -   <a href="#-citation" id="toc--citation">📚 Citation</a>
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# Crop-Insurance-Instruments
 
 The folder provides data and replication codes for the United States
 Crop Insurance Program as described in
@@ -34,7 +18,7 @@ Crop Insurance Program as described in
 ## Accessing the estimated instrumental variables fcip demand in R
 
 -   Project package: `USFarmSafetyNetLab::fcip_demand_instruments`
--   Generate from raw data: `fcip_instruments_formulation.R`
+-   Generate from raw data: `generate_fcip_instruments.R`
 
 Database was last updated on 2025-07-04
 

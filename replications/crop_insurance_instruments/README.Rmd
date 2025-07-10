@@ -3,7 +3,7 @@ title: "Crop-Insurance-Instruments"
 
 output:
   github_document:
-    toc: true
+    toc: false
     toc_depth: 3
 ---
 
@@ -15,8 +15,6 @@ library(dplyr)
 library(devtools)
 load_all()
 ```
-
-# Crop-Insurance-Instruments
 
 The folder provides data and replication codes for the United States Crop Insurance Program as described in 
 
