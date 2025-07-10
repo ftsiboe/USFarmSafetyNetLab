@@ -47,7 +47,7 @@ get_data_release <- function(name = "sobscc", year = "all") {
   dest_file <- file.path(dest_dir, file_name)
   
   # Download file if not cached
-  if (!file.exists(dest_file)) {
+  if(!file.exists(dest_file)){
     piggyback::pb_download(
       file = file_name,
       repo = "ftsiboe/US-FarmSafetyNet-Lab",

@@ -30,6 +30,6 @@ data/README.Rmd
 data/README.md
 ^SECURITY\.md$
 code_of_conduct.md
-job_*.sbatch
-slurm-*.out
+\\.sbatch$
+\\.out$
 
