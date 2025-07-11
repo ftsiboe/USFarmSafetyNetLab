@@ -9,9 +9,9 @@
   
   options(future.globals.maxSize = 20 * 1024^3)  # 20 GiB
   
-  # Install/update Related R Package Only If Its R/ Folder Has Newer Changes
-  update_packages(user="dylan-turner25", repo="rmaADM",package="rmaADM")
-  update_packages(user="dylan-turner25", repo="rfcip",package="rfcip")
+  # # Install/update Related R Package Only If Its R/ Folder Has Newer Changes
+  # update_packages(user="dylan-turner25", repo="rmaADM",package="rmaADM")
+  # update_packages(user="dylan-turner25", repo="rfcip",package="rfcip")
 
   requireNamespace("rmaADM", quietly = TRUE)
   requireNamespace("rfcip", quietly = TRUE)
@@ -45,10 +45,6 @@
       )[[1]]
     )
   }
-}
-
-.onAttach <- function(libname, pkgname) {
-  packageStartupMessage("USFarmSafetyNetLab: rmaADM and rfcip are available via Imports.")
 }
 
 
