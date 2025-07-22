@@ -723,13 +723,13 @@ get_marketing_year_avg_price <- function(
 #'   Path to the directory where Quick Stats files are stored.
 #'   Defaults to `"./data-raw/fastscratch/nass/"`.
 #'   
-#' Approximate per-acre cost of crop production using state‐level rental rates
+#' Approximate per-acre cost of crop production using state-level rental rates
 #' retrieved from USDA NASS Quick Stats.  This function:
 #' \enumerate{
 #'   \item Loads and aggregates NASS asset values and cash rents by state and year.
 #'   \item Joins the two series, excludes non-contiguous states/territories.
 #'   \item Estimates missing rents via a panel regression on log asset values, then corrects for systematic bias.
-#'   \item Interpolates any remaining missing values using a 5-nearest‐neighbor spatial average, iterated twice.
+#'   \item Interpolates any remaining missing values using a 5-nearest-neighbor spatial average, iterated twice.
 #' }
 #'
 #' @return A \code{data.frame} with columns:
@@ -745,7 +745,7 @@ get_marketing_year_avg_price <- function(
 #' \itemize{
 #'   \item \code{process_nass_dataset()} to pull NASS Quick Stats.
 #'   \item \code{plm::pdata.frame()} for panel data setup.
-#'   \item \code{lm()} to fit a state-fixed‐effects trend model.
+#'   \item \code{lm()} to fit a state-fixed-effects trend model.
 #'   \item \code{spdep} to compute spatial lags (5-nearest neighbors).
 #'   \item \code{doBy::summaryBy()} for error-ratio corrections.
 #'   \item \code{terra} and \code{tigris} to obtain state geometries.
@@ -818,7 +818,7 @@ get_state_rental_rates <- function(dir_source = "./data-raw/fastscratch/nass/"){
   # Create 4 lags of ag_land
   for(lag in 1:4){dfx[, paste0("LV_",lag)] <- lag(dfx$ag_land, lag)}
   
-  # Fit state-fixe-‐effects trend model on log asset values
+  # Fit state-fixe--effects trend model on log asset values
   fit.rent <- lm(
     as.formula(
       paste0(
@@ -861,7 +861,7 @@ get_state_rental_rates <- function(dir_source = "./data-raw/fastscratch/nass/"){
   States$state_code <- as.numeric(States$STATEFP)
   centroids <- as.data.frame(terra::geom(terra::centroids(States)))[c("x","y")]
   
-  # Build spatial neighbor matrix (5‐nearest neighbors)
+  # Build spatial neighbor matrix (5-nearest neighbors)
   nbmat <- sp::SpatialPointsDataFrame(
     cbind(centroids$x, centroids$y),
     data = as.data.frame(States),
@@ -871,7 +871,7 @@ get_state_rental_rates <- function(dir_source = "./data-raw/fastscratch/nass/"){
   nbmat <- spdep::knn2nb(nbmat, row.names = States$state_code, sym = FALSE)
   nbmat <- spdep::nb2mat(nbmat, style = "B")
   
-  # Two‐round spatial interpolation of missing rents
+  # Two-round spatial interpolation of missing rents
   for(i in 1:2){
     df <- as.data.frame(
       data.table::rbindlist(
@@ -948,13 +948,13 @@ get_state_rental_rates <- function(dir_source = "./data-raw/fastscratch/nass/"){
 #' rows with unwanted units (e.g., containing a dollar sign) or total rows in the commodity
 #' name are filtered out. Next, area metrics are processed by selecting the first non-missing
 #' sum across the four summaries and averaging it, and production metrics are handled similarly
-#' after filtering out invalid unit–commodity combinations and converting cotton bale values
+#' after filtering out invalid unit-commodity combinations and converting cotton bale values
 #' to pounds. Finally, the area and production results are bound together and summed across
 #' the chosen grouping keys to produce the final `data.table`. 
 #'
 #' @seealso
-#' * \code{\link{downloaded_nass_large_datasets}} – for downloading and caching USDA NASS Quick Stats large dataset files 
-#' * \code{\link{process_nass_dataset}} – for retrieving raw NASS Quick Stats data  
+#' * \code{\link{downloaded_nass_large_datasets}} - for downloading and caching USDA NASS Quick Stats large dataset files 
+#' * \code{\link{process_nass_dataset}} - for retrieving raw NASS Quick Stats data  
 #'
 #' @import data.table
 #' @export
@@ -1134,7 +1134,7 @@ get_nass_production_data <- function(
 #' `census_year`. It then performs three blocks of aggregation:
 #' 
 #' 1. **Agricultural Land by State**  
-#'    Filters for ECONOMICS‐sector state‐level records on cropland, pasture, woodland,
+#'    Filters for ECONOMICS-sector state-level records on cropland, pasture, woodland,
 #'    and cropland share, cleans and converts the `value` field to numeric, computes
 #'    the mean by `(census_year, state_code, short_desc)`, recodes `short_desc` to
 #'    simple labels (`cropland`, `pasture`, `woodland`, `cropland_pct`), pivots wide
@@ -1142,17 +1142,17 @@ get_nass_production_data <- function(
 #'    and saves `nass_census_agLand_state_<census>.rds`.  
 #' 
 #' 2. **Crop Insurance Summaries**  
-#'    Subsets for both cropland and crop‐insurance acreage and operation counts plus
-#'    several farm‐related income receipt categories, strips commas and coerces `value`
+#'    Subsets for both cropland and crop-insurance acreage and operation counts plus
+#'    several farm-related income receipt categories, strips commas and coerces `value`
 #'    to numeric, drops invalid entries, converts location codes to numeric, filters
-#'    to insurance‐related domains, sums `value` by all relevant grouping fields, and
+#'    to insurance-related domains, sums `value` by all relevant grouping fields, and
 #'    saves `nass_census_insurance_data_<census>.rds`.  
 #' 
 #' 3. **BRF Census Aggregates**  
 #'    Filters for producer counts and acres (owned vs. rented), converts `value` to
-#'    numeric, removes zeros and missing, first computes group‐wise means and then sums
+#'    numeric, removes zeros and missing, first computes group-wise means and then sums
 #'    across `(census_year, state_code, state_alpha, agg_level_desc, unit_desc,
-#'    domaincat_desc)`, recodes `domaincat_desc` to `ALL_…` or `BRF_…` plus unit,
+#'    domaincat_desc)`, recodes `domaincat_desc` to `ALL_` or `BRF_` plus unit,
 #'    pivots wide, reorders and renames columns, and saves
 #'    `nass_census_brf_<census>.rds`.  
 #'
@@ -1281,7 +1281,7 @@ get_nass_census_data <- function(
             )
         ]
         
-        # convert, clean, mean‐then‐sum, recode, pivot, reorder
+        # convert, clean, mean-then-sum, recode, pivot, reorder
         bfr[, value := as.numeric(gsub(",", "", as.character(value)))]
         bfr <- bfr[value != 0 & !is.na(value) & is.finite(value)]
         bfr <- bfr[,
@@ -1328,8 +1328,8 @@ get_nass_census_data <- function(
 #' Prepare and Save USDA NASS Data for Release
 #'
 #' @description
-#' Downloads and processes multiple USDA NASS datasets—including census, economics, crops,
-#' production, marketing‐year average prices, and state rental rates—and saves each as
+#' Downloads and processes multiple USDA NASS datasets-including census, economics, crops,
+#' production, marketing-year average prices, and state rental rates-and saves each as
 #' an RDS file in a specified directory.
 #'
 #' @param dir_dest Character. Target directory for saving processed NASS data files
@@ -1348,16 +1348,16 @@ get_nass_census_data <- function(
 #' source, and writes `nass_survey_production_data.rds`. For commodity price averages, it calls
 #' `get_marketing_year_avg_price()` for a predefined list of items, labels the source,
 #' and saves `nass_survey_marketing_year_avg_price.rds`. Finally, it obtains annual state cropland
-#' cash rent and asset‐value data with `get_state_rental_rates()`, notes the bias‐correction
+#' cash rent and asset-value data with `get_state_rental_rates()`, notes the bias-correction
 #' and interpolation methods used, and saves `nass_survey_state_rental_rates.rds`. The function returns
 #' a character vector of all filenames in `dir_dest`.
 #'
 #' @seealso
-#' * \code{\link{downloaded_nass_large_datasets}} – download raw NASS Quick Stats CSVs  
-#' * \code{\link{process_nass_dataset}} – fetch and reshape raw NASS data  
-#' * \code{\link{get_nass_production_data}} – compute production and area metrics  
-#' * \code{\link{get_marketing_year_avg_price}} – calculate marketing-year average prices  
-#' * \code{\link{get_state_rental_rates}} – assemble state rental rate data  
+#' * \code{\link{downloaded_nass_large_datasets}} - download raw NASS Quick Stats CSVs  
+#' * \code{\link{process_nass_dataset}} - fetch and reshape raw NASS data  
+#' * \code{\link{get_nass_production_data}} - compute production and area metrics  
+#' * \code{\link{get_marketing_year_avg_price}} - calculate marketing-year average prices  
+#' * \code{\link{get_state_rental_rates}} - assemble state rental rate data  
 #'
 #' @return Character vector of filenames created in `dir_dest`.
 #' @export
@@ -1436,7 +1436,7 @@ prep_nass_data <- function(
   df[, data_source :=
        paste0(
          "USDA NASS Quick Stats (annual state cropland cash rent & asset value); ",
-         "missing values filled by panel‐regression bias correction and 5-nearest-neighbor spatial interpolation"
+         "missing values filled by panel-regression bias correction and 5-nearest-neighbor spatial interpolation"
        )]
   
   saveRDS(df, file = paste0(dir_dest, "/nass_survey_state_rental_rates.rds"));rm(df); gc()

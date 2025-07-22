@@ -22,7 +22,7 @@ A \code{data.frame} with the same columns as \code{df} with new columns:
 }
 }
 \description{
-This function looks for two columns—\code{unit_structure_code} and
-\code{insurance_plan_code}—and creates recoded versions grouping similar
+This function looks for two columns-\code{unit_structure_code} and
+\code{insurance_plan_code}-and creates recoded versions grouping similar
 codes into broader categories.
 }

@@ -11,7 +11,7 @@ build_internal_datasets(
 }
 \arguments{
 \item{dir_source}{\code{character(1)}
-Path to the top‐level directory containing raw yearly \code{.rds} files.
+Path to the top-level directory containing raw yearly \code{.rds} files.
 Defaults to \code{"./data-raw/internal_datasets"}.}
 
 \item{size_threshold}{\code{numeric(1)}

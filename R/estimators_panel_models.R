@@ -1,25 +1,25 @@
-#' Prepare and demean data for fixed‐effects models
+#' Prepare and demean data for fixed-effects models
 #'
 #' This function
 #'   1. Filters to complete cases on the specified panel, time, weight, variables, and output  
 #'   2. If `output` is NULL, creates a dummy output column filled with 1s  
 #'   3. Drops any panel with only one observation  
-#'   4. Computes within‐panel means for the output + each variable in `varlist` (`_mean_i`)  
+#'   4. Computes within-panel means for the output + each variable in `varlist` (`_mean_i`)  
 #'   5. Computes overall sample means for the same set of variables (`_mean`)  
-#'   6. Replaces each variable in `varlist` by `value − within_panel_mean + overall_mean`  
+#'   6. Replaces each variable in `varlist` by `value - within_panel_mean + overall_mean`  
 #'
 #' @param data    A data.frame or data.table containing the data.
 #' @param varlist Character vector of variable names to be demeaned.
 #' @param panel   Character vector of column name(s) defining the panel identifier.
 #' @param time    Character scalar name of the time variable.
 #' @param wvar    Character scalar name of a variable to keep but _not_ demean (optional, default NULL).
-#' @param output  Character scalar name of an “output” variable whose means are computed but not altered; if NULL, a dummy column named `"output"` is created (optional, default NULL).
+#' @param output  Character scalar name of an output variable whose means are computed but not altered; if NULL, a dummy column named `"output"` is created (optional, default NULL).
 #'
 #' @return A list with components  
 #'   - **data**: a data.table containing  
 #'       - the original `panel`, `time`, `wvar`, `varlist`, and `output` columns  
 #'       - two mean columns for each of `c(output, varlist)`:  
-#'         `<name>_mean_i` (within‐panel) and `<name>_mean` (overall)  
+#'         `<name>_mean_i` (within-panel) and `<name>_mean` (overall)  
 #'   - **NFE**: the number of panels with more than one observation
 #'
 #' @import data.table
@@ -51,7 +51,7 @@ fixed_effect_model_data_prep <- function(
   dt <- dt[obs > 1]
   NFE <- dt[, uniqueN(panel)]
   
-  # 5) compute within‐panel means (_mean_i)
+  # 5) compute within-panel means (_mean_i)
   mean_vars <- c(output, varlist)
   dt[, paste0(mean_vars, "_mean_i") := lapply(.SD, mean),by = panel, .SDcols = mean_vars]
   
@@ -76,11 +76,11 @@ fixed_effect_model_data_prep <- function(
   list(data = dt,NFE  = NFE)
 }
 
-#' Panel‐based spatial smoothing estimator
+#' Panel-based spatial smoothing estimator
 #'
 #' This function
-#'   1. Constructs spatially‐varying treatment interactions (one variable per spatial unit)  
-#'   2. Applies within‐panel/time fixed‐effects demeaning to both outcome and interactions  
+#'   1. Constructs spatially-varying treatment interactions (one variable per spatial unit)  
+#'   2. Applies within-panel/time fixed-effects demeaning to both outcome and interactions  
 #'   3. Fits an OLS model by hand (\code{lm.fit}) to recover one coefficient per spatial unit  
 #'
 #' @param data      A \code{data.table} or \code{data.frame} containing panel data.
@@ -91,8 +91,8 @@ fixed_effect_model_data_prep <- function(
 #' @param spatialvar Name of the spatial grouping variable (e.g. county FIPS; character scalar).
 #'
 #' @return A \code{data.table} with columns:
-#'   - \code{estimate}: the estimated spatial‐unit coefficient  
-#'   - \code{county_fips}: the spatial unit identifier (5‐digit FIPS)  
+#'   - \code{estimate}: the estimated spatial-unit coefficient  
+#'   - \code{county_fips}: the spatial unit identifier (5-digit FIPS)  
 #'   - \code{state_code}, \code{county_code}: parsed FIPS components  
 #'
 #' @details
@@ -114,7 +114,7 @@ panel_based_spatial_smoothing_estimator <- function(
     panel,
     spatialvar){
   
-  # 1) create treatment‐by‐spatial‐unit interaction columns
+  # 1) create treatment-by-spatial-unit interaction columns
   spatialvar_list <- data[, unique(get(spatialvar))]
   data[ , paste0(treatment, '_', spatialvar_list) := 
           lapply(spatialvar_list, function(code) 

@@ -40,22 +40,22 @@ to load the raw census data into a \code{data.table}, then renames \code{commodi
 \code{census_year}. It then performs three blocks of aggregation:
 \enumerate{
 \item \strong{Agricultural Land by State}
-Filters for ECONOMICS‐sector state‐level records on cropland, pasture, woodland,
+Filters for ECONOMICS-sector state-level records on cropland, pasture, woodland,
 and cropland share, cleans and converts the \code{value} field to numeric, computes
 the mean by \verb{(census_year, state_code, short_desc)}, recodes \code{short_desc} to
 simple labels (\code{cropland}, \code{pasture}, \code{woodland}, \code{cropland_pct}), pivots wide
 with \code{data.table::dcast()}, coerces \code{census_year} and \code{state_code} to numeric,
 and saves \verb{nass_census_agLand_state_<census>.rds}.
 \item \strong{Crop Insurance Summaries}
-Subsets for both cropland and crop‐insurance acreage and operation counts plus
-several farm‐related income receipt categories, strips commas and coerces \code{value}
+Subsets for both cropland and crop-insurance acreage and operation counts plus
+several farm-related income receipt categories, strips commas and coerces \code{value}
 to numeric, drops invalid entries, converts location codes to numeric, filters
-to insurance‐related domains, sums \code{value} by all relevant grouping fields, and
+to insurance-related domains, sums \code{value} by all relevant grouping fields, and
 saves \verb{nass_census_insurance_data_<census>.rds}.
 \item \strong{BRF Census Aggregates}
 Filters for producer counts and acres (owned vs. rented), converts \code{value} to
-numeric, removes zeros and missing, first computes group‐wise means and then sums
-across \verb{(census_year, state_code, state_alpha, agg_level_desc, unit_desc, domaincat_desc)}, recodes \code{domaincat_desc} to \verb{ALL_…} or \verb{BRF_…} plus unit,
+numeric, removes zeros and missing, first computes group-wise means and then sums
+across \verb{(census_year, state_code, state_alpha, agg_level_desc, unit_desc, domaincat_desc)}, recodes \code{domaincat_desc} to \code{ALL_} or \code{BRF_} plus unit,
 pivots wide, reorders and renames columns, and saves
 \verb{nass_census_brf_<census>.rds}.
 }

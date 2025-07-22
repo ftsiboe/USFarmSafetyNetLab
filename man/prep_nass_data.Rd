@@ -20,8 +20,8 @@ or will be downloaded (default: \code{"./data-raw/fastscratch/nass/"}).}
 Character vector of filenames created in \code{dir_dest}.
 }
 \description{
-Downloads and processes multiple USDA NASS datasets—including census, economics, crops,
-production, marketing‐year average prices, and state rental rates—and saves each as
+Downloads and processes multiple USDA NASS datasets-including census, economics, crops,
+production, marketing-year average prices, and state rental rates-and saves each as
 an RDS file in a specified directory.
 }
 \details{
@@ -35,16 +35,16 @@ national, state, and county levels using \code{get_nass_production_data()}, tags
 source, and writes \code{nass_survey_production_data.rds}. For commodity price averages, it calls
 \code{get_marketing_year_avg_price()} for a predefined list of items, labels the source,
 and saves \code{nass_survey_marketing_year_avg_price.rds}. Finally, it obtains annual state cropland
-cash rent and asset‐value data with \code{get_state_rental_rates()}, notes the bias‐correction
+cash rent and asset-value data with \code{get_state_rental_rates()}, notes the bias-correction
 and interpolation methods used, and saves \code{nass_survey_state_rental_rates.rds}. The function returns
 a character vector of all filenames in \code{dir_dest}.
 }
 \seealso{
 \itemize{
-\item \code{\link{downloaded_nass_large_datasets}} – download raw NASS Quick Stats CSVs
-\item \code{\link{process_nass_dataset}} – fetch and reshape raw NASS data
-\item \code{\link{get_nass_production_data}} – compute production and area metrics
-\item \code{\link{get_marketing_year_avg_price}} – calculate marketing-year average prices
-\item \code{\link{get_state_rental_rates}} – assemble state rental rate data
+\item \code{\link{downloaded_nass_large_datasets}} - download raw NASS Quick Stats CSVs
+\item \code{\link{process_nass_dataset}} - fetch and reshape raw NASS data
+\item \code{\link{get_nass_production_data}} - compute production and area metrics
+\item \code{\link{get_marketing_year_avg_price}} - calculate marketing-year average prices
+\item \code{\link{get_state_rental_rates}} - assemble state rental rate data
 }
 }

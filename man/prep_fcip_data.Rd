@@ -21,14 +21,14 @@ A list of three character vectors, naming the files saved in:
 }
 \description{
 Downloads, processes, and caches multiple Federal Crop Insurance Program (FCIP)
-datasets—Summary of Business (SOB), Cause of Loss (COL), and Actuarial Data Master (ADM)—
+datasets-Summary of Business (SOB), Cause of Loss (COL), and Actuarial Data Master (ADM)-
 saving them as RDS files in a local cache directory structure.
 }
 \details{
 \enumerate{
 \item \strong{Determine source paths}
 \itemize{
-\item On Windows, locates the \code{farmpolicylab} database under the user's OneDrive→Dropbox folder.
+\item On Windows, locates the \code{farmpolicylab} database under the user's OneDrive to Dropbox folder.
 \item On non-Windows, uses \verb{~/Database/USA/USDA/}.
 }
 \item \strong{Setup local cache directories}
@@ -40,14 +40,14 @@ saving them as RDS files in a local cache directory structure.
 \itemize{
 \item Downloads yearly CSV ZIPs via \code{download_rma_web_data_files()} for \code{sobtpu}
 and \code{sobcov}, plus field description PDFs.
-\item Unzips and reads the historic 1948–1988 SOB data, coerces selected columns to
+\item Unzips and reads the historic 1948-1988 SOB data, coerces selected columns to
 numeric, and saves as \code{sobscc_1948_1988.rds}.
 }
 \item \strong{Cause of Loss (COL)}
 \itemize{
 \item Downloads yearly CSV ZIPs for \code{colsom}, plus field description PDF and
 Excel code listing.
-\item Unzips and reads historic 1948–1988 COL data, coerces selected columns
+\item Unzips and reads historic 1948-1988 COL data, coerces selected columns
 (including \code{indemnity_amount}) to numeric, computes \code{loss_ratio}, filters
 invalid rows, and saves as \code{col_sob_hist.rds}.
 }

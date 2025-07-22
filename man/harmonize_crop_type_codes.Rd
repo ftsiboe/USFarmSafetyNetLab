@@ -15,11 +15,11 @@ A \code{data.frame} with columns:
 \item \code{commodity_code}
 \item \code{type_code}
 \item \code{type_recode}
-\item \code{data_source} (always “Summary of business by type, practice, and unit structure”)
+\item \code{data_source} (always "Summary of business by type, practice, and unit structure")
 }
 }
 \description{
-Download the raw “Summary of Business by Type, Practice, and Unit Structure” (SOBTPU)
+Download the raw Summary of Business by Type, Practice, and Unit Structure (SOBTPU)
 data, clean and harmonize the crop type names for a fixed set of commodity codes,
 determine a single dominant type per county, and save the resulting lookup table
 of type renames.
@@ -32,19 +32,19 @@ This helper function performs the following steps:
 retains only the specified set of commodity codes (wheat, barley, rice, etc.).
 \item Recodes \code{type_name} by commodity:
 \itemize{
-\item \strong{Wheat (11):} “DURUM”, “SPRING”, or “NO TYPE SPECIFIED”, dropping “FORAGE WHEAT FOR SEED”.
-\item \strong{Barley (91):} “SPRING” or “WINTER”.
-\item \strong{Rice (18):} “SHORT”, “LONG”, “MEDIUM”, or “NO TYPE SPECIFIED”, dropping certain japonica types.
-\item \strong{Other crops (41, 75, 94, 17, 81):} “GRAIN”, “SILAGE” (when \code{type_code == 26}), or “ALL”.
+\item \strong{Wheat (11):} \code{"DURUM"}, \code{"SPRING"}, or \code{"NO TYPE SPECIFIED"}, dropping \code{"FORAGE WHEAT FOR SEED"}.
+\item \strong{Barley (91):} \code{"SPRING"} or \code{"WINTER."}
+\item \strong{Rice (18):} \code{"SHORT"}, \code{"LONG"}, \code{"MEDIUM"}, or \code{"NO TYPE SPECIFIED"}, dropping certain japonica types.
+\item \strong{Other crops (41, 75, 94, 17, 81):} \code{"GRAIN"}, \code{"SILAGE"} (when \code{type_code == 26}), or "ALL".
 }
 \item Summarizes total \code{liability_amount} by \verb{(commodity_code, state_code, county_code, type_name)}.
 \item Pivots to wide form, with one column per \code{type_name}, filling missing with zero.
-\item Determines the single “dominant” type for each county—i.e. the one with positive liability
+\item Determines the single "dominant" type for each county-i.e. the one with positive liability
 when all other types are zero.
 \item Joins this \code{type_recode} back onto the full dataset and applies final cleanup:
 \itemize{
-\item If \code{type_name} is not “NO TYPE SPECIFIED”, it overrides the county-level rename.
-\item Fills any remaining blanks or \code{NA} in \code{type_recode} with “NO TYPE SPECIFIED”.
+\item If \code{type_name} is not \code{"NO TYPE SPECIFIED"}, it overrides the county-level rename.
+\item Fills any remaining blanks or \code{NA} in \code{type_recode} with \code{"NO TYPE SPECIFIED"}.
 }
 \item Drops any residual invalid liability rows, selects and deduplicates the key columns,
 adds a \code{data_source} column, saves to \code{./data-raw/type_recodes.rds}, and returns the result.

@@ -16,8 +16,4 @@ Useful links:
 }
 
 }
-\author{
-\strong{Maintainer}: Francis Tsiboe \email{ftsiboe@hotmail.com} (\href{https://orcid.org/0000-0001-5984-1072}{ORCID})
-
-}
 \keyword{internal}

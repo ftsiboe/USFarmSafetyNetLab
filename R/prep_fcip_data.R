@@ -4,8 +4,8 @@
 
 #' Download and Process RMA Web Data Files
 #'
-#' Fetches one or more years of USDA RMA “Summary of Business” data
-#' (state–county–crop & livestock participation series), unzips,
+#' Fetches one or more years of USDA RMA Summary of Business data
+#' (state-county-crop & livestock participation series), unzips,
 #' reads the pipe-delimited text, applies the correct column names,
 #' and saves each year as an \code{.rds} under \code{dest}.
 #'
@@ -16,7 +16,7 @@
 #' @param dest Character path where the final \code{.rds} files will go.
 #'   Defaults to \code{"./data-raw/data_release"}.
 #' @param url_rma_web_data_files Base URL for USDA RMA web data.
-#'   Defaults to the official RMA “Web_Data_Files” root.
+#'   Defaults to the official RMA Web_Data_Files root.
 #' @return Invisibly returns \code{NULL}. Side effect: one \code{.rds}
 #'   per year is written under \code{dest}, named \code{<file_name>_<year>.rds}.
 #'   
@@ -25,7 +25,7 @@
 #'  
 #' @examples
 #' \dontrun{
-#' # Get sobtpu data for 2018–2022
+#' # Get sobtpu data for 2018-2022
 #' download_rma_web_data_files(2018:2022, "sobtpu")
 #' }
 #' @export
@@ -45,7 +45,7 @@ download_rma_web_data_files <- function(
   
   # 2. Build the download URLs based on `file_name` category
   if (file_name %in% c("sobcov", "sobtpu")) {
-    # State–county–crop data
+    # State-county-crop data
     download_urls <- data.frame(
       url  = paste0(
         url_rma_web_data_files,
@@ -362,7 +362,7 @@ standardize_fcip_column_names <- function(df) {
 #' Harmonize and summarize crop type codes from raw SOBTPU data
 #'
 #' @description
-#' Download the raw “Summary of Business by Type, Practice, and Unit Structure” (SOBTPU)
+#' Download the raw Summary of Business by Type, Practice, and Unit Structure (SOBTPU)
 #' data, clean and harmonize the crop type names for a fixed set of commodity codes,
 #' determine a single dominant type per county, and save the resulting lookup table
 #' of type renames.
@@ -373,17 +373,17 @@ standardize_fcip_column_names <- function(df) {
 #' 2. Filters out rows with missing, zero, infinite, or NaN `liability_amount`, and
 #'    retains only the specified set of commodity codes (wheat, barley, rice, etc.).
 #' 3. Recodes `type_name` by commodity:
-#'    - **Wheat (11):** “DURUM”, “SPRING”, or “NO TYPE SPECIFIED”, dropping “FORAGE WHEAT FOR SEED”.
-#'    - **Barley (91):** “SPRING” or “WINTER”.
-#'    - **Rice (18):** “SHORT”, “LONG”, “MEDIUM”, or “NO TYPE SPECIFIED”, dropping certain japonica types.
-#'    - **Other crops (41, 75, 94, 17, 81):** “GRAIN”, “SILAGE” (when `type_code == 26`), or “ALL”.
+#'    - **Wheat (11):** `"DURUM"`, `"SPRING"`, or `"NO TYPE SPECIFIED"`, dropping `"FORAGE WHEAT FOR SEED"`.
+#'    - **Barley (91):** `"SPRING"` or `"WINTER."`
+#'    - **Rice (18):** `"SHORT"`, `"LONG"`, `"MEDIUM"`, or `"NO TYPE SPECIFIED"`, dropping certain japonica types.
+#'    - **Other crops (41, 75, 94, 17, 81):** `"GRAIN"`, `"SILAGE"` (when `type_code == 26`), or "ALL".
 #' 4. Summarizes total `liability_amount` by `(commodity_code, state_code, county_code, type_name)`.
 #' 5. Pivots to wide form, with one column per `type_name`, filling missing with zero.
-#' 6. Determines the single “dominant” type for each county—i.e. the one with positive liability
+#' 6. Determines the single "dominant" type for each county-i.e. the one with positive liability
 #'    when all other types are zero.
 #' 7. Joins this `type_recode` back onto the full dataset and applies final cleanup:
-#'    - If `type_name` is not “NO TYPE SPECIFIED”, it overrides the county-level rename.
-#'    - Fills any remaining blanks or `NA` in `type_recode` with “NO TYPE SPECIFIED”.
+#'    - If `type_name` is not `"NO TYPE SPECIFIED"`, it overrides the county-level rename.
+#'    - Fills any remaining blanks or `NA` in `type_recode` with `"NO TYPE SPECIFIED"`.
 #' 8. Drops any residual invalid liability rows, selects and deduplicates the key columns,
 #'    adds a `data_source` column, saves to `./data-raw/type_recodes.rds`, and returns the result.
 #'    
@@ -395,7 +395,7 @@ standardize_fcip_column_names <- function(df) {
 #' * `commodity_code`
 #' * `type_code`
 #' * `type_recode`
-#' * `data_source` (always “Summary of business by type, practice, and unit structure”)
+#' * `data_source` (always "Summary of business by type, practice, and unit structure")
 #'
 #' @import data.table
 #' @export
@@ -423,7 +423,7 @@ harmonize_crop_type_codes <- function(){
   
   df <- readRDS("./data-raw/fastscratch/sobtpu.rds");setDT(df)
   
-  # Define the codes we care about up‐front
+  # Define the codes we care about up-front
   keep_codes <- c(11, 91, 18, 41, 75, 94, 17, 81)
   
   # 1) Filter out invalid liabilities and unwanted commodities
@@ -475,8 +475,8 @@ harmonize_crop_type_codes <- function(){
     fill = 0
   )
   
-  # 5) Determine the one “dominant” type per county
-  #    exclude “NO TYPE SPECIFIED” from consideration
+  # 5) Determine the one "dominant" type per county
+  #    exclude "NO TYPE SPECIFIED" from consideration
   type_cols <- setdiff(
     names(county_wide),
     c("commodity_code","state_code","county_code","NO TYPE SPECIFIED")
@@ -533,8 +533,8 @@ harmonize_crop_type_codes <- function(){
 
 #' Harmonize election codes in a data table of insurance elections
 #'
-#' This function looks for two columns—`unit_structure_code` and
-#' `insurance_plan_code`—and creates recoded versions grouping similar
+#' This function looks for two columns-`unit_structure_code` and
+#' `insurance_plan_code`-and creates recoded versions grouping similar
 #' codes into broader categories.
 #'
 #' @param df A `data.frame` containing, at minimum,
@@ -550,21 +550,21 @@ harmonize_election_codes <- function(df){
   
   ## Recode unit structure codes into broader classes
   if ("unit_structure_code" %in% names(df)) {
-    # OU – Optional Unit;
-    # UD – OU established by UDO; and
-    # UA – OU established by a WUA.
-    # BU – Basic Unit;
-    # EU – Enterprise Unit;
-    # EP – Enterprise Unit by Irrigated and/or Non-Irrigated Practices;
-    # EC – Enterprise Unit by FAC and/or NFAC Cropping Practices;
-    # WU – Whole-farm Unit;
+    # OU - Optional Unit;
+    # UD - OU established by UDO; and
+    # UA - OU established by a WUA.
+    # BU - Basic Unit;
+    # EU - Enterprise Unit;
+    # EP - Enterprise Unit by Irrigated and/or Non-Irrigated Practices;
+    # EC - Enterprise Unit by FAC and/or NFAC Cropping Practices;
+    # WU - Whole-farm Unit;
     df[, unit_structure_recode := ifelse(
       unit_structure_code %in% c("UD","UA","OU","", NA),
       "OU",
       unit_structure_code
     )]
     
-    # Map all enterprise variants → "EU"
+    # Map all enterprise variants to "EU"
     df[, unit_structure_recode := ifelse(
       unit_structure_code %in% c("EU","EP","EC"),
       "EU",
@@ -576,28 +576,28 @@ harmonize_election_codes <- function(df){
   if ("insurance_plan_code" %in% names(df)) {
     # Harmonize COMBO products
     # These three plans of insurance are similar but not identical. Some differences are:
-    # • CRC bases the insurance guarantee on the higher of the base price or the harvest period price.
-    # • IP and standard RA guarantees are determined using the base price, with no adjustment if the price increases.
-    # • RA offers up-side price protection like that of CRC as an option but IP does not.
-    # • IP limits unit formats to basic units, which include all interest in a crop in a county under identical ownership.
-    # • RA is unique in offering coverage on whole farm units, integrating coverage from two to three crops.
+    # * CRC bases the insurance guarantee on the higher of the base price or the harvest period price.
+    # * IP and standard RA guarantees are determined using the base price, with no adjustment if the price increases.
+    # * RA offers up-side price protection like that of CRC as an option but IP does not.
+    # * IP limits unit formats to basic units, which include all interest in a crop in a county under identical ownership.
+    # * RA is unique in offering coverage on whole farm units, integrating coverage from two to three crops.
     # check <- data[data$ins_plan_ab %in% c("YP","APH","IP","RP-HPE","RPHPE","CRC","RP","RA"),]
     
-    # APH[90] → YP[1]
+    # APH[90] to YP[1]
     df[, insurance_plan_recode := ifelse(
       insurance_plan_code %in% c(1, 90),
       1,
       insurance_plan_code
     )]
     
-    # CRC[44] → RP[2]
+    # CRC[44] to RP[2]
     df[, insurance_plan_recode := ifelse(
       insurance_plan_code %in% c(44, 2),
       2,
       insurance_plan_recode
     )]
     
-    # IP[42], RP-HPE[3], 25 → RP-HPE[3]
+    # IP[42], RP-HPE[3], 25 to RP-HPE[3]
     df[, insurance_plan_recode := ifelse(
       insurance_plan_code %in% c(25, 42, 3),
       3,
@@ -608,105 +608,11 @@ harmonize_election_codes <- function(df){
   return(df)
 }
 
-
-#' Download and clean Insurance Control Elements tables
-#'
-#' @description
-#' `get_ice_data()` retrieves all “YTD” ICE (Insurance Control Elements) text files
-#' from the specified directory on the RMA public FTP site for one or more years,
-#' downloads them to a temporary location, reads them as pipe-delimited data,
-#' applies internal cleaning routines, and returns the combined dataset. Original
-#' text files are discarded after reading.
-#'
-#' @param years
-#'   Integer vector of calendar years to download (e.g. `2012:2020`). Defaults to `2012`.
-#'
-#' @param ice_url
-#'   Character string giving the base URL of the ICE directory on the RMA FTP site.
-#'   Must end with a slash. Defaults to
-#'   `"https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/"`.
-#'
-#' @param selected_ice
-#'   Character vector of keyword(s) or regular expressions to filter the filenames.
-#'   Only ICE files whose names match at least one element of `selected_ice` will be
-#'   downloaded. If `NULL`, all “YTD” files are processed.
-#'
-#' @return
-#' A single `data.table` (invisibly coercible to `data.frame`) containing the cleaned
-#' ICE data for all requested years. If no matching files are found or all downloads
-#' fail, returns an empty `data.table`.
-#'
-#' @details
-#' Internally, `get_ice_data()` uses
-#' \code{\link[rmaADM]{locate_download_link}} to find all links ending in
-#' “YTD.txt” for each year, then
-#' \code{\link[utils]{download.file}} to fetch them, and
-#' \code{\link[rmaADM]{clean_data}} to perform any standard cleanup before
-#' combining with \code{\link[data.table]{rbindlist}}.
-#'
-#' @seealso
-#' \code{\link[rmaADM]{locate_download_link}}, \code{\link[rmaADM]{clean_data}}
-#'
-#' @import dplyr
-#' @importFrom stringr str_extract str_match_all
-#' @importFrom data.table rbindlist
-#' @importFrom utils download.file
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Download & process ICE tables for 2018 and 2019,
-#' # filtering for any file with “IceAOExpenseSubsidy” in its name
-#' ice_df <- get_ice_data(
-#'   years        = 2018:2019,
-#'   selected_ice = "IceAOExpenseSubsidy"
-#' )
-#' }
-get_ice_data <- function(
-    years        = 2012,
-    ice_url      = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
-    selected_ice = NULL) {
-  dt <- data.table::rbindlist(
-    lapply(years, function(year) {
-      tryCatch({
-        ## locate and filter links ending in "YTD.txt"
-        download_links <- rmaADM:::locate_download_link(
-          year        = year,
-          ice_url     = ice_url,
-          data_source = "ice"
-        ) %>% unlist(use.names = FALSE)
-        download_links <- grep("YTD\\.txt$", download_links, value = TRUE)
-        
-        ## filter by user-supplied patterns, if any
-        if(!is.null(selected_ice)) {
-          pattern <- paste(selected_ice, collapse = "|")
-          download_links <- grep(pattern, download_links, value = TRUE)
-        }
-        
-        dt  <-  data.table::rbindlist(
-          lapply(download_links, function(download_link) {
-            tryCatch({
-              ## download, read, clean
-              tmp <- tempfile(fileext = ".txt")
-              utils::download.file(download_link, destfile = tmp, mode = "wb")
-              dt  <- readr::read_delim(tmp, delim = "|",
-                                       col_names = TRUE, show_col_types = FALSE)
-              FCIP_FORCE_NUMERIC_KEYS <- USFarmSafetyNetLab::FCIP_FORCE_NUMERIC_KEYS
-              dt  <- rmaADM:::clean_data(dt)
-              dt
-            }, error = function(e) {NULL})
-          }),fill = TRUE)
-      }, error = function(e) {NULL})
-    }),fill = TRUE)
-  gc()
-  return(dt)
-}
-
 #' Prepare FCIP Data for Release
 #'
 #' @description
 #' Downloads, processes, and caches multiple Federal Crop Insurance Program (FCIP)
-#' datasets—Summary of Business (SOB), Cause of Loss (COL), and Actuarial Data Master (ADM)—
+#' datasets-Summary of Business (SOB), Cause of Loss (COL), and Actuarial Data Master (ADM)-
 #' saving them as RDS files in a local cache directory structure.
 #'
 #' @param dir_dest Character. Base directory under which to store processed FCIP data.
@@ -715,7 +621,7 @@ get_ice_data <- function(
 #'
 #' @details
 #' 1. **Determine source paths**  
-#'    - On Windows, locates the `farmpolicylab` database under the user's OneDrive→Dropbox folder.  
+#'    - On Windows, locates the `farmpolicylab` database under the user's OneDrive to Dropbox folder.  
 #'    - On non-Windows, uses `~/Database/USA/USDA/`.  
 #'
 #' 2. **Setup local cache directories**  
@@ -725,13 +631,13 @@ get_ice_data <- function(
 #' 3. **Summary of Business (SOB)**  
 #'    - Downloads yearly CSV ZIPs via `download_rma_web_data_files()` for `sobtpu`
 #'      and `sobcov`, plus field description PDFs.  
-#'    - Unzips and reads the historic 1948–1988 SOB data, coerces selected columns to
+#'    - Unzips and reads the historic 1948-1988 SOB data, coerces selected columns to
 #'      numeric, and saves as `sobscc_1948_1988.rds`.  
 #'
 #' 4. **Cause of Loss (COL)**  
 #'    - Downloads yearly CSV ZIPs for `colsom`, plus field description PDF and
 #'      Excel code listing.  
-#'    - Unzips and reads historic 1948–1988 COL data, coerces selected columns
+#'    - Unzips and reads historic 1948-1988 COL data, coerces selected columns
 #'      (including `indemnity_amount`) to numeric, computes `loss_ratio`, filters
 #'      invalid rows, and saves as `col_sob_hist.rds`.  
 #'

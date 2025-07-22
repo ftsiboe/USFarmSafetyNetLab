@@ -49,13 +49,13 @@ breakdown by production practice. These four summaries are merged back together,
 rows with unwanted units (e.g., containing a dollar sign) or total rows in the commodity
 name are filtered out. Next, area metrics are processed by selecting the first non-missing
 sum across the four summaries and averaging it, and production metrics are handled similarly
-after filtering out invalid unit–commodity combinations and converting cotton bale values
+after filtering out invalid unit-commodity combinations and converting cotton bale values
 to pounds. Finally, the area and production results are bound together and summed across
 the chosen grouping keys to produce the final \code{data.table}.
 }
 \seealso{
 \itemize{
-\item \code{\link{downloaded_nass_large_datasets}} – for downloading and caching USDA NASS Quick Stats large dataset files
-\item \code{\link{process_nass_dataset}} – for retrieving raw NASS Quick Stats data
+\item \code{\link{downloaded_nass_large_datasets}} - for downloading and caching USDA NASS Quick Stats large dataset files
+\item \code{\link{process_nass_dataset}} - for retrieving raw NASS Quick Stats data
 }
 }

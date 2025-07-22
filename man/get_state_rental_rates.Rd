@@ -11,13 +11,13 @@ get_state_rental_rates(dir_source = "./data-raw/fastscratch/nass/")
 Path to the directory where Quick Stats files are stored.
 Defaults to \code{"./data-raw/fastscratch/nass/"}.
 
-Approximate per-acre cost of crop production using state‐level rental rates
+Approximate per-acre cost of crop production using state-level rental rates
 retrieved from USDA NASS Quick Stats.  This function:
 \enumerate{
 \item Loads and aggregates NASS asset values and cash rents by state and year.
 \item Joins the two series, excludes non-contiguous states/territories.
 \item Estimates missing rents via a panel regression on log asset values, then corrects for systematic bias.
-\item Interpolates any remaining missing values using a 5-nearest‐neighbor spatial average, iterated twice.
+\item Interpolates any remaining missing values using a 5-nearest-neighbor spatial average, iterated twice.
 }}
 }
 \value{
@@ -37,7 +37,7 @@ Internally this function relies on:
 \itemize{
 \item \code{process_nass_dataset()} to pull NASS Quick Stats.
 \item \code{plm::pdata.frame()} for panel data setup.
-\item \code{lm()} to fit a state-fixed‐effects trend model.
+\item \code{lm()} to fit a state-fixed-effects trend model.
 \item \code{spdep} to compute spatial lags (5-nearest neighbors).
 \item \code{doBy::summaryBy()} for error-ratio corrections.
 \item \code{terra} and \code{tigris} to obtain state geometries.

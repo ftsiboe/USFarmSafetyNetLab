@@ -13,9 +13,9 @@ get_data_release(name = "sobscc", year = "all")
 Defaults to "all".
 Availability:
 * sobscc: "all" only
-* sobcov: "all" and individual years from 1989–2025
-* sobtpu: "all" and individual years from 1999–2025
-* colsom: "all" and individual years from 1989–2025}
+* sobcov: "all" and individual years from 1989-2025
+* sobtpu: "all" and individual years from 1999-2025
+* colsom: "all" and individual years from 1989-2025}
 }
 \value{
 The R object loaded from the requested RDS file.
@@ -23,7 +23,7 @@ The R object loaded from the requested RDS file.
 \description{
 This function constructs the filename \verb{<name>_<year>.rds}, determines the appropriate GitHub release tag
 based on the prefix of \code{name} ("sob" or "col"), and downloads the file via the piggyback package
-if it is not already present in the user’s cache directory. The file is then read into R and returned.
+if it is not already present in the user cache directory. The file is then read into R and returned.
 Currently supports only Summary of Business releases ("sobscc", "sobcov", "sobtpu") and Cause of Loss releases ("colsom").
 }
 \details{

@@ -2,7 +2,7 @@
 #'
 #' This function constructs the filename `<name>_<year>.rds`, determines the appropriate GitHub release tag
 #' based on the prefix of `name` ("sob" or "col"), and downloads the file via the piggyback package
-#' if it is not already present in the user’s cache directory. The file is then read into R and returned.
+#' if it is not already present in the user cache directory. The file is then read into R and returned.
 #' Currently supports only Summary of Business releases ("sobscc", "sobcov", "sobtpu") and Cause of Loss releases ("colsom").
 #'
 #' @param name Character. Base name of the data release (one of "sobscc", "sobcov", "sobtpu", or "colsom"). Defaults to "sobscc".
@@ -10,9 +10,9 @@
 #'             Defaults to "all".
 #'             Availability:
 #'             * sobscc: "all" only 
-#'             * sobcov: "all" and individual years from 1989–2025
-#'             * sobtpu: "all" and individual years from 1999–2025
-#'             * colsom: "all" and individual years from 1989–2025
+#'             * sobcov: "all" and individual years from 1989-2025
+#'             * sobtpu: "all" and individual years from 1999-2025
+#'             * colsom: "all" and individual years from 1989-2025
 #' @return The R object loaded from the requested RDS file.
 #' @details
 #' - `tools::R_user_dir("USFarmSafetyNetLab", which = "cache")` locates or creates a per-user cache directory.
@@ -83,7 +83,7 @@ get_data_release <- function(name = "sobscc", year = "all") {
 #' @param planted_area Numeric
 #' @param production_history_length Integer vector of indices for actual_farm_yield columns. Default 0:10.
 #' 
-#' @return A \code{data.table} with one row per “farmer” and columns:
+#' @return A \code{data.table} with one row per farmer and columns:
 #' \itemize{
 #'   \item \code{farmid}
 #'   \item \code{commodity_year}
@@ -94,7 +94,7 @@ get_data_release <- function(name = "sobscc", year = "all") {
 #'   \item \code{approved_yield}, \code{rate_yield}
 #'   \item \code{reported_acres}, \code{insured_share_percent}
 #'   \item \code{price_election_percent}, \code{dmage_area_rate}, \code{market_year_price}
-#'   \item \code{actual_farm_yield_0} … \code{actual_farm_yield_<max(production_history_length)>}
+#'   \item \code{actual_farm_yield_0} to \code{actual_farm_yield_<max(production_history_length)>}
 #' }
 #'
 #' @examples
@@ -255,7 +255,7 @@ generate_toy_farmer_data <- function(
 #' `R/helper_data.R` with roxygen documentation for each combined dataset.
 #'
 #' @param dir_source `character(1)`
-#'   Path to the top‐level directory containing raw yearly `.rds` files.
+#'   Path to the top-level directory containing raw yearly `.rds` files.
 #'   Defaults to `"./data-raw/internal_datasets"`.
 #' @param size_threshold   `numeric(1)`
 #'   Maximum file size (in megabytes) allowed for inclusion.  Any dataset whose

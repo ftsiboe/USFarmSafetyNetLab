@@ -14,7 +14,7 @@
 #'   - nlapv:   lapv normalized by mu
 #'   - nlrpv:   lrpv normalized by mu
 #'   - lres2:   same as lapv (for clarity)
-#'   - cdf:     empirical probability of loss (P(X < μ))
+#'   - cdf:     empirical probability of loss (P(X < mu))
 #' @import moments
 #' @importFrom stats median var
 #' @export

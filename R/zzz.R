@@ -8,16 +8,12 @@
   calculate_mode <- function(x,na.rm = T){ux <- unique(x); ux[which.max(tabulate(match(x, ux)))]}
   
   options(future.globals.maxSize = 20 * 1024^3)  # 20 GiB
-  
-  # # Install/update Related R Package Only If Its R/ Folder Has Newer Changes
-  # update_packages(user="dylan-turner25", repo="rmaADM",package="rmaADM")
-  # update_packages(user="dylan-turner25", repo="rfcip",package="rfcip")
 
   requireNamespace("rmaADM", quietly = TRUE)
   requireNamespace("rfcip", quietly = TRUE)
   
   # Note: data.table's `:=` creates these columns at runtime. We register them here
-  # so that R CMD check doesn’t flag “no visible binding for global variable”.
+  # so that R CMD check does not flag no visible binding for global variable.
   if (getRversion() >= "2.15.1") {
     utils::globalVariables(
       strsplit(

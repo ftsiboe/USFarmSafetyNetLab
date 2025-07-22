@@ -66,7 +66,7 @@ generate_toy_farmer_data(
 \item{production_history_length}{Integer vector of indices for actual_farm_yield columns. Default 0:10.}
 }
 \value{
-A \code{data.table} with one row per “farmer” and columns:
+A \code{data.table} with one row per farmer and columns:
 \itemize{
 \item \code{farmid}
 \item \code{commodity_year}
@@ -77,7 +77,7 @@ A \code{data.table} with one row per “farmer” and columns:
 \item \code{approved_yield}, \code{rate_yield}
 \item \code{reported_acres}, \code{insured_share_percent}
 \item \code{price_election_percent}, \code{dmage_area_rate}, \code{market_year_price}
-\item \code{actual_farm_yield_0} … \code{actual_farm_yield_<max(production_history_length)>}
+\item \code{actual_farm_yield_0} to \code{actual_farm_yield_<max(production_history_length)>}
 }
 }
 \description{

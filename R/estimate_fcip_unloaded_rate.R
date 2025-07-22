@@ -1,7 +1,7 @@
 #' Estimate FCIP Unloaded (County) Rates
 #'
-#' Computes the “unloaded” loss cost rates (\code{tau}) for counties based on
-#' the FCIC Rate Methodology Handbook (2009), pp. 65–70.
+#' Computes the unloaded loss cost rates (\code{tau}) for counties based on
+#' the FCIC Rate Methodology Handbook (2009), pp. 65-70.
 #'
 #' @param statplan A \link[data.table]{data.table} containing FCIP rate elements
 #'   with at least the columns:
@@ -21,14 +21,14 @@
 #' @return A \code{data.frame} with columns:
 #'   \describe{
 #'     \item{state_code, county_code, commodity_code}{Keys identifying county and crop.}
-#'     \item{tau}{Estimated FCIP county “unloaded” rate.}
+#'     \item{tau}{Estimated FCIP county unloaded rate.}
 #'   }
 #' @import data.table
 #' 
 #' @details
 #' 1. **Target data** is filtered to the selected state(s)/county(ies).  
-#' 2. **Group data** finds contiguous‐county groupings, unions them with the target.  
-#' 3. Computes group‐level statistics:
+#' 2. **Group data** finds contiguous-county groupings, unions them with the target.  
+#' 3. Computes group-level statistics:
 #'   - \code{c_alpha}: mean insured acres  
 #'   - \code{c_u}: mean LCR  
 #'   - \code{c_a}: variance of LCR  
@@ -42,7 +42,7 @@
 #'   \eqn{P = c_{\!net\_acre}/c_\alpha,\quad K = c_v/c_a.}
 #'
 #' @references
-#' FCIC Rate Methodology Handbook APH (2009), pp. 65–70.  
+#' FCIC Rate Methodology Handbook APH (2009), pp. 65-70.  
 #' \url{https://legacy.rma.usda.gov/pubs/2008/ratemethodology.pdf}
 #'
 #' @export
@@ -60,7 +60,7 @@ estimate_fcip_unloaded_rate <- function(
     state_code %in% state & county_code %in% county
   ]
   
-  # 2. Build the contiguous‐county group for each target county
+  # 2. Build the contiguous-county group for each target county
   group_data <- target_data[contiguous_county, on = .(state_code, county_code), nomatch = 0
   ][, .(state_code = contiguous_state_code, county_code = contiguous_county_code)]
   group_data <- unique(group_data)

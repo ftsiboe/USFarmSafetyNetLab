@@ -2,13 +2,11 @@ Package: USFarmSafetyNetLab
 Type: Package
 Title: US Farm Safety Net Lab
 Version: 0.0.0.9000
-Authors@R: 
-    person(
-      given = "Francis", family = "Tsiboe",
-      role = c("aut", "cre"),
-      email = "ftsiboe@hotmail.com",
-      comment = c(ORCID = "0000-0001-5984-1072")
-    )
+Author: Francis Tsiboe [aut, cre] (<https://orcid.org/0000-0001-5984-1072>)
+Maintainer: Francis Tsiboe <ftsiboe@hotmail.com>
+Contributor: -
+Reviewer: -
+Creator: Francis Tsiboe
 Description: This repository centralizes research outputs, analytical tools, and
  resources for exploring and evaluating the United States agricultural safety net
  programs. It supports analysis of key programs including the Federal Crop Insurance
@@ -33,3 +31,10 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 LazyData: true
+Cite-us: If you find it useful, please consider staring the repository and citing the following studies
+  - Tsiboe, F. and Turner, D. (2025). "Incorporating buy‐up price loss coverage into the United States
+    farm safety net." Applied Economic Perspectives and Policy.
+  - Tsiboe, F., et al. (2025). "Risk reduction impacts of crop insurance in the United States."
+    Applied Economic Perspectives and Policy.
+  - Gaku, S. and Tsiboe, F. (2024). Evaluation of alternative farm safety net program combination
+    strategies. Agricultural Finance Review.

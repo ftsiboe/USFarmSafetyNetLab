@@ -29,7 +29,7 @@ copy_3rd_party_function <- function(pkg, fun_name, dest_dir = "R") {
   # Extract and unwrap if memoised
   obj <- getFromNamespace(fun_name, pkg)
   if ("memoised_function" %in% class(obj)) {
-    message(sprintf("ℹ Detected memoised function '%s:::%s' – unwrapping.", pkg, fun_name))
+    message(sprintf("Detected memoised function '%s:::%s' - unwrapping.", pkg, fun_name))
     obj <- environment(obj)$f
   }
 
@@ -82,10 +82,6 @@ copy_3rd_party_function <- function(pkg, fun_name, dest_dir = "R") {
   file_path <- file.path(dest_dir, paste0(fun_name, ".R"))
   writeLines(c(header, fun_text), con = file_path)
 
-  message(sprintf("✅ Function '%s:::%s' written to '%s'", pkg, fun_name, file_path))
+  message(sprintf("Function '%s:::%s' written to '%s'", pkg, fun_name, file_path))
   invisible(file_path)
 }
-
-
-copy_3rd_party_function(pkg="rmaADM", fun_name="clean_data")
-copy_3rd_party_function("rmaADM", fun_name="locate_download_link")

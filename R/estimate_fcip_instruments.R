@@ -1,9 +1,9 @@
 #' Estimate FCIP Instrumental Variables (Unloaded Rates)
 #'
-#' Uses historical FCIP rate data to build instrumented unloaded‐rate variables
+#' Uses historical FCIP rate data to build instrumented unloaded-rate variables
 #' following:
-#'   1. Tsiboe & Turner (2023), “Econometric identification of crop insurance participation”  
-#'      _Agricultural and Resource Economics Review_, 52(3):476–497.  
+#'   1. Tsiboe & Turner (2023), Econometric identification of crop insurance participation  
+#'      _Agricultural and Resource Economics Review_, 52(3):476-497.  
 #'      \url{https://doi.org/10.1017/age.2023.13}  
 #'
 #' @param year Integer. The target crop year for which to construct instruments.
@@ -17,24 +17,24 @@
 #'   }
 #'
 #' @import data.table
-#' @return A data.table with one row per county–crop for the specified \code{year},
+#' @return A data.table with one row per county-crop for the specified \code{year},
 #'   containing:
 #'   \describe{
 #'     \item{state_code, county_code, commodity_code}{Keys.}
-#'     \item{tau_sob}{Smoothed unloaded rate (uses contiguous‐county means to fill zeros/NAs).}
+#'     \item{tau_sob}{Smoothed unloaded rate (uses contiguous-county means to fill zeros/NAs).}
 #'     \item{commodity_year}{The input \code{year}, repeated.}
 #'   }
 #'
 #' @details
 #' 1. **Task list**: Identify all unique (state, county) pairs with data in the  
-#'    2–21 years before \code{year}.  
-#' 2. **Unloaded‐rate calculation**: For each county in \code{task_list}, call  
-#'    \code{estimate_fcip_unloaded_rate()} on the same 2–21 year window to get \code{tau}.  
+#'    2-21 years before \code{year}.  
+#' 2. **Unloaded-rate calculation**: For each county in \code{task_list}, call  
+#'    \code{estimate_fcip_unloaded_rate()} on the same 2-21 year window to get \code{tau}.  
 #'    Errors return \code{NULL} so processing continues.  
-#' 3. **Contiguous‐county smoothing**:  
+#' 3. **Contiguous-county smoothing**:  
 #'    - Build a lookup table of contiguous counties (using \code{contiguous_county}).  
 #'    - For each contiguous group, compute the mean \code{tau} to get \code{tau_c}.  
-#' 4. **Merge & fill**: Left‐join the raw \code{adm} and \code{contiguous_adm};  
+#' 4. **Merge & fill**: Left-join the raw \code{adm} and \code{contiguous_adm};  
 #'    replace any zero/NA/Inf \code{tau} with the group mean \code{tau_c} into  
 #'    \code{tau_sob}.  
 #' 5. **Cleanup**: Drop helper columns (\code{tau}, \code{tau_c}), remove invalid rows,  
@@ -44,7 +44,7 @@
 #' @export
 estimate_fcip_instruments <- function(year, statplan) {
   
-  # 1. Build list of (state, county) with at least 2–21 years of data before 'year'
+  # 1. Build list of (state, county) with at least 2-21 years of data before 'year'
   task_list <- unique(statplan[commodity_year %in% (year-2):(year-21), .(state_code, county_code)])
   
   # 2. For each county, compute the unloaded rate via the helper function
@@ -84,7 +84,7 @@ estimate_fcip_instruments <- function(year, statplan) {
         }, error = function(e){return(NULL)})
       }), fill = TRUE)
   
-  # 5. Merge raw rates with contiguous‐county smoothed rates
+  # 5. Merge raw rates with contiguous-county smoothed rates
   adm <- adm[contiguous_adm, on = intersect(names(adm), names(contiguous_adm)), nomatch = 0]
   
   # 6. Replace any invalid/zero tau with the smoothed tau_c
@@ -103,8 +103,8 @@ estimate_fcip_instruments <- function(year, statplan) {
 
 #' Formulate & Merge National Subsidy Rate Instrument (Yu et al., 2018)
 #'
-#' Downloads the historical “Summary of Business” RDS and computes
-#' national subsidy‐rate instruments at specified coverage levels,
+#' Downloads the historical Summary of Business RDS and computes
+#' national subsidy-rate instruments at specified coverage levels,
 #' following Yu et al. (2018).
 #'
 #' @param dt sobcov
@@ -133,7 +133,7 @@ get_yu2018_instrument <- function(
   dt <- dt[insurance_plan_code   %in% plan_codes]
   
   # 4. Create a label for each coverage level
-  #    (round to nearest 5% then convert to a “subsidy_rate_##” string)
+  #    (round to nearest 5% then convert to a subsidy_rate_## string)
   dt[, coverage_level_percent := paste0("subsidy_rate_",(round((coverage_level_percent / 0.05)) * 0.05) * 100)]
   
   # 5. Keep only the coverage levels we need
@@ -149,9 +149,8 @@ get_yu2018_instrument <- function(
   # 7. Convert to rate = subsidy_amount / total premium
   dt_sum[, subsidy_rate := subsidy_amount / total_premium_amount]
   
-  # 8. Reshape to wide: one column per coverage level’s subsidy rate
-  #    (requires tidyr)
-  dt_wide <- dt_sum[, .(commodity_year, coverage_level_percent, subsidy_rate)] %>%
+  # 8. Reshape to wide: one column per coverage level subsidy rate (requires tidyr)
+  dt_wide <- dt_sum[, .(commodity_year, coverage_level_percent, subsidy_rate)] |>
     tidyr::spread(coverage_level_percent, subsidy_rate)
   
   # 9. Return as data.table
