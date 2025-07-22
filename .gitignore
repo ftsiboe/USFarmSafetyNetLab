@@ -9,7 +9,7 @@ data-raw/*
 replications/*
 !replications/fcip_calibrated_yields/
 !replications/crop_insurance_instruments/
-!replications/testthat_adm/
 !data-raw/build_and_try.R
 !data-raw/build_data_release.R
 !data-raw/build_internal_datasets.R
+!data-raw/codestash/
