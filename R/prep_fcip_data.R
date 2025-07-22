@@ -287,6 +287,16 @@ download_rma_web_data_files <- function(
         .SD, function(x) as.numeric(as.character(x))), 
         .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))]
       
+      # Ensure numeric columns are coerced to numeric
+      amount_variables <- c(
+        "net_reporting_level_amount","liability_amount","additional_subsidy","efa_premium_discount",
+        "total_premium_amount","subsidy_amount","indemnity_amount","loss_ratio","endorsed_commodity_reporting_level_amount",
+        "policies_sold_count","policies_earning_premium_count","policies_indemnified_count","units_earning_premium_count",
+        "units_indemnified_count","net_reported_quantity","endorsed_companion_acres","state_private_subsidy"  )
+      data[, c(intersect(amount_variables, names(data))) := lapply(
+        .SD, function(x) as.numeric(as.character(x))), 
+        .SDcols = intersect(amount_variables, names(data))]
+      
       saveRDS(data,file = file.path(dest, paste0(file_name, "_", download_urls$year[i], ".rds")))
       
     }, error = function(e) {
@@ -706,8 +716,7 @@ prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
   
   sobcov_all <- list.files(paste0(dir_dest,"/sob"),pattern = "sobcov",full.names = T)
   sobcov_all <- sobcov_all[!grepl("pdf|all",sobcov_all)]
-  sobcov_all <- data.table::rbindlist(
-    lapply(sobcov_all,function(i){readRDS(i)}), fill = TRUE)
+  sobcov_all <- data.table::rbindlist(lapply(sobcov_all,function(i){readRDS(i)}), fill = TRUE)
   saveRDS(sobcov_all,paste0(dir_dest,"/sob/sobcov_all.rds"))
   
   temp_zip <- tempfile(fileext = ".zip")
@@ -739,11 +748,19 @@ prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
     "subsidy_amount",
     "indemnity_amount",
     "loss_ratio")
-
+  
   sobscc_1948_1988 <- as.data.table(sobscc_1948_1988)
   sobscc_1948_1988[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(sobscc_1948_1988))) := lapply(
     .SD, function(x) as.numeric(as.character(x))), 
     .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(sobscc_1948_1988))]
+  
+  amount_variables <- c(
+    "policies_sold_count","policies_earning_premium_count","policies_indemnified_count","units_earning_premium_count","units_indemnified_count",
+    "net_reported_quantity","liability_amount","total_premium_amount","subsidy_amount","indemnity_amount","loss_ratio")
+  sobscc_1948_1988[, c(intersect(amount_variables, names(sobscc_1948_1988))) := lapply(
+    .SD, function(x) as.numeric(as.character(x))), 
+    .SDcols = intersect(amount_variables, names(sobscc_1948_1988))]
+  
   saveRDS(sobscc_1948_1988,file=paste0(dir_dest,"/sob/sobscc_1948_1988.rds"))
   
   utils::download.file(
@@ -766,7 +783,7 @@ prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
                   "liability_amount","total_premium_amount","subsidy_amount","indemnity_amount")])
   
   saveRDS(sobscc_all,file=paste0(dir_dest,"/sob/sobscc_all.rds"))
-
+  
   #-------------------------------------------------------------------------------
   # Cause of Loss                                                              ####
   download_rma_web_data_files(
@@ -823,6 +840,13 @@ prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
   data[, c(intersect(c(FCIP_FORCE_NUMERIC_KEYS,"indemnity_amount"), names(data))) := lapply(
     .SD, function(x) as.numeric(as.character(x))), 
     .SDcols = intersect(c(FCIP_FORCE_NUMERIC_KEYS,"indemnity_amount"), names(data))]
+  
+  amount_variables <- c(
+    "policies_earning_premium_count","policies_indemnified_count","net_reported_quantity","liability_amount",
+    "total_premium_amount","subsidy_amount","indemnity_amount","loss_ratio")
+  data[, c(intersect(amount_variables, names(data))) := lapply(
+    .SD, function(x) as.numeric(as.character(x))), 
+    .SDcols = intersect(amount_variables, names(data))]
   
   data[,loss_ratio := indemnity_amount/total_premium_amount]
   data <- data[!liability_amount %in% c(0,NA,Inf,-Inf)]
