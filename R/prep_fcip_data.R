@@ -581,7 +581,7 @@ harmonize_election_codes <- function(df){
       unit_structure_recode
     )]
     
-    df[unit_structure_rename := factor(
+    df[,unit_structure_rename := factor(
       unit_structure_recode,
       levels = c("OU","BU","EU"),
       labels = c("Optional Unit (OU)","Basic Unit (BU)","Enterprise/Whole Fram Unit (EU)"))]
