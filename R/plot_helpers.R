@@ -115,10 +115,82 @@ plot_liability_and_acres <- function(
   return(fig)
 }
 
-
-
-
-
+#' Add U.S. Farm Policy Vertical Lines and Labels to a ggplot
+#'
+#' This function overlays vertical lines and text labels on a ggplot object to mark major 
+#' U.S. agricultural policy events (e.g., Farm Bills or Acts). The vertical lines are drawn 
+#' at specific years, and labels are positioned based on values provided in the `pty` vector.
+#'
+#' @param pty A numeric vector of y-axis positions for label placement. 
+#' The length of the vector determines which policy annotations are added:
+#' \itemize{
+#'   \item 1st: 1980 Act
+#'   \item 2nd: 1994 Act
+#'   \item 3rd: 1996 Farm Bill
+#'   \item 4th: 2000 Agricultural Risk Protection Act
+#'   \item 5th: 2008 Farm Bill
+#'   \item 6th: 2014 Farm Bill
+#'   \item 7th: 2018 Farm Bill
+#' }
+#' @param plot A `ggplot` object to which policy lines and labels will be added.
+#' @param size A numeric value indicating the text size of the policy labels.
+#'
+#' @return A `ggplot` object with added vertical dashed lines and corresponding 
+#' text labels for each policy year provided.
+#'
+#' @details
+#' The lines and labels are added in brown color with dashed lines (`lty=5`), and labels 
+#' are rotated vertically. Labels are only drawn if the corresponding index exists in `pty`.
+#'
+#' @import ggplot2
+#'
+#' @examples
+#' \dontrun{
+#' base_plot <- ggplot(data, aes(x = crop_year, y = value)) +
+#'   geom_line()
+#' policy_positions <- c(10, 15, 20, 25, 30, 35, 40)
+#' annotated_plot <- policytime(policy_positions, base_plot, size = 3)
+#' print(annotated_plot)
+#' }
+#'
+#' @export
+policytime <- function(pty,plot,size){
+  plotx <- plot + geom_vline(aes(xintercept=1980), lwd=0.5, lty=5,color = "brown") + 
+    geom_text(aes(x=1980 + .5, label="1980 Act",y=pty[1]),
+              colour="brown", angle=90, size=size,check_overlap = TRUE, fontface = "bold")
+  
+  if(length(pty) >=2){
+    plotx <- plotx + geom_vline(aes(xintercept=1994), lwd=0.5, lty=5,color = "brown") + 
+      geom_text(aes(x=1994 + .5, label="1994 Act",y=pty[2]),
+                colour="brown", angle=90, size=size,check_overlap = TRUE,fontface = "bold")
+  }
+  if(length(pty) >=3){
+    plotx <- plotx + geom_vline(aes(xintercept=1996), lwd=0.5, lty=5,color = "brown") + 
+      geom_text(aes(x=1996 + .5, label="1996 Farm Bill",y=pty[3]),
+                colour="brown", angle=90, size=size,check_overlap = TRUE,fontface = "bold")
+  }
+  if(length(pty) >=4){
+    plotx <- plotx +  geom_vline(aes(xintercept=2000), lwd=0.5, lty=5,color = "brown") + 
+      geom_text(aes(x=2000 + .5, label="2000 Agricultural Risk Protection Act",y=pty[4]),
+                colour="brown", angle=90, size=size,check_overlap = TRUE,fontface = "bold")
+  }
+  if(length(pty) >=5){
+    plotx <- plotx + geom_vline(aes(xintercept=2008), lwd=0.5, lty=5,color = "brown") + 
+      geom_text(aes(x=2008 + .5, label="2008 Farm Bill",y=pty[5]),
+                colour="brown", angle=90, size=size,check_overlap = TRUE,fontface = "bold")
+  }
+  if(length(pty) >=6){
+    plotx <- plotx + geom_vline(aes(xintercept=2014), lwd=0.5, lty=5,color = "brown") + 
+      geom_text(aes(x=2014 + .5, label="2014 Farm Bill",y=pty[6]),
+                colour="brown", angle=90, size=size,check_overlap = TRUE,fontface = "bold")
+  }
+  if(length(pty) >=7){
+    plotx <- plotx + geom_vline(aes(xintercept=2018), lwd=0.5, lty=5,color = "brown") + 
+      geom_text(aes(x=2018 + .5, label="2018 Farm Bill",y=pty[7]),
+                colour="brown", angle=90, size=size,check_overlap = TRUE,fontface = "bold")
+  }
+  return(plotx)
+}
 
 
 
