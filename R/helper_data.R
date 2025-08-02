@@ -7,6 +7,41 @@
 #' @source USDA-RMA, Actuarial Data Master - A0123
 #' @usage data(contiguous_county)
 "contiguous_county"
+#' @name ice_administrative_fee_waiver_code
+#' @title ice_administrative_fee_waiver_code
+#' @description A combined dataset for ice_administrative_fee_waiver_code
+#' @format A data frame with 66 rows and 4 columns covering Inf--Inf.
+#' @source USDA-RMA, Insurance Control Elements - PASS - D00154
+#' @usage data(ice_administrative_fee_waiver_code)
+"ice_administrative_fee_waiver_code"
+#' @name ice_policy_history_request_code
+#' @title ice_policy_history_request_code
+#' @description A combined dataset for ice_policy_history_request_code
+#' @format A data frame with 127 rows and 4 columns covering Inf--Inf.
+#' @source USDA-RMA, Insurance Control Elements - PASS - D00154
+#' @usage data(ice_policy_history_request_code)
+"ice_policy_history_request_code"
+#' @name ice_program_indicator
+#' @title ice_program_indicator
+#' @description A combined dataset for ice_program_indicator
+#' @format A data frame with 46 rows and 4 columns covering Inf--Inf.
+#' @source USDA-RMA, Insurance Control Elements - PASS - D00154
+#' @usage data(ice_program_indicator)
+"ice_program_indicator"
+#' @name ice_program_indicator_code
+#' @title ice_program_indicator_code
+#' @description A combined dataset for ice_program_indicator_code
+#' @format A data frame with 46 rows and 4 columns covering Inf--Inf.
+#' @source USDA-RMA, Insurance Control Elements - PASS - D00154
+#' @usage data(ice_program_indicator_code)
+"ice_program_indicator_code"
+#' @name ice_yield_type_code
+#' @title ice_yield_type_code
+#' @description A combined dataset for ice_yield_type_code
+#' @format A data frame with 913 rows and 5 columns covering Inf--Inf.
+#' @source USDA-RMA, Insurance Control Elements - PASS - D00154
+#' @usage data(ice_yield_type_code)
+"ice_yield_type_code"
 #' @name index_for_price_recived
 #' @title index_for_price_recived
 #' @description A combined dataset for index_for_price_recived

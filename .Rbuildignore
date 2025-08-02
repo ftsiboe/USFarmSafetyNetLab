@@ -32,4 +32,7 @@ data/README.md
 code_of_conduct.md
 job_lcr_estimations.sbatch
 \\.out$
+^.*\\.pdf$
+^USFarmSafetyNetLab_.*\.pdf$
+^man/figures/
 

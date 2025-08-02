@@ -17,11 +17,6 @@
 #' @format A \code{character} vector of field names.
 #' @return A \code{character} vector specifying the columns used to define
 #'   each FCIP insurance pool.
-#'
-#' @seealso
-#' \code{FCIP_INSURANCE_ELECTION} for the set of fields defining an insurance election.
-#' \code{FCIP_INSURANCE_ELECTION_RCODED} for the set of fields defining a recoded insurance pool.
-#'
 #' @examples
 #' \dontrun{
 #' # Default insurance pool fields
@@ -41,7 +36,6 @@ FCIP_INSURANCE_POOL <- c(
   "practice_code"
 )
 
-
 #' Insurance election identifier fields
 #'
 #' A character vector of column names that define an insurance election within
@@ -56,11 +50,6 @@ FCIP_INSURANCE_POOL <- c(
 #'   \item{coverage_level_percent}{Elected coverage level as a percentage of approved yield or price.}
 #' }
 #' @return A \code{character} vector of field names used to specify insurance elections.
-#'
-#' @seealso
-#' \code{FCIP_INSURANCE_ELECTION_RCODED} for the set of fields defining a recoded insurance pool.
-#' \code{FCIP_INSURANCE_POOL} for the set of fields defining an insurance pool.
-#'
 #' @examples
 #' \dontrun{
 #' # Default election fields
@@ -96,10 +85,6 @@ FCIP_INSURANCE_ELECTION <- c(
 #' }
 #' @return
 #' A \code{character} vector of recoded insurance election field names.
-#'
-#' @seealso
-#' \code{FCIP_INSURANCE_POOL} for the set of fields defining an insurance pool.
-#' \code{FCIP_INSURANCE_ELECTION} for the set of fields defining an insurance election.
 #'
 #' @examples
 #' \dontrun{
@@ -143,9 +128,6 @@ FCIP_INSURANCE_ELECTION_RCODED <- c(
 #' @format A \code{character} vector of column names.
 #' @return A \code{character} vector of field names to coerce to numeric.
 #'
-#' @seealso
-#' \code{FCIP_INSURANCE_POOL} for the set of fields defining an insurance pool.
-#'
 #' @examples
 #' \dontrun{
 #' # View default keys
@@ -178,8 +160,31 @@ FCIP_FORCE_NUMERIC_KEYS <- c(
   "practice_code",
   "record_category_code",
   "insurance_plan_code",
-  "coverage_level_percent"
+  "coverage_level_percent",
+  "price_volatility_factor",
+  "area_loss_start_percent",
+  "area_loss_end_percent"
 )
 
-
-
+#' Column names to coerce to character
+#'
+#' A character vector of column names that should be converted to character
+#' during data ingestion and cleaning.
+#'
+#' @format A \code{character} vector of column names.
+#' @return A \code{character} vector of field names to coerce to character
+#'
+#' @export
+FCIP_FORCE_CHARACTER_KEYS <- c(
+  "unit_structure_code",
+  "coverage_type_code",
+  "record_type_code",
+  "reference_amount_code",
+  "optional_unit_allowed_flag",
+  "basic_unit_allowed_flag",
+  "enterprise_unit_allowed_flag",
+  "whole_farm_unit_allowed_flag",
+  "program_type_code",
+  "type_practice_use_code",
+  "private_508h_flag"
+)

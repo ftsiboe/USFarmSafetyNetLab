@@ -1,7 +1,3 @@
-# remotes::install_github("dylan-turner25/rmaADM", force = TRUE,upgrade="never")
-# remotes::install_github("dylan-turner25/rfcip", force = TRUE,upgrade="never")
-# remotes::install_github("dylan-turner25/rfsa", force = TRUE,upgrade="never")
-
 #' Download and Process RMA Web Data Files
 #'
 #' Fetches one or more years of USDA RMA Summary of Business data
@@ -886,9 +882,7 @@ prep_fcip_data <- function(dir_dest = "data-raw/data_release"){
   price <- standardize_fcip_column_names(price)
   
   saveRDS(price,file=paste0(dir_dest,"/adm/fcip_commodity_prices.rds"))
-  
-  # saveRDS(rmaADM:::clean_data(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/2025/2025_A01230_ContiguousCounty_YTD.rds"))),
-  #         file=paste0(dir_dest,"/contiguous_county_adm.rds"))
+
   #-------------------------------------------------------------------------------
   
   return(c(list.files(paste0(dir_dest,"/sob")),

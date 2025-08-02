@@ -1,7 +1,7 @@
 #' ERS Theme
 #' @source coppied from https://github.com/USDA-REE-ERS/MTED-Theme on 08/01/2025
 #' @examples
-#' ggplot2::ggplot() + ERSTheme::ers_theme()
+#' ggplot2::ggplot() + ers_theme()
 #' @export
 ers_theme = function() {
   ggplot2::theme(

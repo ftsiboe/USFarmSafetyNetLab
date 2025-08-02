@@ -40,8 +40,4 @@ rFarmPolicySim:::FCIP_INSURANCE_POOL <- c(
 )
 }
 }
-\seealso{
-\code{FCIP_INSURANCE_ELECTION} for the set of fields defining an insurance election.
-\code{FCIP_INSURANCE_ELECTION_RCODED} for the set of fields defining a recoded insurance pool.
-}
 \keyword{datasets}

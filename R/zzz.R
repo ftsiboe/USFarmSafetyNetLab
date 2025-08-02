@@ -4,12 +4,10 @@
   
   # set global timeout limit
   options(timeout = 360000)
-  
-  calculate_mode <- function(x,na.rm = T){ux <- unique(x); ux[which.max(tabulate(match(x, ux)))]}
-  
+
   options(future.globals.maxSize = 20 * 1024^3)  # 20 GiB
 
-  requireNamespace("rmaADM", quietly = TRUE)
+  # requireNamespace("rmaADM", quietly = TRUE)
   requireNamespace("rfcip", quietly = TRUE)
   
   # Note: data.table's `:=` creates these columns at runtime. We register them here
@@ -36,6 +34,8 @@
     price_election_percent rate_yield record_category_code
     reference_amount_code reported_acres
     ..final_cols ..keep_cols ALL county_fips estimate_smooth obs
+    IQR cagr change coef disaggregate outcome pct_change
+    rank_among_outcomes reinsurance_year sd unit_structure_rename filename time
       ",
         "\\s+"
       )[[1]]

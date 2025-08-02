@@ -13,5 +13,5 @@ ers_theme()
 ERS Theme
 }
 \examples{
-ggplot2::ggplot() + ERSTheme::ers_theme()
+ggplot2::ggplot() + ers_theme()
 }

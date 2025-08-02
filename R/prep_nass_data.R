@@ -72,9 +72,9 @@ get_nass_historical_track_record_crop <- function(
   croptr <- basename(download_link)
   download.file(download_link,destfile=paste0(dir_source,"/croptr.zip"),mode="wb")
   
-  index <- xml2::read_html(unz(paste0(dir_source,"/croptr.zip"),"crop_index.htm"))  %>% 
-    rvest::html_node("table:nth-child(2)") %>%  rvest::html_text()
-  index <- map(index, ~ stringr::str_split(.x, "\\r\n\r\n") %>% unlist())
+  index <- xml2::read_html(unz(paste0(dir_source,"/croptr.zip"),"crop_index.htm"))  |> 
+    rvest::html_node("table:nth-child(2)") |>  rvest::html_text()
+  index <- map(index, ~ stringr::str_split(.x, "\\r\n\r\n") |> unlist())
   index <- purrr::reduce(index, c)
   index <- index[(grepl("Area Planted",index) | grepl("Area Harvested",index))]
   index <- index[! grepl("Principal Crops",index)]
@@ -273,7 +273,7 @@ get_nass_historical_track_record_crop <- function(
   final$variable <- ifelse(final$variable %in% "PRODUCTION","Tracks_production",final$variable)
   final$variable <- ifelse(final$variable %in% "YIELD","Tracks_yield",final$variable)
   final$variable <- ifelse(final$variable %in% "PRICE","Tracks_price",final$variable)
-  final <- final %>% tidyr::spread(variable, value)
+  final <- final |> tidyr::spread(variable, value)
   final$CROP <- ifelse(final$CROP %in% "SUNFLOWER","SUNFLOWERS",final$CROP)
   final$CROP <- ifelse(final$CROP %in% "SUGARBEET","SUGAR BEETS",final$CROP)
   final$CROP <- ifelse(final$CROP %in% "POTATO","POTATOES",final$CROP)
@@ -290,10 +290,10 @@ get_nass_historical_track_record_crop <- function(
                                      "SORGHUM - GRAZED","SPRING POTATO","SUMMER POTATO","WINTER POTATO","WINTER WHEAT"),]
   
   final$crop_year <- as.numeric(as.character(final$crop_year))
-  final <- final %>% group_by(CROP,crop_year) %>%
+  final <- final |> group_by(CROP,crop_year) |>
     summarise(across(all_of(c("Tracks_area_harvested", "Tracks_area_planted", "Tracks_price", "Tracks_production","Tracks_yield")),
-                     ~ sum(., na.rm = TRUE), .names = "{.col}")) %>%
-    ungroup() %>% as.data.frame(.)
+                     ~ sum(., na.rm = TRUE), .names = "{.col}")) |>
+    ungroup() |> as.data.frame(.)
   
   final <- final[c("CROP","crop_year","Tracks_area_harvested", "Tracks_area_planted", "Tracks_price", "Tracks_production","Tracks_yield")]
   names(final) <- c("commodity_name","commodity_year","tracks_area_harvested", "tracks_area_planted", "tracks_price", "tracks_production","tracks_yield")
@@ -364,8 +364,8 @@ downloaded_nass_large_datasets <- function(large_datasets, dir_dest = "./data-ra
         # Scrape available dataset URLs
         base_url <- "https://www.nass.usda.gov"
         dataset_page <- xml2::read_html(paste0(base_url, "/datasets/"))
-        hrefs <- dataset_page %>%
-          rvest::html_nodes("a") %>%
+        hrefs <- dataset_page |>
+          rvest::html_nodes("a") |>
           rvest::html_attr("href")
         txt_links <- hrefs[grepl("\\.txt", hrefs)]
         qs_urls <- txt_links[grepl("datasets", txt_links)]

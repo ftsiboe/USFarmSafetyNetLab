@@ -11,11 +11,9 @@
 #'   \item{FB1996}{Federal Agriculture Improvement and Reform Act of 1996 (P.L. 104-127, "1996 Farm Bill")}
 #'   \item{FB2000}{Agricultural Risk Protection Act of 2000 (P.L. 106-224, "ARPA")}
 #'   \item{FB2008}{Food, Conservation, and Energy Act of 2008 (P.L. 110-246, "2008 Farm Bill")}
-#'   \item{FB2014}{Agricultural Act of 2014 (P.L. 113–79, "2014 Farm Bill")}
+#'   \item{FB2014}{Agricultural Act of 2014 (P.L. 113-79, "2014 Farm Bill")}
 #'   \item{FB2018}{Agricultural Improvement Act of 2018 (P.L. 115-334, "2018 Farm Bill")}
 #' }
-#'
-#' @usage data(legislations)
 #' @keywords internal
 legislations <- list(
   # Created the first major U.S. farm subsidy and supply control system during the Great Depression.
@@ -43,7 +41,7 @@ legislations <- list(
   FB2008 = 'Food, Conservation, and Energy Act of 2008 (P.L. 110-246, "2008 Farm Bill")',
   
   # Repealed direct payments; introduced ARC/PLC programs; expanded crop insurance.
-  FB2014 = 'Agricultural Act of 2014 (P.L. 113–79, "2014 Farm Bill")',
+  FB2014 = 'Agricultural Act of 2014 (P.L. 113-79, "2014 Farm Bill")',
   
   # Continued ARC/PLC with tweaks; added hemp legalization and minor conservation reform.
   FB2018 = 'Agricultural Improvement Act of 2018 (P.L. 115-334, "2018 Farm Bill")',

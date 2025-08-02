@@ -1,30 +1,59 @@
-#' Plot Liability and Net Reported Acres Faceted by Disaggregation Variable
+#' Plot Liability and Net Reported Acres Faceted by a Grouping Variable
 #'
-#' This function creates a two-panel bar chart that visualizes (A) liability in U.S. dollars 
-#' and (B) net reported acres over time, grouped by a user-defined disaggregation variable. 
-#' A shared x-axis and a unified bottom legend are included.
+#' Produces a two-panel bar chart:
+#' \enumerate{
+#'   \item \strong{Panel A} - Liability (in U.S.\ dollars) by year and group.
+#'   \item \strong{Panel B} - Net reported acres (in acres) by year and group.
+#' }
+#' The panels share the same x-axis (commodity years) and a single legend
+#' that is displayed beneath the figure.
 #'
-#' @param data A `data.frame` containing the columns: `crop_year`, `value`, `variable`, 
-#' and a column specified by `disag`. The `variable` column should include 
-#' "(A) Liability in U.S. dollars" and "(B) Net reported acres" as possible values.
-#' @param disag A `character` string specifying the name of the column in `data` 
-#' to be used for grouping in the plots (e.g., `"commodity"`, `"state"`).
-#' @param time_scale_theme An optional ggplot2 theme object controlling time axis styling. 
-#' If `NULL`, the function expects a globally defined `myTime` theme.
-#' @param general_theme An optional ggplot2 theme object for general plot styling. 
-#' If `NULL`, the function expects a globally defined `myTheme`.
+#' @param data A `data.frame` containing at least these columns:
+#'   \itemize{
+#'     \item `commodity_year` - numeric or factor; the x-axis.
+#'     \item `value` - numeric; the bar heights.
+#'     \item `variable` - factor with the levels
+#'       `"(A) Liability in U.S. dollars"` and
+#'       `"(B) Net reported acres"`.
+#'     \item The column referenced by `grouping_variable`.
+#'   }
+#' @param grouping_variable A character scalar giving the name of the column in
+#'   `data` that defines the groups (e.g.\ `"commodity"`, `"state"`).
+#' @param grouping_name Optional character scalar used as the legend title.
+#'   Defaults to the value of `grouping_variable` if `NULL`.
+#' @param time_scale_theme Optional `ggplot2` scale or theme element that
+#'   controls the x-axis breaks/labels.  If `NULL`, the function applies
+#'   `scale_x_continuous(breaks = unique(data$commodity_year), labels = unique(data$commodity_year))`.
+#' @param general_theme Optional `ggplot2` theme applied to both panels.
+#'   If `NULL`, `ers_theme()` is used with additional tweaks for font sizes,
+#'   legend layout, and facet strips.
+#' @param label_liability Y-axis label for Panel A.  Default
+#'   `"Billion U.S. dollars\\n"`.
+#' @param label_net_reported_acres Y-axis label for Panel B.  Default
+#'   `"Million acres\\n"`.
+#' @param palette A character vector of hex colors used to fill the bars.
+#'   The default is an 11-color palette aligned with ERS/NDSU branding.
 #'
-#' @return A `gtable` object combining:
-#' \itemize{
-#'   \item Panel A: Liability by year and group
-#'   \item Panel B: Net reported acres by year and group
-#'   \item Shared x-axis label
-#'   \item Combined legend at the bottom
+#' @return A named list with five objects:
+#' \describe{
+#'   \item{`fig`}{A `gtable` containing the assembled two-panel figure, shared
+#'     x-axis label, and bottom legend.}
+#'   \item{`figA`}{The `ggplot` object for Panel A.}
+#'   \item{`figB`}{The `ggplot` object for Panel B.}
+#'   \item{`ldgnd`}{The extracted legend as a `gtable`.}
+#'   \item{`xlabT`}{The shared x-axis grob as a `gtable`.}
 #' }
 #'
 #' @details
-#' The function uses `ggplot2`, `gridExtra`, and `gtable` for construction and layout. 
-#' You can pass custom themes to override the defaults.
+#' Internally the function:
+#' \enumerate{
+#'   \item Duplicates the column named by `grouping_variable` into
+#'     `data$grouping_variable` for convenient aesthetic mapping.
+#'   \item Builds two separate `ggplot` bar charts (one per `variable` level),
+#'     applies user themes and palettes, and hides their legends.
+#'   \item Extracts a shared legend and x-axis grob with `gtable_filter()`.
+#'   \item Assembles everything with `gridExtra::grid.arrange()`.
+#' }
 #'
 #' @import ggplot2
 #' @import gridExtra
@@ -33,46 +62,81 @@
 #'
 #' @examples
 #' \dontrun{
+#' # Group by commodity with a custom x-axis theme
 #' plot_liability_and_acres(
-#'   data = data_comm, 
-#'   disag = "commodity",
-#'   time_scale_theme = theme(axis.text.x = element_text(angle = 45)),
-#'   general_theme = theme_minimal()
+#'   data = data_comm,
+#'   grouping_variable = "commodity",
+#'   grouping_name = "Commodity",
+#'   time_scale_theme = ggplot2::scale_x_continuous(
+#'     breaks = seq(2008, 2024, 2),
+#'     labels = seq(2008, 2024, 2)
+#'   ),
+#'   general_theme = ggplot2::theme_minimal()
 #' )
 #' }
 #'
 #' @export
 plot_liability_and_acres <- function(
     data,
-    disag,
+    grouping_variable,
+    grouping_name = NULL,
     time_scale_theme = NULL,
-    general_theme = NULL){
+    general_theme = NULL,
+    label_liability = "Billion U.S. dollars\n",
+    label_net_reported_acres = "Million acres\n",
+    palette = c("#003524", #  (Dark Green)
+                "#00583D", #  (NDSU Green)
+                "#A0BD78", #  (Sage)
+                "#BED73B", #  (Lime Green)
+                "#BE5E27", #  (Rust)
+                "#FFC425", #  (NDSU Yellow)
+                "#FEF389", #  (Lemon Yellow)
+                "#D7E5C8", #  (Pale Sage)
+                "#9DD9F7", #  (Morning Sky)
+                "#51ABA0", #  (Teal)
+                "#0F374B") #  (Night)
+    ){
+
+  if(is.null(time_scale_theme)){
+    time_scale_theme = scale_x_continuous(breaks = unique(data$commodity_year),labels = unique(data$commodity_year))
+  }
   
-  #  data <- data_comm;footnote <- footnote;disag <- "commodity"
-  data$disag <- data[,disag]
-  NN <- length(unique(as.character(data$disag)))
+  if(is.null(general_theme)){
+    general_theme <- ers_theme() +
+      theme(plot.title= element_text(size=10.5),
+            axis.title= element_text(size=10,color="black"),
+            axis.text = element_text(size=10,color="black"),
+            axis.title.y= element_text(size=10,color="black"),
+            legend.title=element_blank(),
+            legend.text=element_text(size=9),
+            plot.caption = element_text(size=10),
+            strip.text = element_text(size = 10),
+            strip.background = element_rect(fill = "white", colour = "black", size = 1))
+  }
+  
+  data$grouping_variable <- data[,grouping_variable]
+  NN <- length(unique(as.character(data$grouping_variable)))
   figA <- ggplot()+
     geom_bar(data=data[data$variable %in% "(A) Liability in U.S. dollars",],
-             aes(x = crop_year, y= value,
-                 group=disag,color=disag,fill=disag),
+             aes(x = commodity_year, y= value,
+                 group=grouping_variable,color=grouping_variable,fill=grouping_variable),
              stat = "identity",color="black") +
-    labs(subtitle="(A) Liability in U.S. dollars",y ="Billion U.S. dollars\n") +
-    myTheme + myTime +
+    labs(subtitle="(A) Liability in U.S. dollars",y = label_liability) +
+    general_theme + time_scale_theme +
     theme(plot.caption = element_blank(),
           plot.subtitle = element_text(size = 12),
           axis.title.x= element_blank(),
           axis.text.x = element_text(size=10,color="black",angle = 90,vjust = 0.5),
           legend.position ="none",
           strip.background = element_blank())
-  
-  
+
   figB <- ggplot()+
     geom_bar(data=data[data$variable %in% "(B) Net reported acres",],
-             aes(x = crop_year, y= value,
-                 group=disag,color=disag,fill=disag),
+             aes(x = commodity_year, y= value,
+                 group=grouping_variable,color=grouping_variable,fill=grouping_variable),
              stat = "identity",color="black") +
-    labs(subtitle="(B) Net reported acres",y ="Million acres\n") +
-    myTheme + myTime +
+    labs(subtitle="(B) Net reported acres",y = label_net_reported_acres) +
+    general_theme + time_scale_theme +
     theme(plot.caption = element_blank(),
           plot.subtitle = element_text(size = 12),
           axis.title.x= element_blank(),
@@ -80,13 +144,16 @@ plot_liability_and_acres <- function(
           legend.position ="none",
           strip.background = element_blank())
   
-  
+  if(!is.null(palette)){
+    figA <- figA + scale_fill_manual(values = palette,na.value = "white", name = grouping_name)
+    figB <- figB + scale_fill_manual(values = palette,na.value = "white", name = grouping_name)
+  }
+
   xlabT <- gtable_filter(
     ggplot_gtable(
       ggplot_build(
-        figA + labs(x="Year") + theme(axis.title.x= element_text(size=10,color="black"))
+        figA + labs(x="Commodity year") + theme(axis.title.x= element_text(size=10,color="black"))
       )), "xlab-b")
-  
   
   ldgnd <- gtable_filter(
     ggplot_gtable(
@@ -96,23 +163,12 @@ plot_liability_and_acres <- function(
           theme(legend.position = "bottom",
                 legend.key.size = unit(0.5,"cm"),
                 legend.text=element_text(size=7.5))
-        
       )), "guide-box-botto")
-  
-  
-  # caption <- gtable_filter(
-  #   ggplot_gtable(
-  #     ggplot_build(
-  #       figA + labs(caption = footnote) +
-  #         theme(plot.caption = element_text(size=8,hjust = 0.01))
-  #     )), "caption")
   
   fig <- grid.arrange(figA,figB,widths=c(1,1),nrow = 1)
   fig <- grid.arrange(fig,xlabT,heights=c(1,0.05),ncol = 1)
   fig <- grid.arrange(fig,ldgnd,heights=c(1,0.10),ncol = 1)
-  #fig <- grid.arrange(fig,caption,heights=c(0.2,0.05),ncol = 1)
-  fig
-  return(fig)
+  return(list(fig=fig,figA=figA,figB=figB,ldgnd=ldgnd,xlabT=xlabT))
 }
 
 #' Add U.S. Farm Policy Vertical Lines and Labels to a ggplot
@@ -146,7 +202,7 @@ plot_liability_and_acres <- function(
 #'
 #' @examples
 #' \dontrun{
-#' base_plot <- ggplot(data, aes(x = crop_year, y = value)) +
+#' base_plot <- ggplot(data, aes(x = commodity_year, y = value)) +
 #'   geom_line()
 #' policy_positions <- c(10, 15, 20, 25, 30, 35, 40)
 #' annotated_plot <- policytime(policy_positions, base_plot, size = 3)
@@ -191,8 +247,3 @@ policytime <- function(pty,plot,size){
   }
   return(plotx)
 }
-
-
-
-
-

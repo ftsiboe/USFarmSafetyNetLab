@@ -20,16 +20,13 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
-Depends:
-    R (>= 3.5)
+Depends: R (>= 4.1.0)
 Imports:
-    rfcip,rmaADM,data.table,dplyr, doBy, gh, magrittr, piggyback, plm, purrr,
-    readr, remotes, rvest, sp, spdep, stringr, terra, classInt,
-    tidyr, tigris, xml2, moments, stats, sf, utils, urbnmapr
-Suggests:
-    knitr,
-    rmarkdown,
-    testthat (>= 3.0.0)
+    rfcip, data.table, dplyr, doBy, piggyback, plm, purrr,
+    readr, rvest, sp, spdep, stringr, terra, classInt, janitor, 
+    tidyr, tigris, xml2, moments, stats, sf, utils, urbnmapr, ggplot2, gridExtra, gtable
+Remotes: github::dylan-turner25/rfcip
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 LazyData: true
 Cite-us: If you find it useful, please consider staring the repository and citing the following studies
   - Tsiboe, F. and Turner, D. (2025). "Incorporating buy‐up price loss coverage into the United States

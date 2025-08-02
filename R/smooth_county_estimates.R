@@ -28,7 +28,6 @@
 #' @importFrom sf st_touches
 #' @importFrom utils head tail
 #' @importFrom terra vect
-#' @importFrom magrittr "%>%"
 #' @importFrom classInt classIntervals
 #' @export
 smooth_county_estimates <- function(
@@ -76,7 +75,7 @@ smooth_county_estimates <- function(
   brks      <- unique(classInt::classIntervals(uniq_vals,
                                                n = n_classes,
                                                style = "jenks")$brks)
-  map_sf <- map_sf %>%
+  map_sf <- map_sf |>
     dplyr::mutate(
       estimate_cat = cut(
         estimate_smooth,

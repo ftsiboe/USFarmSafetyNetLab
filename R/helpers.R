@@ -266,7 +266,6 @@ generate_toy_farmer_data <- function(
 #' and generation of `R/helper_data.R` containing roxygen entries.
 #'
 #' @import dplyr
-#' @importFrom magrittr %>%
 #' @importFrom purrr map
 #' @importFrom readr type_convert
 #' @export
@@ -284,7 +283,7 @@ build_internal_datasets <- function(dir_source = "./data-raw/internal_datasets",
     dir.create("./data")
   }
   
-  file_info <- rmaADM:::get_file_info(directory =dir_source, file_suffix = ".rds")
+  file_info <- get_file_info(directory =dir_source, file_suffix = ".rds")
   
   # Add a column with the file name without any of the parent folders
   file_info$file_name <- gsub(paste0(dir_source, "/"), "", file_info$file_path)
@@ -293,12 +292,12 @@ build_internal_datasets <- function(dir_source = "./data-raw/internal_datasets",
   
   # keep only files that are less than the size threshold (in MB). Applied to
   # maximum size over all years
-  max_sizes <- file_info %>%
-    group_by(.data$file_name) %>%
-    summarize(max_size = max(.data$size_mb)) %>%
+  max_sizes <- file_info |>
+    group_by(.data$file_name) |>
+    summarize(max_size = max(.data$size_mb)) |>
     filter(.data$max_size < size_threshold)
   
-  file_info <- file_info %>%
+  file_info <- file_info |>
     filter(.data$file_name %in% max_sizes$file_name)
   
   # if "./R/helper_data.R" already exists, rename it with the date appended
@@ -319,12 +318,12 @@ build_internal_datasets <- function(dir_source = "./data-raw/internal_datasets",
     file_paths <- file_info[file_info$file_name == f, "file_path"]
     
     # load and combine the datasets
-    data <- file_paths %>%
+    data <- file_paths |>
       purrr::map(~ {
         df <- readRDS(.x)                 # read in the data frame
         df[] <- lapply(df, as.character) # convert all columns to character
         df                               # return the data frame
-      }) %>%
+      }) |>
       dplyr::bind_rows()                 # bind rows
     
     # convert columns to their appropriate types

@@ -43,7 +43,4 @@ rFarmPolicySim:::FCIP_FORCE_NUMERIC_KEYS <- c(
 }
 
 }
-\seealso{
-\code{FCIP_INSURANCE_POOL} for the set of fields defining an insurance pool.
-}
 \keyword{datasets}
