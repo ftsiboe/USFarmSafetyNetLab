@@ -11,9 +11,10 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/ftsiboe/USFarmSafetyNetLab/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ftsiboe/USFarmSafetyNetLab/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/ftsiboe/USFarmSafetyNetLab/graph/badge.svg?token=5PP9O74NZC)](https://codecov.io/gh/ftsiboe/USFarmSafetyNetLab)
+[![codecov](https://codecov.io/gh/ftsiboe/USFarmSafetyNetLab/graph/badge.svg?token=VIMHQH2SEO)](https://codecov.io/gh/ftsiboe/USFarmSafetyNetLab)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
-![R \>= 4.0](https://img.shields.io/badge/R-%3E=4.0-blue)
+![R \>= 4.0](https://img.shields.io/badge/R-%3E=4.0-blue) [![Contributor
+Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 <!-- badges: end -->
 
 # US Farm Safety Net Lab
@@ -65,7 +66,7 @@ stakeholders; and Extension agents and agricultural educators
 feel free to open issues, submit pull requests, or provide feedback and
 suggestions to further enrich the resources provided here.
 
-Go to the [**US-FarmSafetyNet-Lab
+Go to the [**USFarmSafetyNetLab
 wiki**](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/wiki) to explore
 other pages in this repository
 
