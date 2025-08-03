@@ -1,10 +1,14 @@
 #---------------------------------------------------------
 # Preliminaries                                        ####
 # load package
-rm(list=ls(all=TRUE));gc()
-devtools::document()
-devtools::load_all()
-
+rm(list=ls(all=TRUE));gc();library(rmaADM);library(rfcip);library(data.table)
+library(dplyr)
+source("R/constants.R")
+source("R/build_internal_datasets.R")
+source("R/prep_fcip_data.R")
+source("R/prep_nass_data.R")
+source("R/get_ice_data.R")
+source("R/copied_from_rmaADM.R")
 current_year <- as.numeric(format(Sys.Date(),"%Y"))-2
 
 dir_fastscratch <- "./data-raw/fastscratch"
@@ -13,9 +17,11 @@ dir_fastscratch <- "./data-raw/fastscratch"
 if (!dir.exists(dir_fastscratch)) {
   dir.create(dir_fastscratch, recursive = TRUE)
 }
-if (!dir.exists("./data-raw/internal_datasets")) {
+if(!dir.exists("./data-raw/internal_datasets")) {
   dir.create("./data-raw/internal_datasets", recursive = TRUE)
 }
+
+unlink(list.files("./data-raw/internal_datasets",full.names = T))
 
 if(Sys.info()['sysname'] %in% "Windows"){
   farmpolicylab <- paste0(gsub("OneDrive","Dropbox",Sys.getenv("OneDriveConsumer")),"/farmpolicylab/database/")
@@ -30,6 +36,50 @@ contiguous_county <- rmaADM:::clean_data(readRDS(paste0(farmpolicylab,"rmaFCIPda
 contiguous_county <- as.data.table(contiguous_county)
 contiguous_county[, data_source := "USDA-RMA, Actuarial Data Master - A0123"]
 saveRDS(contiguous_county,file="./data-raw/internal_datasets/contiguous_county.rds");rm(contiguous_county);gc()
+#---------------------------------------------------------
+# RMA-ICE: Program indicator                           ####
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
+                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
+                    selected_ice = "IceProgramIndicator")
+df <- unique(df[, c("reinsurance_year","program_indicator_code","program_indicator_description"), with = FALSE])
+df <- df[complete.cases(df)]
+table(df$program_indicator_code,df$reinsurance_year)
+df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
+saveRDS(df,file="./data-raw/internal_datasets/ice_program_indicator_code.rds");rm(df);gc()
+#---------------------------------------------------------
+# RMA-ICE: Administrative Fee Waiver Code              ####
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
+                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
+                    selected_ice = "IceAdministrativeFeeWaiver")
+df <- unique(df[, c("reinsurance_year","administrative_fee_waiver_code","administrative_fee_waiver_description"), with = FALSE])
+df <- df[complete.cases(df)]
+table(df$administrative_fee_waiver_code,df$reinsurance_year)
+df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
+saveRDS(df,file="./data-raw/internal_datasets/ice_administrative_fee_waiver_code.rds");rm(df);gc()
+#---------------------------------------------------------
+# RMA-ICE: Policy History Request Code                 ####
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
+                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
+                    selected_ice = "IceHistoryRequest")
+df <- unique(df[, c("reinsurance_year","producer_policy_history_request_code","policy_producer_history_request_code_description"), with = FALSE])
+df <- df[complete.cases(df)]
+table(df$producer_policy_history_request_code,df$reinsurance_year)
+df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
+saveRDS(df,file="./data-raw/internal_datasets/ice_policy_history_request_code.rds");rm(df);gc()
+#---------------------------------------------------------
+# RMA-ICE: Yield Type Code                             ####
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
+                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
+                    selected_ice = "D00042_IceYieldType")
+df <- unique(df[, c("reinsurance_year","yield_type_code","valid_pty_non_summary_flag","yield_type_description"), with = FALSE])
+df <- df[complete.cases(df)]
+table(df$yield_type_code,df$reinsurance_year)
+df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
+saveRDS(df,file="./data-raw/internal_datasets/ice_yield_type_code.rds");rm(df);gc()
 #---------------------------------------------------------
 # Harmonize and summarize crop type                    ####
 rm(list= ls()[!(ls() %in% c(Keep.List))])
@@ -89,49 +139,9 @@ df <- get_state_rental_rates()
 df[, data_source := "Output from get_state_rental_rates() function"]
 saveRDS(df,file = "./data-raw/internal_datasets/state_rental_rates.rds")
 #---------------------------------------------------------
-# Program indicator                                    ####
+# BRF Census                                           #### 
 rm(list= ls()[!(ls() %in% c(Keep.List))])
-df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
-                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
-                    selected_ice = "IceProgramIndicator")
-df <- unique(df[, c("reinsurance_year","program_indicator_code","program_indicator_description"), with = FALSE])
-df <- df[complete.cases(df)]
-table(df$program_indicator_code,df$reinsurance_year)
-df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
-saveRDS(df,file="./data-raw/internal_datasets/ice_program_indicator_code.rds");rm(df);gc()
-#---------------------------------------------------------
-# Administrative Fee Waiver Code                       ####
-rm(list= ls()[!(ls() %in% c(Keep.List))])
-df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
-                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
-                    selected_ice = "IceAdministrativeFeeWaiver")
-df <- unique(df[, c("reinsurance_year","administrative_fee_waiver_code","administrative_fee_waiver_description"), with = FALSE])
-df <- df[complete.cases(df)]
-table(df$administrative_fee_waiver_code,df$reinsurance_year)
-df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
-saveRDS(df,file="./data-raw/internal_datasets/ice_administrative_fee_waiver_code.rds");rm(df);gc()
-#---------------------------------------------------------
-# Policy History Request Code                          ####
-rm(list= ls()[!(ls() %in% c(Keep.List))])
-df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
-                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
-                    selected_ice = "IceHistoryRequest")
-df <- unique(df[, c("reinsurance_year","producer_policy_history_request_code","policy_producer_history_request_code_description"), with = FALSE])
-df <- df[complete.cases(df)]
-table(df$producer_policy_history_request_code,df$reinsurance_year)
-df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
-saveRDS(df,file="./data-raw/internal_datasets/ice_policy_history_request_code.rds");rm(df);gc()
-#---------------------------------------------------------
-# Yield Type Code                                      ####
-rm(list= ls()[!(ls() %in% c(Keep.List))])
-df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
-                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
-                    selected_ice = "D00042_IceYieldType")
-df <- unique(df[, c("reinsurance_year","yield_type_code","valid_pty_non_summary_flag","yield_type_description"), with = FALSE])
-df <- df[complete.cases(df)]
-table(df$yield_type_code,df$reinsurance_year)
-df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
-saveRDS(df,file="./data-raw/internal_datasets/ice_yield_type_code.rds");rm(df);gc()
+source("data-raw/codestash/get_census_data_bfr.R")
 #---------------------------------------------------------
 # Build the helper data sets                           ####
 rm(list= ls()[!(ls() %in% c(Keep.List))])

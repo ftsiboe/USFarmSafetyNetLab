@@ -1,5 +1,12 @@
 #' @title Simulator Helper Datasets
 
+#' @name census_state_beginning_farmer_and_rancher_data
+#' @title census_state_beginning_farmer_and_rancher_data
+#' @description A combined dataset for census_state_beginning_farmer_and_rancher_data
+#' @format A data frame with 255 rows and 16 columns covering Inf--Inf.
+#' @source USDA NASS Quick Stats
+#' @usage data(census_state_beginning_farmer_and_rancher_data)
+"census_state_beginning_farmer_and_rancher_data"
 #' @name contiguous_county
 #' @title contiguous_county
 #' @description A combined dataset for contiguous_county
@@ -21,13 +28,6 @@
 #' @source USDA-RMA, Insurance Control Elements - PASS - D00154
 #' @usage data(ice_policy_history_request_code)
 "ice_policy_history_request_code"
-#' @name ice_program_indicator
-#' @title ice_program_indicator
-#' @description A combined dataset for ice_program_indicator
-#' @format A data frame with 46 rows and 4 columns covering Inf--Inf.
-#' @source USDA-RMA, Insurance Control Elements - PASS - D00154
-#' @usage data(ice_program_indicator)
-"ice_program_indicator"
 #' @name ice_program_indicator_code
 #' @title ice_program_indicator_code
 #' @description A combined dataset for ice_program_indicator_code
@@ -59,7 +59,7 @@
 #' @name rma_type_recodes
 #' @title rma_type_recodes
 #' @description A combined dataset for rma_type_recodes
-#' @format A data frame with 230935 rows and 7 columns covering 1999-2025.
+#' @format A data frame with 232236 rows and 7 columns covering 1999-2025.
 #' @source USDA-RMA, Summary of business by type, practice, and unit structure
 #' @usage data(rma_type_recodes)
 "rma_type_recodes"

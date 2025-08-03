@@ -5,7 +5,7 @@
 \alias{rma_type_recodes}
 \title{rma_type_recodes}
 \format{
-A data frame with 230935 rows and 7 columns covering 1999-2025.
+A data frame with 232236 rows and 7 columns covering 1999-2025.
 }
 \source{
 USDA-RMA, Summary of business by type, practice, and unit structure

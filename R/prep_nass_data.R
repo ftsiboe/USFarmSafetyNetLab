@@ -1,4 +1,3 @@
-
 #' Download and Process USDA NASS Historical Crop Track Records
 #'
 #' @description
@@ -58,6 +57,7 @@
 #'
 #' @import xml2 rvest tidyr purrr data.table readr stringr
 #' @importFrom stringr str_to_sentence
+#' @importFrom dplyr across group_by summarise ungroup
 #' @export
 get_nass_historical_track_record_crop <- function(
     url="https://usda.library.cornell.edu/concern/publications/c534fn92g?locale=en", 
@@ -834,7 +834,10 @@ get_state_rental_rates <- function(dir_source = "./data-raw/fastscratch/nass/"){
   dfx$land_rent_hat <- exp(predict(fit.rent, dfx))
   
   # Compute error ratios and correct systematic bias
+  dfx <- as.data.frame(dfx)
   dfx$error <- dfx$land_rent / dfx$land_rent_hat
+  dfx$state_code <- as.numeric(as.character(dfx$state_code))
+  dfy <- doBy::summaryBy(error ~ state_code, data = dfx, FUN = mean, na.rm = TRUE)
   dfx <- dplyr::inner_join(
     dfx,
     doBy::summaryBy(error ~ state_code, data = dfx, FUN = mean, na.rm = TRUE),

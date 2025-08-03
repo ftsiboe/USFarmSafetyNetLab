@@ -47,6 +47,7 @@
 #'   - **rank_among_outcomes**: Global CAGR rank across all outcome/disaggregate groups.
 #' @import data.table
 #' @importFrom stats IQR coef sd 
+#' @importFrom stats lm 
 #' @export
 analyze_and_summarize_time_series <- function(dt, threshold = 10) {
   dt <- data.table::as.data.table(dt)

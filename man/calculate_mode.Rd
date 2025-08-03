@@ -7,7 +7,7 @@
 calculate_mode(x, na.rm = TRUE)
 }
 \arguments{
-\item{x}{A vector of any atomic type (numeric, character, factor, …).}
+\item{x}{A vector of any atomic type (numeric, character, factor,).}
 
 \item{na.rm}{Logical; should missing values be ignored?
 Defaults to \code{TRUE}. If \code{FALSE} and \code{x} contains any \code{NA}s, the
@@ -32,5 +32,5 @@ Internally the function:
 }
 
 Because it relies on base R functions, the implementation is
-vectorised and generally fast for typical data‐frame column sizes.
+vectorised and generally fast for typical data-frame column sizes.
 }

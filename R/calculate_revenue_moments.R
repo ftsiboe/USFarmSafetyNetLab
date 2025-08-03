@@ -56,7 +56,7 @@ calculate_revenue_moments <- function(x) {
 #'
 #' Returns the element that occurs most frequently in a vector.
 #'
-#' @param x A vector of any atomic type (numeric, character, factor, …).
+#' @param x A vector of any atomic type (numeric, character, factor,).
 #' @param na.rm Logical; should missing values be ignored?  
 #'   Defaults to `TRUE`. If `FALSE` and `x` contains any `NA`s, the
 #'   function returns `NA`.
@@ -76,7 +76,7 @@ calculate_revenue_moments <- function(x) {
 #' }
 #'
 #' Because it relies on base R functions, the implementation is
-#' vectorised and generally fast for typical data‐frame column sizes.
+#' vectorised and generally fast for typical data-frame column sizes.
 #' @export
 calculate_mode <- function(x, na.rm = TRUE) {
   if (na.rm) x <- x[!is.na(x)]

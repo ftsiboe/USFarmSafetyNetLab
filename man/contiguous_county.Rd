@@ -3,7 +3,7 @@
 \docType{data}
 \name{contiguous_county}
 \alias{contiguous_county}
-\title{Simulator Helper Datasets}
+\title{contiguous_county}
 \format{
 A data frame with 24307 rows and 12 columns covering Inf--Inf.
 }
