@@ -1,3 +1,208 @@
+#' Plot an Annotated US States Choropleth Map
+#'
+#' @description
+#' Creates a choropleth map of US states colored by a categorical value, with state labels
+#' and special treatment for small states (VT, NH, and other small ones) using repelled text.
+#' Optionally embeds a table grob in the bottom-left corner of the map.
+#'
+#' @param data A data frame containing at least:
+#'   \itemize{
+#'     \item `state_code`: numeric FIPS code matching `urbnmapr::get_urbn_map("states")`
+#'     \item `value_cat`: categorical variable used for fill colors
+#'     \item `value`: numeric variable used to display numeric labels
+#'   }
+#' @param legend_title Character; title for the fill legend. If `NULL`, no title is shown.
+#' @param palette Character vector of colours (hex codes) to use for the categories.
+#'   Defaults to a 10-colour NDSU-inspired palette.
+#' @param table_grob A `grob` object (e.g. from `gridExtra::tableGrob`) to annotate on the map;
+#'   if `NULL`, no table is added.
+#'
+#' @return A `ggplot` object showing the US states choropleth with annotated labels.
+#'
+#' @details
+#' - Uses `urbnmapr::get_urbn_map(map = "states", sf = TRUE)` to fetch a US states basemap.
+#' - Joins the input data on `state_code` and filters out states with missing `value_cat`.
+#' - Computes equal-area centroids (EPSG:5070) to place labels.
+#' - Flags states with area < 50,000 km² as "small" and applies repelled text labels.
+#' - Standard states get text labels placed via `geom_sf_text()`.
+#' - Small states in the east and west are nudged horizontally; VT & NH get custom nudges.
+#' - Adds an optional table in the bottom-left via `annotation_custom()`.
+#'
+#' @import ggplot2
+#' @import sf
+#' @import dplyr
+#' @import urbnmapr
+#' @import ggrepel
+#' @importFrom grid unit
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(sf)
+#' # Assume `my_data` has columns: state_code, value_cat, value
+#' gg <- plot_us_states_choropleth(
+#'   data = my_data,
+#'   legend_title = "Category",
+#'   palette = c("#003524", "#00583D", "#A0BD78", "#BED73B",
+#'               "#BE5E27", "#FFC425", "#FEF389", "#D7E5C8",
+#'               "#9DD9F7", "#51ABA0", "#0F374B")
+#' )
+#' print(gg)
+#' }
+plot_us_states_choropleth <- function(
+    data,
+    legend_title = NULL,
+    palette = c(
+      "#003524", # Dark Green
+      "#00583D", # NDSU Green
+      "#A0BD78", # Sage
+      "#BED73B", # Lime Green
+      "#BE5E27", # Rust
+      "#FFC425", # NDSU Yellow
+      "#FEF389", # Lemon Yellow
+      "#D7E5C8", # Pale Sage
+      "#9DD9F7", # Morning Sky
+      "#51ABA0", # Teal
+      "#0F374B"  # Night
+    ),
+    table_grob = NULL
+) {
+  # If no legend title is provided, set blank to suppress default
+  if (is.null(legend_title)) {
+    legend_title <- ""
+  }
+  
+  # Load base map of US states with FIPS codes
+  us_sf <- urbnmapr::get_urbn_map(map = "states", sf = TRUE)
+  us_sf$state_code <- as.numeric(as.character(us_sf$state_fips))
+  
+  # Join user data to base map and drop missing categories
+  sf_object <- us_sf %>%
+    left_join(data, by = "state_code") %>%
+    filter(!is.na(value_cat))
+  
+  # Create labels: two-line state abbreviation and rounded value
+  sf_object$label <- paste0(
+    sf_object$state_abbv, "\n",
+    sprintf("%.1f", round(sf_object$value, 1))
+  )
+  
+  # Transform to equal-area projection for area and centroid calculations
+  sf_eqarea <- st_transform(sf_object, 5070)
+  
+  # Compute area in km² and flag "small" states (< 50,000 km²)
+  sf_object <- sf_object %>%
+    mutate(
+      area_km2 = as.numeric(st_area(sf_eqarea) / 1e6),
+      is_small = area_km2 < 50000
+    )
+  
+  # Extract centroids for small states
+  small_states <- sf_object %>%
+    filter(is_small) %>%
+    mutate(
+      centroid = st_centroid(geometry),
+      cx = st_coordinates(centroid)[,1],
+      cy = st_coordinates(centroid)[,2]
+    )
+  
+  # Big states plotted normally
+  big_states <- filter(sf_object, !is_small)
+  
+  # Compute map bounding box and offsets for label nudging
+  bb    <- st_bbox(us_sf)
+  mid_x <- (bb$xmin + bb$xmax) / 2
+  x_off <- (bb$xmax - bb$xmin) * 0.05  # 5% width
+  y_off <- (bb$ymax - bb$ymin) * 0.10  # 10% height
+  
+  # Separate small states into east, west, and VT/NH groups
+  vt_nh      <- filter(small_states, state_abbv %in% c("VT", "NH"))
+  east_small <- filter(small_states, cx > mid_x, !state_abbv %in% c("VT", "NH"))
+  west_small <- filter(small_states, cx <= mid_x)
+  
+  # Build the ggplot object
+  fig <- ggplot() +
+    # Fill states by category
+    geom_sf(
+      data = sf_object,
+      aes(fill = value_cat),
+      colour = NA, size = 0.2
+    ) +
+    # Draw state borders
+    geom_sf(
+      data = us_sf,
+      colour = "gray", fill = NA, size = 0.01
+    ) +
+    # Labels for big states
+    geom_sf_text(
+      data = big_states,
+      aes(label = label),
+      size = 2.5, fontface = "bold"
+    ) +
+    # Repelled labels for small western states
+    geom_text_repel(
+      data = west_small,
+      aes(x = cx, y = cy, label = label),
+      nudge_x = -x_off, hjust = 1, direction = "y",
+      size = 2.5, segment.size = 0.3, min.segment.length = 0,
+      fontface = "bold"
+    ) +
+    # Repelled labels for small eastern states
+    geom_text_repel(
+      data = east_small,
+      aes(x = cx, y = cy, label = label),
+      nudge_x = x_off, hjust = 0, direction = "y",
+      size = 2.5, segment.size = 0.3, min.segment.length = 0,
+      fontface = "bold"
+    ) +
+    # Special placement for VT and NH
+    geom_text_repel(
+      data = vt_nh,
+      aes(x = cx, y = cy, label = label),
+      nudge_x = -1.5 * x_off, nudge_y = y_off,
+      hjust = 0, direction = "y", size = 2.5,
+      segment.size = 0.3, min.segment.length = 0,
+      fontface = "bold"
+    ) +
+    # Apply custom palette and legend title
+    scale_fill_manual(
+      values = palette,
+      na.value = "white",
+      name = legend_title
+    ) +
+    guides(fill = guide_legend(ncol = 1)) +
+    theme_bw() +
+    theme(
+      panel.grid.major   = element_blank(),
+      panel.grid.minor   = element_blank(),
+      axis.ticks         = element_blank(),
+      axis.text          = element_blank(),
+      axis.title.x       = element_blank(),
+      axis.title.y       = element_blank(),
+      legend.position    = c(0.08, 0.80),
+      legend.background  = element_blank(),
+      legend.key.size    = unit(0.3, "cm"),
+      legend.text        = element_text(size = 9),
+      legend.title       = element_text(size = 9),
+      plot.title         = element_text(size = 8),
+      strip.background   = element_blank()
+    ) +
+    coord_sf()
+  
+  # Optionally add a table grob in the bottom-left
+  if (!is.null(table_grob)) {
+    fig <- fig +
+      annotation_custom(
+        grob = table_grob,
+        xmin = -900000,
+        ymin = -5300000
+      )
+  }
+  
+  return(fig)
+}
+
+
 #' Plot Liability and Net Reported Acres Faceted by a Grouping Variable
 #'
 #' Produces a two-panel bar chart:
