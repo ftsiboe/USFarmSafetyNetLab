@@ -143,6 +143,8 @@ FCIP_INSURANCE_ELECTION_RCODED <- c(
 #' @export
 FCIP_FORCE_NUMERIC_KEYS <- c(
   "commodity_year",
+  "year_of_loss",
+  "reinsurance_year",
   "state_code",
   "county_code",
   "sub_county_code",
@@ -186,5 +188,70 @@ FCIP_FORCE_CHARACTER_KEYS <- c(
   "whole_farm_unit_allowed_flag",
   "program_type_code",
   "type_practice_use_code",
-  "private_508h_flag"
+  "private_508h_flag",
+  "state_name",
+  "state_abbreviation",
+  "county_name",
+  "commodity_name",
+  "insurance_plan_abbreviation",
+  "cause_of_loss_description",
+  "type_name",
+  "practice_name",
+  "unit_structure_name",
+  "delivery_type",
+  "quantity_type",
+  "reporting_level_type" ,
+  "insurance_plan_name" ,
+  "delivery_id" ,
+  "cause_of_loss_code" ,                                                                                    
+  "month_of_loss_name",
+  "month_of_loss_abbreviation",
+  "stage_code",
+  "month_of_loss"
 )
+
+#' Column names to coerce to numeric
+#'
+#' A character vector of column names that should be converted to character
+#' during data ingestion and cleaning.
+#'
+#' @format A \code{character} vector of column names.
+#' @return A \code{character} vector of field names to coerce to numeric
+#'
+#' @export
+FCIP_FORCE_AMOUNT_VARIABLES <- c(
+  "net_reporting_level_amount",
+  "liability_amount","additional_subsidy",
+  "efa_premium_discount",
+  "total_premium_amount",
+  "subsidy_amount",
+  "indemnity_amount",
+  "loss_ratio",
+  "endorsed_commodity_reporting_level_amount",
+  "policies_sold_count",
+  "policies_earning_premium_count",
+  "policies_indemnified_count",
+  "units_earning_premium_count",
+  "units_indemnified_count",
+  "net_reported_quantity",
+  "endorsed_companion_acres",
+  "state_private_subsidy",
+  "net_planted_quantity",
+  "net_determined_quantity",
+  "net_endorsed_acres",
+  "producer_paid_premium_amount",
+  "net_number_of_head",
+  "expected_end_value",
+  paste0("target_marketings_", 1:11),
+  paste0("corn_equivalent_", 2:11),
+  paste0("soybean_meal_equivalent_", 2:11),       
+  "endorsements_earning_premium",
+  "endorsements_indemnified","deductible",
+  "live_cattle_target_weight_quantity",
+  "feeder_cattle_target_weight_quantity",
+  "corn_target_weight_quantity",
+  "endorsement_length",
+  "coverage_price",
+  "rate",
+  "cost_per_cwt",
+  "total_weight")

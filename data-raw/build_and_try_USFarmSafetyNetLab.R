@@ -6,7 +6,7 @@ rm(list=ls(all=TRUE));gc();library(rmaADM);library(rfcip);library(data.table);li
 unlink(c("NAMESPACE","./R/helper_data.R",
          list.files("./data", full.names = TRUE),
          list.files("./man", full.names = TRUE)))
-source("data-raw/build_internal_datasets.R")
+source("data-raw/internal_datasets/build_internal_datasets.R")
 rm(list=ls(all=TRUE))
 devtools::document()
 for(i in list.files("R",full.names = T)){
@@ -21,3 +21,24 @@ unlink(c("NAMESPACE",list.files("./man", full.names = TRUE)))
 devtools::document()
 devtools::check_man()
 devtools::check()
+
+devtools::document()
+unique(unlist(layouts_fcip))[
+  !unique(unlist(layouts_fcip)) %in% 
+    c(FCIP_FORCE_CHARACTER_KEYS,
+      FCIP_FORCE_AMOUNT_VARIABLES,
+      FCIP_FORCE_NUMERIC_KEYS,
+      FCIP_INSURANCE_POOL,
+      FCIP_INSURANCE_ELECTION_RCODED)]
+
+
+
+
+
+
+
+
+
+
+
+

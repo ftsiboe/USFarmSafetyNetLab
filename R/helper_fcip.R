@@ -125,193 +125,22 @@ download_rma_web_data_files <- function(
       
       # e) Apply the proper column names per `file_name`
       colnames(data) <- layouts_fcip[[file_name]]
-      
-      
-      # if (file_name == "sobtpu") {
-      #   colnames(data) <- c(
-      #     "commodity_year",
-      #     "state_code",
-      #     "state_name",
-      #     "state_abbreviation",
-      #     "county_code",
-      #     "county_name",
-      #     "commodity_code",
-      #     "commodity_name",
-      #     "insurance_plan_code",
-      #     "insurance_plan_abbreviation",
-      #     "coverage_type_code",
-      #     "coverage_level_percent",
-      #     "delivery_id",
-      #     "type_code",
-      #     "type_name",
-      #     "practice_code",
-      #     "practice_name",
-      #     "unit_structure_code",
-      #     "unit_structure_name",
-      #     "net_reporting_level_amount",
-      #     "reporting_level_type",
-      #     "liability_amount",
-      #     "total_premium_amount",
-      #     "subsidy_amount",
-      #     "indemnity_amount",
-      #     "loss_ratio",
-      #     "endorsed_commodity_reporting_level_amount"
-      #   )
-      # }
-      # 
-      # if (file_name == "sobcov") {
-      #   colnames(data) <- c(
-      #     "commodity_year",
-      #     "state_code",
-      #     "state_abbreviation",
-      #     "county_code",
-      #     "county_name",
-      #     "commodity_code",
-      #     "commodity_name",
-      #     "insurance_plan_code",
-      #     "insurance_plan_abbreviation",
-      #     "coverage_category",
-      #     "delivery_type",
-      #     "coverage_level_percent",
-      #     "policies_sold_count",
-      #     "policies_earning_premium_count",
-      #     "policies_indemnified_count",
-      #     "units_earning_premium_count",
-      #     "units_indemnified_count",
-      #     "quantity_type",
-      #     "net_reported_quantity",
-      #     "endorsed_companion_acres",
-      #     "liability_amount",
-      #     "total_premium_amount",
-      #     "subsidy_amount",
-      #     "state_private_subsidy",
-      #     "additional_subsidy",
-      #     "efa_premium_discount",
-      #     "indemnity_amount",
-      #     "loss_ratio"
-      #   )
-      # }
-      # 
-      # if (file_name == "colsom") {
-      #   colnames(data) <- c(
-      #     "commodity_year",
-      #     "state_code",
-      #     "state_abbreviation",
-      #     "county_code",
-      #     "county_name",
-      #     "commodity_code",
-      #     "commodity_name",
-      #     "insurance_plan_code",
-      #     "insurance_plan_name_abbreviation",
-      #     "coverage_category",
-      #     "stage_code",
-      #     "cause_of_loss_code",
-      #     "cause_of_loss_description",
-      #     "month_of_loss",
-      #     "month_of_loss_name",
-      #     "year_of_loss",
-      #     "policies_earning_premium",
-      #     "policies_indemnified",
-      #     "net_planted_quantity",
-      #     "net_endorsed_acres",
-      #     "liability",
-      #     "total_premium",
-      #     "producer_paid_premium",
-      #     "subsidy",
-      #     "state_private_subsidy",
-      #     "additional_subsidy",
-      #     "efa_premium_discount",
-      #     "net_determined_quantity",
-      #     "indemnity_amount",
-      #     "loss_ratio"
-      #   )
-      # }
-      # 
-      # if (file_name == "lgm") {
-      #   colnames(data) <- c(
-      #     "reinsurance_year",
-      #     "commodity_year",
-      #     "location_state_code",
-      #     "location_state_abbreviation",
-      #     "location_county_code",
-      #     "location_county_name",
-      #     "commodity_code",
-      #     "commodity_name",
-      #     "insurance_plan_code",
-      #     "insurance_plan_name",
-      #     "type_code",
-      #     "type_code_name",
-      #     "practice_code",
-      #     "practice_code_name",
-      #     "sales_effective_date",
-      #     paste0("target_marketings_", 1:11),
-      #     paste0("corn_equivalent_", 2:11),
-      #     paste0("soybean_meal_equivalent_", 2:11),
-      #     "endorsements_earning_premium",
-      #     "endorsements_indemnified",
-      #     "deductible",
-      #     "live_cattle_target_weight_quantity",
-      #     "feeder_cattle_target_weight_quantity",
-      #     "corn_target_weight_quantity",
-      #     "liability_amount",
-      #     "total_premium_amount",
-      #     "subsidy_amount",
-      #     "producer_premium_amount",
-      #     "indemnity_amount"
-      #   )
-      # }
-      # 
-      # if (file_name == "lrp") {
-      #   colnames(data) <- c(
-      #     "reinsurance_year",
-      #     "commodity_year",
-      #     "location_state_code",
-      #     "location_state_abbreviation",
-      #     "location_county_code",
-      #     "location_county_name",
-      #     "commodity_code",
-      #     "commodity_name",
-      #     "insurance_plan_code",
-      #     "insurance_plan_name",
-      #     "type_code",
-      #     "type_code_name",
-      #     "practice_code",
-      #     "practice_code_name",
-      #     "sales_effective_date",
-      #     "endorsement_length",
-      #     "coverage_price",
-      #     "expected_end_value",
-      #     "coverage_level_percent",
-      #     "rate",
-      #     "cost_per_cwt",
-      #     "end_date",
-      #     "endorsements_earning_premium",
-      #     "endorsements_indemnified",
-      #     "net_number_of_head",
-      #     "total_weight",
-      #     "subsidy_amount",
-      #     "total_premium_amount",
-      #     "producer_premium_amount",
-      #     "liability_amount",
-      #     "indemnity_amount"
-      #   )
-      # }
-      
-      # f) Save the cleaned data to disk
+
       data <- data.table::as.data.table(data)
+      
       data[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))) := lapply(
         .SD, function(x) as.numeric(as.character(x))), 
         .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))]
-      
-      # Ensure numeric columns are coerced to numeric
-      amount_variables <- c(
-        "net_reporting_level_amount","liability_amount","additional_subsidy","efa_premium_discount",
-        "total_premium_amount","subsidy_amount","indemnity_amount","loss_ratio","endorsed_commodity_reporting_level_amount",
-        "policies_sold_count","policies_earning_premium_count","policies_indemnified_count","units_earning_premium_count",
-        "units_indemnified_count","net_reported_quantity","endorsed_companion_acres","state_private_subsidy"  )
-      data[, c(intersect(amount_variables, names(data))) := lapply(
+
+      data[, c(intersect(FCIP_FORCE_CHARACTER_KEYS, names(data))) := lapply(
+        .SD, function(x) trimws(gsub("\\s+", " ", gsub("[\r\n]", "", as.character(as.character(x)))), which = c("both"))), 
+        .SDcols = intersect(FCIP_FORCE_CHARACTER_KEYS, names(data))]
+
+      data[, c(intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))) := lapply(
         .SD, function(x) as.numeric(as.character(x))), 
-        .SDcols = intersect(amount_variables, names(data))]
+        .SDcols = intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))]
+      
+      data <- harmonize_codes_and_names(data)
       
       saveRDS(data,file = file.path(dest, paste0(file_name, "_", download_urls$year[i], ".rds")))
       
@@ -557,22 +386,15 @@ harmonize_crop_type_codes <- function(){
 }
 
 
-#' Harmonize election codes in a data table of insurance elections
+#' Harmonize names/codes in a data table of insurance elections
 #'
-#' This function looks for two columns-`unit_structure_code` and
-#' `insurance_plan_code`-and creates recoded versions grouping similar
+#' This function looks for two columns and creates recoded versions grouping similar
 #' codes into broader categories.
 #'
-#' @param df A `data.frame` containing, at minimum,
-#'   one or both of the columns:
-#'   - `unit_structure_code`
-#'   - `insurance_plan_code`
-#'
-#' @return A `data.frame` with the same columns as `df` with new columns:
-#'   - `unit_structure_recode` (if `unit_structure_code` was present)
-#'   - `insurance_plan_recode` (if `insurance_plan_code` was present)
+#' @param df A `data.frame`
+#' @return A `data.frame` with the same columns as `df` with new columns
 #' @export
-harmonize_election_codes <- function(df){
+harmonize_codes_and_names <- function(df){
   
   ## Recode unit structure codes into broader classes
   if ("unit_structure_code" %in% names(df)) {
@@ -636,9 +458,71 @@ harmonize_election_codes <- function(df){
     )]
   }
   
+  ## Recode coverage level percent 
+  if ("coverage_level_percent" %in% names(df)) {
+    df[, coverage_level_percent_recode := fifelse(coverage_level_percent > 1,coverage_level_percent / 100,coverage_level_percent)]
+    df[, coverage_level_percent_recode := round(coverage_level_percent_recode / 0.05) * 0.05]
+    df[coverage_level_percent_recode < 0.50, coverage_level_percent_recode := 0.5]
+    df[coverage_level_percent_recode > 0.95, coverage_level_percent_recode := 0.95]
+  }
+  
+  ## Recode coverage type 
+  if ("coverage_type_code" %in% names(df)) {
+    df[, coverage_type_code_recode := fifelse(coverage_type_code %in% "C","CAT","Buy-up")]
+    df[commodity_year <1995, coverage_type_code_recode := "CAT"] # CAT was started in 1995
+  }
+  
+  if("coverage_type_code" %in% names(df) & "commodity_year" %in% names(df) ) {
+    df[commodity_year <1995, coverage_type_code_recode := "CAT"] # CAT was started in 1995
+  }
+  
+  ## Re-code damage type  
+  if ("cause_of_loss_description" %in% names(df)) {
+    
+    # 1) Cold weather codes
+    cold_codes <- c("COLD WET WEATHER","COLD WINTER","FREEZE","FROST","ICE FLOE","ICE FLOW")
+    df[, damage_name_recode := fifelse(toupper(cause_of_loss_description) %in% cold_codes,"Cold weather","Other")]
+    
+    # 2) Disease/Insects 
+    disease_codes <- c(
+      "PLANT DISEASE","WILDLIFE","INSECTS","MYCOTOXIN",
+      "ASIAN SOYBEAN RUST","AQUACULTURE DISEASE",
+      "ASIATIC CITRUS CANKER","DISEASE, AQUACULTURE",
+      "MEDFLY","MYCOTOXIN (AFLATOXIN)","POST BLOOM FRUIT DROP")
+    df[toupper(cause_of_loss_description) %in% disease_codes,damage_name_recode := "Disease/Insects"]
+    
+    # 3) Drought & heat codes
+    drought_codes <- c(
+      "DROUGHT","FAILURE OF IRRIGATION SUPPLY",
+      "FAILURE OF IRRIGATION EQUIPMENT","HEAT","HOT WIND",
+      "FIRE","HOT HEMP","DROUGHT DEVIATION","EXCESS SUN",
+      "FAILURE IRRIG EQUIP","FAILURE IRRIG SUPPLY")
+    df[toupper(cause_of_loss_description) %in% drought_codes,damage_name_recode := "Drought & heat"]
+    
+    # 4) Hail
+    df[toupper(cause_of_loss_description) == "HAIL",damage_name_recode := "Hail"]
+    
+    # 5) Price declines
+    price_codes <- c("DECLINE IN PRICE","MARKET PRICE DIFFERENCE - SPRING VS HARVEST")
+    df[toupper(cause_of_loss_description) %in% price_codes,damage_name_recode := "Price declines"]
+    
+    # 6) Excess moisture & related weather
+    excess_codes <- c(
+      "TORNADO","EXCESS MOISTURE/PRECIPITATION/RAIN","FLOOD",
+      "POOR DRAINAGE","EROSION","HURRICANE/TROPICAL DEPRESSION",
+      "WIND/EXCESS WIND","STORM SURGE","CYCLONE",
+      "TIDAL WAVE/TSUNAMI","INABILITY TO PREPARE LAND FOR IRRIGATION",
+      "TIDAL WAVE","EXCESS MOISTURE/PRECIP/RAIN")
+    df[toupper(cause_of_loss_description) %in% excess_codes,damage_name_recode := "Excess moisture & related weather"]
+    
+    # 7) Area/index plans
+    index_codes <- c("GRP/GRIP CROPS ONLY`","GRP/GRIP CROPS","ARPI CROPS ONLY","ARPI/SCO/STAX CROPS ONLY",
+                      "ARPI/SCO/STAX/MP CROPS ONLY","ARPI/SCO/STAX/MP/HIP WI CROPS ONLY","GRP/GRIP CROPS ONLY",
+                      "ARPI/SCO/ECO/STAX/MP/HIP-WI/PACE CROPS ONLY","ARPI/SCO/ECO/STAX/MP/HIP WI CROPS ONLY")
+    df[toupper(cause_of_loss_description) %in% index_codes,damage_name_recode := "Area/index plans"]
+
+  }
+
   return(df)
 }
-
-
-
 

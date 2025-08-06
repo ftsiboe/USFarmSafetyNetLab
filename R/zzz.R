@@ -36,6 +36,9 @@
     ..final_cols ..keep_cols ALL county_fips estimate_smooth obs
     IQR cagr change coef disaggregate outcome pct_change
     rank_among_outcomes reinsurance_year sd unit_structure_rename filename time
+    area_km2 cause_of_loss_description centroid
+    coverage_level_percent_recode coverage_type_code_recode cx cy
+    damage_name_recode geometry is_small label state_abbv value_cat
       ",
         "\\s+"
       )[[1]]

@@ -41,7 +41,7 @@ Optionally embeds a table grob in the bottom-left corner of the map.
 \item Uses \code{urbnmapr::get_urbn_map(map = "states", sf = TRUE)} to fetch a US states basemap.
 \item Joins the input data on \code{state_code} and filters out states with missing \code{value_cat}.
 \item Computes equal-area centroids (EPSG:5070) to place labels.
-\item Flags states with area < 50,000 km² as "small" and applies repelled text labels.
+\item Flags states with area < 50,000 km^2 as "small" and applies repelled text labels.
 \item Standard states get text labels placed via \code{geom_sf_text()}.
 \item Small states in the east and west are nudged horizontally; VT & NH get custom nudges.
 \item Adds an optional table in the bottom-left via \code{annotation_custom()}.

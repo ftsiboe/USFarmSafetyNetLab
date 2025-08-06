@@ -23,7 +23,7 @@
 #' - Uses `urbnmapr::get_urbn_map(map = "states", sf = TRUE)` to fetch a US states basemap.
 #' - Joins the input data on `state_code` and filters out states with missing `value_cat`.
 #' - Computes equal-area centroids (EPSG:5070) to place labels.
-#' - Flags states with area < 50,000 km² as "small" and applies repelled text labels.
+#' - Flags states with area < 50,000 km^2 as "small" and applies repelled text labels.
 #' - Standard states get text labels placed via `geom_sf_text()`.
 #' - Small states in the east and west are nudged horizontally; VT & NH get custom nudges.
 #' - Adds an optional table in the bottom-left via `annotation_custom()`.
@@ -90,7 +90,7 @@ plot_us_states_choropleth <- function(
   # Transform to equal-area projection for area and centroid calculations
   sf_eqarea <- st_transform(sf_object, 5070)
   
-  # Compute area in km² and flag "small" states (< 50,000 km²)
+  # Compute area in km^2 and flag "small" states (< 50,000 km^2)
   sf_object <- sf_object %>%
     mutate(
       area_km2 = as.numeric(st_area(sf_eqarea) / 1e6),
