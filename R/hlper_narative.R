@@ -1,3 +1,44 @@
+#' Rescale Numeric Values for Readable Display
+#'
+#' This function rescales each numeric value in a vector independently to ensure
+#' at most three significant digits appear before the decimal point. It then returns
+#' a character vector of rounded values with the appropriate unit label.
+#'
+#' @param x A named numeric vector to rescale.
+#' @param rounding Number of decimal places to round the scaled value (default is 2).
+#'
+#' @return A character vector of formatted values with their scale unit (e.g., "156.54 million").
+#'
+#' @export
+rescale_values <- function(x, rounding = 2) {
+  scale_labels <- c("unit", "hundred", "thousand", "million", "billion", "trillion",
+                    "quadrillion", "quintillion", "sextillion", "septillion")
+  scale_factors <- c(1, 1e2, 1e3, 1e6, 1e9, 1e12, 1e15, 1e18, 1e21, 1e24)
+  
+  scaled_values <- numeric(length(x))
+  scale_used <- character(length(x))
+  
+  for (i in seq_along(x)) {
+    abs_val <- abs(x[i])
+    
+    # Compute how many digits before decimal for each scale
+    digit_counts <- abs_val / scale_factors
+    
+    # Find the largest scale index such that the scaled value < 1000
+    scale_index <- max(which(digit_counts < 1000 & digit_counts >= 1), na.rm = TRUE)
+    
+    scaled_values[i] <- x[i] / scale_factors[scale_index]
+    scale_used[i] <- scale_labels[scale_index]
+  }
+  
+  res <- paste0(round(scaled_values, rounding), " ", scale_used)
+  
+  names(res) <- names(x)
+
+  # Combine and return as character string
+  return(res)
+}
+
 #' Analyze and summarize time-series data by disaggregate and outcome using data.table
 #'
 #' This function computes comprehensive summary statistics, trend diagnostics,
@@ -21,8 +62,8 @@
 #'   - **cv**: Coefficient of variation (sd divided by mean).
 #'   - **n_obs**: Number of non-missing observations.
 #'   - **pct_missing**: Percentage of years with missing `value`.
-#'   - **initial_year_value**: Value in the first `commodity_year` period.
-#'   - **final_year_value**: Value in the last `commodity_year` period.
+#'   - **start_year_value**: Value in the first `commodity_year` period.
+#'   - **current_year_value**: Value in the last `commodity_year` period.
 #'   - **year_with_max_value**: Year when `value` is maximized.
 #'   - **max_value**: Maximum `value` observed.
 #'   - **year_with_min_value**: Year when `value` is minimized.
@@ -78,8 +119,8 @@ analyze_and_summarize_time_series <- function(dt, threshold = 10) {
       max_value               = max(value, na.rm = TRUE),
       year_with_min_value     = commodity_year[which.min(value)],
       min_value               = min(value, na.rm = TRUE),
-      initial_year_value      = value[1],
-      final_year_value        = value[.N],
+      start_year_value        = value[1],
+      current_year_value      = value[.N],
       cumulative_change       = value[.N] - value[1],
       mean_annual_growth_rate = ((value[.N] / value[1]) ^ (1 / (commodity_year[.N] - commodity_year[1])) - 1) * 100,
       growth_initial_to_final = (value[.N] - value[1]) / value[1] * 100
@@ -91,7 +132,8 @@ analyze_and_summarize_time_series <- function(dt, threshold = 10) {
     # Merge in global rank
     summ <- merge(summ, global_summ, by = c("outcome", "disaggregate"), all.x = TRUE, sort = FALSE)
     
-    out_list <- lapply(seq_len(nrow(summ)), function(i) {
+    out_list <- lapply(seq_len(nrow(summ)), function(i){
+      #print(i)
       row <- summ[i]
       lvl <- row$disaggregate
       dt_lvl <- subdt[disaggregate == lvl][order(commodity_year)]
@@ -128,13 +170,21 @@ analyze_and_summarize_time_series <- function(dt, threshold = 10) {
       diffs <- dt_lvl[, diff(value)]
       monotonic <- all(diffs >= 0, na.rm = TRUE) || all(diffs <= 0, na.rm = TRUE)
       tm <- lm(value ~ commodity_year, data = dt_lvl)
-      trend_slope     <- coef(tm)[2]
-      trend_p_value   <- summary(tm)$coefficients[2, 4]
-      trend_r_squared <- summary(tm)$r.squared
-      time_to_peak   <- row$year_with_max_value - dt_lvl$commodity_year[1]
-      time_to_trough <- row$year_with_min_value - dt_lvl$commodity_year[1]
+      sm <- summary(tm)
+      coef_mat <- sm$coefficients
+      if ("commodity_year" %in% rownames(coef_mat)) {
+        trend_slope   <- coef_mat["commodity_year", "Estimate"]
+        trend_p_value <- coef_mat["commodity_year", "Pr(>|t|)"]
+      } else {
+        warning("No commodity_year coefficient: perhaps dt_lvl$commodity_year is constant or there's <2 observations.")
+        trend_slope   <- NA_real_
+        trend_p_value <- NA_real_
+      }
+      trend_r_squared <- sm$r.squared
+      time_to_peak    <- row$year_with_max_value - dt_lvl$commodity_year[1]
+      time_to_trough  <- row$year_with_min_value - dt_lvl$commodity_year[1]
       
-      data.frame(
+      res_lvl <- data.frame(
         mean                    = row$mean,
         sd                      = row$sd,
         median                  = row$median,
@@ -142,8 +192,8 @@ analyze_and_summarize_time_series <- function(dt, threshold = 10) {
         cv                      = row$cv,
         n_obs                   = row$n_obs,
         pct_missing             = row$pct_missing,
-        initial_year_value      = row$initial_year_value,
-        final_year_value        = row$final_year_value,
+        start_year_value        = row$start_year_value,
+        current_year_value      = row$current_year_value,
         year_with_max_value     = row$year_with_max_value,
         max_value               = row$max_value,
         year_with_min_value     = row$year_with_min_value,
@@ -168,8 +218,13 @@ analyze_and_summarize_time_series <- function(dt, threshold = 10) {
         rank_among_outcomes     = row$rank_among_outcomes,
         stringsAsFactors        = FALSE
       )
+      
+      for(y in unique(dt_lvl$commodity_year)){
+        res_lvl[,paste0("value_",y)] <- mean(dt_lvl[dt_lvl$commodity_year %in% y,]$value,na.rm=T)
+      }
+      return(res_lvl)
     })
-    names(out_list) <- tolower(summ$disaggregate)
+    names(out_list) <- gsub("^_|_$","",gsub("[- ]+","_",tolower(summ$disaggregate)))
     out_list
   }
   

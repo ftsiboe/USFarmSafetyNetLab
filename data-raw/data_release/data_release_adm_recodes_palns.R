@@ -185,8 +185,12 @@ data <- data[!data$crop_yr %in% NA,]
 data <- data[c("crop_yr","ins_plan_cd","ins_plan","ins_plan_ab_adm","policy","protect","triger","ins_plan_type_rma")]
 names(data) <- c("commodity_year","insurance_plan_code","insurance_plan_name","insurance_plan_abbreviation",
                  "fcip_policy_type","outcome_protected","triger_level","insurance_plan_type_rma")
+
+data$insurance_plan_name <- tools::toTitleCase(stringr::str_to_sentence(toupper(data$insurance_plan_name)))
+
 data <- data.table::as.data.table(unique(data))
 data <- harmonize_codes_and_names(data)
+
 saveRDS(data,file=paste0(dir_data_release,"/adm/recodes_insurance_plan.rds"))
 
 
