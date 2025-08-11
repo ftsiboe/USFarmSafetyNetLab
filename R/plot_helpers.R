@@ -66,7 +66,7 @@ plot_us_states_choropleth <- function(
       "#0F374B"  # Night
     ),
     table_grob = NULL,
-    label_size = 2.5,
+    label_size = 2.5
 ) {
   # If no legend title is provided, set blank to suppress default
   if (is.null(legend_title)) {
