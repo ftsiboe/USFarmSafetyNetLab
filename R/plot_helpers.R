@@ -16,7 +16,7 @@
 #'   Defaults to a 10-colour NDSU-inspired palette.
 #' @param table_grob A `grob` object (e.g. from `gridExtra::tableGrob`) to annotate on the map;
 #'   if `NULL`, no table is added.
-#'
+#' @param label_size label size for sgeom_sf_text
 #' @return A `ggplot` object showing the US states choropleth with annotated labels.
 #'
 #' @details
@@ -65,7 +65,8 @@ plot_us_states_choropleth <- function(
       "#51ABA0", # Teal
       "#0F374B"  # Night
     ),
-    table_grob = NULL
+    table_grob = NULL,
+    label_size = 2.5,
 ) {
   # If no legend title is provided, set blank to suppress default
   if (is.null(legend_title)) {
@@ -137,14 +138,14 @@ plot_us_states_choropleth <- function(
     geom_sf_text(
       data = big_states,
       aes(label = label),
-      size = 2.5, fontface = "bold"
+      size = label_size, fontface = "bold"
     ) +
     # Repelled labels for small western states
     geom_text_repel(
       data = west_small,
       aes(x = cx, y = cy, label = label),
       nudge_x = -x_off, hjust = 1, direction = "y",
-      size = 2.5, segment.size = 0.3, min.segment.length = 0,
+      size = label_size, segment.size = 0.3, min.segment.length = 0,
       fontface = "bold"
     ) +
     # Repelled labels for small eastern states
@@ -152,7 +153,7 @@ plot_us_states_choropleth <- function(
       data = east_small,
       aes(x = cx, y = cy, label = label),
       nudge_x = x_off, hjust = 0, direction = "y",
-      size = 2.5, segment.size = 0.3, min.segment.length = 0,
+      size = label_size, segment.size = 0.3, min.segment.length = 0,
       fontface = "bold"
     ) +
     # Special placement for VT and NH
@@ -160,7 +161,7 @@ plot_us_states_choropleth <- function(
       data = vt_nh,
       aes(x = cx, y = cy, label = label),
       nudge_x = -1.5 * x_off, nudge_y = y_off,
-      hjust = 0, direction = "y", size = 2.5,
+      hjust = 0, direction = "y", size = label_size,
       segment.size = 0.3, min.segment.length = 0,
       fontface = "bold"
     ) +
