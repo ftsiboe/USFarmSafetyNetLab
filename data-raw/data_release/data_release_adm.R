@@ -31,6 +31,23 @@ baserate <- rbind(baserate_legacy,baserate)
 baserate <- baserate[complete.cases(baserate)]
 saveRDS(baserate,file=paste0(dir_data_release,"/adm/fcip_demand_instruments_from_adm.rds"))
 
+# lapply(
+#   2011:2025,
+#   function(year){
+#     # year <- 2011
+#     df <- readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/",
+#                          year,"/",year,"_A01100_YieldAndTyield_YTD.rds"))
+#     names(df) <- gsub("[.]","_",tolower( names(df)))
+#     df <- as.data.table(df)[transitional_amount_code %in% "Y" & leaf_year %in% NA][
+#       , lapply(.SD, function(x) mean(x, na.rm = TRUE)),
+#       by = c(FCIP_INSURANCE_POOL, "commodity_year", "prior_commodity_year"),
+#       .SDcols = c("transitional_amount")]
+#     saveRDS(df,file=paste0(dir_data_release,"/adm/transitional_amount_",year,".rds"))
+#     rm(df);gc()
+#     return(year)
+#   })
+
+
 # price <- readRDS(file.path(farmpolicylab,
 #                            "rmaFCIPdata", "rmaPrices",
 #                            "Output", "ersFcipPrices.rds"))

@@ -16,4 +16,4 @@ replications/*
 !data-raw/data_release/*.R
 /data-raw/data_release/*.rds
 /data-raw/data_release/**/
-
+!data-raw/readmes/

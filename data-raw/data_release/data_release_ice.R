@@ -37,14 +37,7 @@ df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
 saveRDS(df,file=paste0(dir_data_release,"/ice/ice_policy_history_request_code.rds"));rm(df);gc()
 
 # Yield Type Code       
-df <- get_ice_data( years = 2011:as.numeric(format(Sys.Date(),"%Y")),
-                    ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
-                    selected_ice = "D00042_IceYieldType")
-df <- unique(df[, c("reinsurance_year","yield_type_code","valid_pty_non_summary_flag","yield_type_description"), with = FALSE])
-df <- df[complete.cases(df)]
-table(df$yield_type_code,df$reinsurance_year)
-df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
-saveRDS(df,file=paste0(dir_data_release,"/ice/ice_yield_type_code.rds"));rm(df);gc()
+source(paste0(dir_data_release,"/data_release_ice_yield_type_description.R"))
 
 # Send  Insurance Control Elements to Github
 # tryCatch({
