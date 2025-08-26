@@ -45,5 +45,5 @@ brf_census <- data.table::rbindlist(
         return(bfr)
       }, error = function(e){return(NULL)})
     }),fill = T)
-brf_census[, data_source := "USDA NASS Quick Stats"]
-saveRDS(brf_census,file = "./data-raw/internal_datasets/census_state_beginning_farmer_and_rancher_data.rds")
+
+

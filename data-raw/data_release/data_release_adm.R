@@ -2,70 +2,61 @@ source("data-raw/work_environment_setup.R")
 
 devtools::document()
 
+# unlink(list.files(paste0(dir_data_release,"/adm"), full.names = TRUE, recursive = TRUE))
+
+Keep.List<-c("Keep.List",ls())
+
+# recodes type
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+data <- harmonize_crop_type_codes()
+data[, data_source := "Generated internally, using harmonize_crop_type_codes()"]
+saveRDS(data,file=paste0(dir_data_release,"/adm/fcip_recodes_type.rds"))
+
+# recodes practice
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+source(paste0(dir_data_release,"/data_release_adm_recodes_practice.R"))
+data[, data_source := "USDA-RMA, Actuarial Data Master - A00510 supplemented data from legacy ADM files"]
+saveRDS(data,file=paste0(dir_data_release,"/adm/fcip_recodes_practice.rds"))
+
 # recodes palns
+rm(list= ls()[!(ls() %in% c(Keep.List))])
 source(paste0(dir_data_release,"/data_release_adm_recodes_palns.R"))
+data[, data_source := "USDA-RMA, Actuarial Data Master - A00460 supplemented data from legacy ADM files"]
+saveRDS(data,file=paste0(dir_data_release,"/adm/fcip_recodes_insurance_plan.rds"))
+
+# recodes commodity
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+source(paste0(dir_data_release,"/data_release_adm_recodes_commodity.R"))
+adm[, data_source := "USDA-RMA, Actuarial Data Master - A00400 and A00420 supplemented data from legacy ADM files"]
+saveRDS(adm,file=paste0(dir_data_release,"/adm/fcip_recodes_commodity_groupings.rds"))
+
+# commodity price
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+source(paste0(dir_data_release,"/data_release_adm_commodity_price.R"))
+price[, data_source := "USDA-RMA, Actuarial Data Master - A00810 supplemented data from legacy ADM files"]
+saveRDS(price,file=paste0(dir_data_release,"/adm/fcip_commodity_price.rds"))
 
 # base rate
-baserate <-data.table::rbindlist(
-  lapply(
-    2011:as.numeric(format(Sys.Date(),"%Y")),
-    function(y){
-      baserate <- get_adm_data(year = y, dataset = "baserate")
-      baserate$tau_adm <- baserate$reference_rate + baserate$fixed_rate
-      baserate <- doBy::summaryBy(tau_adm~commodity_year + state_code + county_code + commodity_code,data=baserate,FUN=mean,na.rm=T,keep.names = T)
-      return(baserate)
-    }), fill = TRUE)
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+source(paste0(dir_data_release,"/data_release_adm_base_rate.R"))
+baserate[, data_source := "USDA-RMA, Actuarial Data Master supplemented data from legacy ADM files"]
+saveRDS(baserate,file=paste0(dir_data_release,"/adm/fcip_aph_base_rate.rds"))
 
-baserate_legacy <- data.table::rbindlist(
-  lapply(
-    2001:2010,
-    function(y){
-      adm <- readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Output/base_rate/base_rate_",y,".rds"))
-      adm$tau_adm <- adm$Rr + adm$Rf
-      adm <- doBy::summaryBy(tau_adm~crop_yr + state_cd + county_cd + crop_cd,data=adm,FUN=mean,na.rm=T,keep.names = T)
-      return(adm)
-    }), fill = TRUE)
-baserate_legacy <- standardize_fcip_column_names(baserate_legacy)
-
-baserate <- rbind(baserate_legacy,baserate)
-baserate <- baserate[complete.cases(baserate)]
-saveRDS(baserate,file=paste0(dir_data_release,"/adm/fcip_demand_instruments_from_adm.rds"))
-
-# lapply(
-#   2011:2025,
-#   function(year){
-#     # year <- 2011
-#     df <- readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/",
-#                          year,"/",year,"_A01100_YieldAndTyield_YTD.rds"))
-#     names(df) <- gsub("[.]","_",tolower( names(df)))
-#     df <- as.data.table(df)[transitional_amount_code %in% "Y" & leaf_year %in% NA][
-#       , lapply(.SD, function(x) mean(x, na.rm = TRUE)),
-#       by = c(FCIP_INSURANCE_POOL, "commodity_year", "prior_commodity_year"),
-#       .SDcols = c("transitional_amount")]
-#     saveRDS(df,file=paste0(dir_data_release,"/adm/transitional_amount_",year,".rds"))
-#     rm(df);gc()
-#     return(year)
-#   })
+# Contiguous county 
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+contiguous_county <- rmaADM:::clean_data(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/2025/2025_A01230_ContiguousCounty_YTD.rds")))
+contiguous_county <- as.data.table(contiguous_county)
+contiguous_county[, data_source := "USDA-RMA, Actuarial Data Master - A0123"]
+saveRDS(contiguous_county,file=paste0(dir_data_release,"/adm/fcip_contiguous_county.rds"))
 
 
-# price <- readRDS(file.path(farmpolicylab,
-#                            "rmaFCIPdata", "rmaPrices",
-#                            "Output", "ersFcipPrices.rds"))
-# price$projecetd_price <- price$Price_Prj
-# price$harvest_price <- price$Price_Hrvst
-# price <- doBy::summaryBy(list(c("projecetd_price", "harvest_price"),c("state_cd","county_cd","typ_cd","crop_yr","crop_cd")),
-#                          data=price,FUN=mean,na.rm=T,keep.names = T)
-# price <- standardize_fcip_column_names(price)
-# 
-# saveRDS(price,file=paste0(dir_dest,"/adm/fcip_commodity_prices.rds"))
-
-# Send Actuarial Data Master to Github    
+# # Send Actuarial Data Master to Github    
 # tryCatch({
 #   piggyback::pb_release_delete(repo = "ftsiboe/USFarmSafetyNetLab", tag = "adm")
 # }, error = function(e){NULL})
 # 
 # piggyback::pb_release_create(
-#   repo = "ftsiboe/USFarmSafetyNetLab", 
+#   repo = "ftsiboe/USFarmSafetyNetLab",
 #   tag = "adm",
 #   name = "Actuarial Data Master",
 #   body = "Various items aggregated from the FCIP's Actuarial Data Master")

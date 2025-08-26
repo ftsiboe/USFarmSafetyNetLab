@@ -2,7 +2,7 @@
 # remotes::install_github("dylan-turner25/rfcip", force = TRUE,upgrade="never")
 # remotes::install_github("dylan-turner25/rfsa", force = TRUE,upgrade="never")
 # usethis::use_github_action()
-rm(list=ls(all=TRUE));gc();library(rmaADM);library(rfcip);library(data.table);library(stringr)
+rm(list=ls(all=TRUE));gc();library(rfcip);library(data.table);library(stringr)
 unlink(c("NAMESPACE","./R/helper_data.R",
          list.files("./data", full.names = TRUE),
          list.files("./man", full.names = TRUE)))

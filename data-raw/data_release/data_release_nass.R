@@ -1,0 +1,79 @@
+
+rm(list=ls(all=TRUE));gc();library(rfcip);library(data.table);library(dplyr)
+source("data-raw/work_environment_setup.R")
+
+# unlink(list.files(paste0(dir_data_release,"/nass"), full.names = TRUE, recursive = TRUE))
+
+devtools::document()
+
+source("R/helper_nass.R")
+
+Keep.List<-c("Keep.List",ls())
+
+# BRF Census               
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+source("data-raw/codestash/get_census_data_bfr.R")
+brf_census[, data_source := "USDA NASS Quick Stats"]
+saveRDS(brf_census,file=paste0(dir_data_release,"/nass/nass_census_state_beginning_farmer_and_rancher_data.rds"))
+
+# INDEX FOR PRICE RECEIVED, 2011       
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+df <- process_nass_dataset(
+  dir_source  = paste0(dir_fastscratch,"/nass"),
+  large_dataset = "economics",
+  nassqs_params = list(short_desc = "COMMODITY TOTALS - INDEX FOR PRICE RECEIVED, 2011",
+                       freq_desc = "ANNUAL"))
+df <- df[freq_desc %in% "ANNUAL",
+         .(index_for_price_recived = mean(value, na.rm = TRUE)),
+         by = c("commodity_year")]
+df[, data_source := "USDA NASS Quick Stats"]
+saveRDS(df,file=paste0(dir_data_release,"/nass/nass_index_for_price_recived.rds"))
+
+# Get Marketing Year Average Price          
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+df <-  get_marketing_year_avg_price(
+  dir_source = paste0(dir_fastscratch,"/nass"),
+  agg_level_desc = c("NATIONAL","STATE"),
+  short_desc = c(
+    "OATS - PRICE RECEIVED, MEASURED IN $ / BU",
+    "RYE - PRICE RECEIVED, MEASURED IN $ / BU",
+    "TOBACCO - PRICE RECEIVED, MEASURED IN $ / LB",
+    "CORN, GRAIN - PRICE RECEIVED, MEASURED IN $ / BU",
+    "FLAXSEED - PRICE RECEIVED, MEASURED IN $ / BU",
+    "BARLEY - PRICE RECEIVED, MEASURED IN $ / BU",
+    "BEANS, DRY EDIBLE, INCL CHICKPEAS - PRICE RECEIVED, MEASURED IN $ / CWT",
+    "HAY - PRICE RECEIVED, MEASURED IN $ / TON",
+    "WHEAT - PRICE RECEIVED, MEASURED IN $ / BU",
+    "COTTON - PRICE RECEIVED, MEASURED IN $ / LB",
+    "SORGHUM, GRAIN - PRICE RECEIVED, MEASURED IN $ / CWT",
+    "SOYBEANS - PRICE RECEIVED, MEASURED IN $ / BU",
+    "SUGARBEETS - PRICE RECEIVED, MEASURED IN $ / TON",
+    "PEAS, DRY EDIBLE - PRICE RECEIVED, MEASURED IN $ / CWT",
+    "SUNFLOWER - PRICE RECEIVED, MEASURED IN $ / CWT",
+    "RICE - PRICE RECEIVED, MEASURED IN $ / CWT",
+    "PEANUTS - PRICE RECEIVED, MEASURED IN $ / LB",
+    "CANOLA - PRICE RECEIVED, MEASURED IN $ / CWT",
+    "MAPLE SYRUP - PRICE RECEIVED, MEASURED IN $ / GALLON",
+    "RICE, LONG GRAIN - PRICE RECEIVED, MEASURED IN $ / CWT",
+    "MILLET, PROSO - PRICE RECEIVED, MEASURED IN $ / BU",
+    "SUGARCANE - PRICE RECEIVED, MEASURED IN $ / TON",
+    "SAFFLOWER - PRICE RECEIVED, MEASURED IN $ / CWT"))
+
+df[, data_source := "USDA NASS Quick Stats"]
+saveRDS(df,file=paste0(dir_data_release,"/nass/nass_marketing_year_avg_price.rds"))
+
+# State rental rates                   
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+df <- get_state_rental_rates()
+df[, data_source := "Output from get_state_rental_rates() function"]
+saveRDS(df,file=paste0(dir_data_release,"/nass/nass_state_rental_rates.rds"))
+
+# Aggregate NASS Production Data              
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+df <- get_nass_production_data(
+  dir_source      = "./data-raw/fastscratch/nass/",
+  source_desc     = "SURVEY",
+  agg_level_desc  = c("NATIONAL","STATE","COUNTY"))
+df[, data_source := "USDA NASS Quick Stats"]
+saveRDS(df,file=paste0(dir_data_release,"/nass/nass_production_data.rds"))
+

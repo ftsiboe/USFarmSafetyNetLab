@@ -9,7 +9,8 @@ plot_us_states_choropleth(
   legend_title = NULL,
   palette = c("#003524", "#00583D", "#A0BD78", "#BED73B", "#BE5E27", "#FFC425",
     "#FEF389", "#D7E5C8", "#9DD9F7", "#51ABA0", "#0F374B"),
-  table_grob = NULL
+  table_grob = NULL,
+  label_size = 2.5
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ Defaults to a 10-colour NDSU-inspired palette.}
 
 \item{table_grob}{A \code{grob} object (e.g. from \code{gridExtra::tableGrob}) to annotate on the map;
 if \code{NULL}, no table is added.}
+
+\item{label_size}{label size for sgeom_sf_text}
 }
 \value{
 A \code{ggplot} object showing the US states choropleth with annotated labels.

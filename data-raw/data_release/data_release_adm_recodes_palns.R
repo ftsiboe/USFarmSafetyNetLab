@@ -1,6 +1,6 @@
 
 source("data-raw/work_environment_setup.R")
-library(rmaADM)
+library(rfcip)
 devtools::document()
 
 # 1) Retrieve ADM data for each year from 2011 to current, binding into one data.frame
@@ -190,8 +190,4 @@ data$insurance_plan_name <- tools::toTitleCase(stringr::str_to_sentence(toupper(
 
 data <- data.table::as.data.table(unique(data))
 data <- harmonize_codes_and_names(data)
-
-saveRDS(data,file=paste0(dir_data_release,"/adm/recodes_insurance_plan.rds"))
-
-
 

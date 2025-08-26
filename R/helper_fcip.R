@@ -213,6 +213,145 @@ standardize_fcip_column_names <- function(df) {
   df
 }
 
+#' Harmonize names/codes in a data table of insurance elections
+#'
+#' This function looks for two columns and creates recoded versions grouping similar
+#' codes into broader categories.
+#'
+#' @param df A `data.frame`
+#' @return A `data.frame` with the same columns as `df` with new columns
+#' @export
+harmonize_codes_and_names <- function(df){
+  
+  ## Recode unit structure codes into broader classes
+  if ("unit_structure_code" %in% names(df)) {
+    # OU - Optional Unit;
+    # UD - OU established by UDO; and
+    # UA - OU established by a WUA.
+    # BU - Basic Unit;
+    # EU - Enterprise Unit;
+    # EP - Enterprise Unit by Irrigated and/or Non-Irrigated Practices;
+    # EC - Enterprise Unit by FAC and/or NFAC Cropping Practices;
+    # WU - Whole-farm Unit;
+    df[, unit_structure_recode := ifelse(
+      unit_structure_code %in% c("UD","UA","OU","", NA),
+      "OU",
+      unit_structure_code
+    )]
+    
+    # Map all enterprise variants to "EU"
+    df[, unit_structure_recode := ifelse(
+      unit_structure_code %in% c("EU","EP","EC","WU"),
+      "EU",
+      unit_structure_recode
+    )]
+    
+    df[,unit_structure_rename := factor(
+      unit_structure_recode,
+      levels = c("OU","BU","EU"),
+      labels = c("Optional Unit (OU)","Basic Unit (BU)","Enterprise/Whole Fram Unit (EU)"))]
+  }
+  
+  ## Recode insurance plan codes to harmonize similar products
+  if ("insurance_plan_code" %in% names(df)) {
+    # Harmonize COMBO products
+    # These three plans of insurance are similar but not identical. Some differences are:
+    # * CRC bases the insurance guarantee on the higher of the base price or the harvest period price.
+    # * IP and standard RA guarantees are determined using the base price, with no adjustment if the price increases.
+    # * RA offers up-side price protection like that of CRC as an option but IP does not.
+    # * IP limits unit formats to basic units, which include all interest in a crop in a county under identical ownership.
+    # * RA is unique in offering coverage on whole farm units, integrating coverage from two to three crops.
+    # check <- data[data$ins_plan_ab %in% c("YP","APH","IP","RP-HPE","RPHPE","CRC","RP","RA"),]
+    
+    # APH[90] to YP[1]
+    df[, insurance_plan_recode := ifelse(
+      insurance_plan_code %in% c(1, 90),
+      1,
+      insurance_plan_code
+    )]
+    
+    # CRC[44] to RP[2]
+    df[, insurance_plan_recode := ifelse(
+      insurance_plan_code %in% c(44, 2),
+      2,
+      insurance_plan_recode
+    )]
+    
+    # IP[42], RP-HPE[3], 25 to RP-HPE[3]
+    df[, insurance_plan_recode := ifelse(
+      insurance_plan_code %in% c(25, 42, 3),
+      3,
+      insurance_plan_recode
+    )]
+  }
+  
+  ## Recode coverage level percent 
+  if ("coverage_level_percent" %in% names(df)) {
+    df[, coverage_level_percent_recode := fifelse(coverage_level_percent > 1,coverage_level_percent / 100,coverage_level_percent)]
+    df[, coverage_level_percent_recode := round(coverage_level_percent_recode / 0.05) * 0.05]
+    df[coverage_level_percent_recode < 0.50, coverage_level_percent_recode := 0.5]
+    df[coverage_level_percent_recode > 0.95, coverage_level_percent_recode := 0.95]
+  }
+  
+  ## Recode coverage type 
+  if ("coverage_type_code" %in% names(df)) {
+    df[, coverage_type_code_recode := fifelse(coverage_type_code %in% "C","CAT","Buy-up")]
+    df[commodity_year <1995, coverage_type_code_recode := "CAT"] # CAT was started in 1995
+  }
+  
+  if("coverage_type_code" %in% names(df) & "commodity_year" %in% names(df) ) {
+    df[commodity_year <1995, coverage_type_code_recode := "CAT"] # CAT was started in 1995
+  }
+  
+  ## Re-code damage type  
+  if ("cause_of_loss_description" %in% names(df)) {
+    
+    # 1) Cold weather codes
+    cold_codes <- c("COLD WET WEATHER","COLD WINTER","FREEZE","FROST","ICE FLOE","ICE FLOW")
+    df[, damage_name_recode := fifelse(toupper(cause_of_loss_description) %in% cold_codes,"Cold weather","Other")]
+    
+    # 2) Disease/Insects 
+    disease_codes <- c(
+      "PLANT DISEASE","WILDLIFE","INSECTS","MYCOTOXIN",
+      "ASIAN SOYBEAN RUST","AQUACULTURE DISEASE",
+      "ASIATIC CITRUS CANKER","DISEASE, AQUACULTURE",
+      "MEDFLY","MYCOTOXIN (AFLATOXIN)","POST BLOOM FRUIT DROP")
+    df[toupper(cause_of_loss_description) %in% disease_codes,damage_name_recode := "Disease/Insects"]
+    
+    # 3) Drought & heat codes
+    drought_codes <- c(
+      "DROUGHT","FAILURE OF IRRIGATION SUPPLY",
+      "FAILURE OF IRRIGATION EQUIPMENT","HEAT","HOT WIND",
+      "FIRE","HOT HEMP","DROUGHT DEVIATION","EXCESS SUN",
+      "FAILURE IRRIG EQUIP","FAILURE IRRIG SUPPLY")
+    df[toupper(cause_of_loss_description) %in% drought_codes,damage_name_recode := "Drought & heat"]
+    
+    # 4) Hail
+    df[toupper(cause_of_loss_description) == "HAIL",damage_name_recode := "Hail"]
+    
+    # 5) Price declines
+    price_codes <- c("DECLINE IN PRICE","MARKET PRICE DIFFERENCE - SPRING VS HARVEST")
+    df[toupper(cause_of_loss_description) %in% price_codes,damage_name_recode := "Price declines"]
+    
+    # 6) Excess moisture & related weather
+    excess_codes <- c(
+      "TORNADO","EXCESS MOISTURE/PRECIPITATION/RAIN","FLOOD",
+      "POOR DRAINAGE","EROSION","HURRICANE/TROPICAL DEPRESSION",
+      "WIND/EXCESS WIND","STORM SURGE","CYCLONE",
+      "TIDAL WAVE/TSUNAMI","INABILITY TO PREPARE LAND FOR IRRIGATION",
+      "TIDAL WAVE","EXCESS MOISTURE/PRECIP/RAIN")
+    df[toupper(cause_of_loss_description) %in% excess_codes,damage_name_recode := "Excess moisture & related weather"]
+    
+    # 7) Area/index plans
+    index_codes <- c("GRP/GRIP CROPS ONLY`","GRP/GRIP CROPS","ARPI CROPS ONLY","ARPI/SCO/STAX CROPS ONLY",
+                      "ARPI/SCO/STAX/MP CROPS ONLY","ARPI/SCO/STAX/MP/HIP WI CROPS ONLY","GRP/GRIP CROPS ONLY",
+                      "ARPI/SCO/ECO/STAX/MP/HIP-WI/PACE CROPS ONLY","ARPI/SCO/ECO/STAX/MP/HIP WI CROPS ONLY")
+    df[toupper(cause_of_loss_description) %in% index_codes,damage_name_recode := "Area/index plans"]
+
+  }
+
+  return(df)
+}
 
 #' Harmonize and summarize crop type codes from raw SOBTPU data
 #'
@@ -384,145 +523,3 @@ harmonize_crop_type_codes <- function(){
   
   return(df)
 }
-
-
-#' Harmonize names/codes in a data table of insurance elections
-#'
-#' This function looks for two columns and creates recoded versions grouping similar
-#' codes into broader categories.
-#'
-#' @param df A `data.frame`
-#' @return A `data.frame` with the same columns as `df` with new columns
-#' @export
-harmonize_codes_and_names <- function(df){
-  
-  ## Recode unit structure codes into broader classes
-  if ("unit_structure_code" %in% names(df)) {
-    # OU - Optional Unit;
-    # UD - OU established by UDO; and
-    # UA - OU established by a WUA.
-    # BU - Basic Unit;
-    # EU - Enterprise Unit;
-    # EP - Enterprise Unit by Irrigated and/or Non-Irrigated Practices;
-    # EC - Enterprise Unit by FAC and/or NFAC Cropping Practices;
-    # WU - Whole-farm Unit;
-    df[, unit_structure_recode := ifelse(
-      unit_structure_code %in% c("UD","UA","OU","", NA),
-      "OU",
-      unit_structure_code
-    )]
-    
-    # Map all enterprise variants to "EU"
-    df[, unit_structure_recode := ifelse(
-      unit_structure_code %in% c("EU","EP","EC","WU"),
-      "EU",
-      unit_structure_recode
-    )]
-    
-    df[,unit_structure_rename := factor(
-      unit_structure_recode,
-      levels = c("OU","BU","EU"),
-      labels = c("Optional Unit (OU)","Basic Unit (BU)","Enterprise/Whole Fram Unit (EU)"))]
-  }
-  
-  ## Recode insurance plan codes to harmonize similar products
-  if ("insurance_plan_code" %in% names(df)) {
-    # Harmonize COMBO products
-    # These three plans of insurance are similar but not identical. Some differences are:
-    # * CRC bases the insurance guarantee on the higher of the base price or the harvest period price.
-    # * IP and standard RA guarantees are determined using the base price, with no adjustment if the price increases.
-    # * RA offers up-side price protection like that of CRC as an option but IP does not.
-    # * IP limits unit formats to basic units, which include all interest in a crop in a county under identical ownership.
-    # * RA is unique in offering coverage on whole farm units, integrating coverage from two to three crops.
-    # check <- data[data$ins_plan_ab %in% c("YP","APH","IP","RP-HPE","RPHPE","CRC","RP","RA"),]
-    
-    # APH[90] to YP[1]
-    df[, insurance_plan_recode := ifelse(
-      insurance_plan_code %in% c(1, 90),
-      1,
-      insurance_plan_code
-    )]
-    
-    # CRC[44] to RP[2]
-    df[, insurance_plan_recode := ifelse(
-      insurance_plan_code %in% c(44, 2),
-      2,
-      insurance_plan_recode
-    )]
-    
-    # IP[42], RP-HPE[3], 25 to RP-HPE[3]
-    df[, insurance_plan_recode := ifelse(
-      insurance_plan_code %in% c(25, 42, 3),
-      3,
-      insurance_plan_recode
-    )]
-  }
-  
-  ## Recode coverage level percent 
-  if ("coverage_level_percent" %in% names(df)) {
-    df[, coverage_level_percent_recode := fifelse(coverage_level_percent > 1,coverage_level_percent / 100,coverage_level_percent)]
-    df[, coverage_level_percent_recode := round(coverage_level_percent_recode / 0.05) * 0.05]
-    df[coverage_level_percent_recode < 0.50, coverage_level_percent_recode := 0.5]
-    df[coverage_level_percent_recode > 0.95, coverage_level_percent_recode := 0.95]
-  }
-  
-  ## Recode coverage type 
-  if ("coverage_type_code" %in% names(df)) {
-    df[, coverage_type_code_recode := fifelse(coverage_type_code %in% "C","CAT","Buy-up")]
-    df[commodity_year <1995, coverage_type_code_recode := "CAT"] # CAT was started in 1995
-  }
-  
-  if("coverage_type_code" %in% names(df) & "commodity_year" %in% names(df) ) {
-    df[commodity_year <1995, coverage_type_code_recode := "CAT"] # CAT was started in 1995
-  }
-  
-  ## Re-code damage type  
-  if ("cause_of_loss_description" %in% names(df)) {
-    
-    # 1) Cold weather codes
-    cold_codes <- c("COLD WET WEATHER","COLD WINTER","FREEZE","FROST","ICE FLOE","ICE FLOW")
-    df[, damage_name_recode := fifelse(toupper(cause_of_loss_description) %in% cold_codes,"Cold weather","Other")]
-    
-    # 2) Disease/Insects 
-    disease_codes <- c(
-      "PLANT DISEASE","WILDLIFE","INSECTS","MYCOTOXIN",
-      "ASIAN SOYBEAN RUST","AQUACULTURE DISEASE",
-      "ASIATIC CITRUS CANKER","DISEASE, AQUACULTURE",
-      "MEDFLY","MYCOTOXIN (AFLATOXIN)","POST BLOOM FRUIT DROP")
-    df[toupper(cause_of_loss_description) %in% disease_codes,damage_name_recode := "Disease/Insects"]
-    
-    # 3) Drought & heat codes
-    drought_codes <- c(
-      "DROUGHT","FAILURE OF IRRIGATION SUPPLY",
-      "FAILURE OF IRRIGATION EQUIPMENT","HEAT","HOT WIND",
-      "FIRE","HOT HEMP","DROUGHT DEVIATION","EXCESS SUN",
-      "FAILURE IRRIG EQUIP","FAILURE IRRIG SUPPLY")
-    df[toupper(cause_of_loss_description) %in% drought_codes,damage_name_recode := "Drought & heat"]
-    
-    # 4) Hail
-    df[toupper(cause_of_loss_description) == "HAIL",damage_name_recode := "Hail"]
-    
-    # 5) Price declines
-    price_codes <- c("DECLINE IN PRICE","MARKET PRICE DIFFERENCE - SPRING VS HARVEST")
-    df[toupper(cause_of_loss_description) %in% price_codes,damage_name_recode := "Price declines"]
-    
-    # 6) Excess moisture & related weather
-    excess_codes <- c(
-      "TORNADO","EXCESS MOISTURE/PRECIPITATION/RAIN","FLOOD",
-      "POOR DRAINAGE","EROSION","HURRICANE/TROPICAL DEPRESSION",
-      "WIND/EXCESS WIND","STORM SURGE","CYCLONE",
-      "TIDAL WAVE/TSUNAMI","INABILITY TO PREPARE LAND FOR IRRIGATION",
-      "TIDAL WAVE","EXCESS MOISTURE/PRECIP/RAIN")
-    df[toupper(cause_of_loss_description) %in% excess_codes,damage_name_recode := "Excess moisture & related weather"]
-    
-    # 7) Area/index plans
-    index_codes <- c("GRP/GRIP CROPS ONLY`","GRP/GRIP CROPS","ARPI CROPS ONLY","ARPI/SCO/STAX CROPS ONLY",
-                      "ARPI/SCO/STAX/MP CROPS ONLY","ARPI/SCO/STAX/MP/HIP WI CROPS ONLY","GRP/GRIP CROPS ONLY",
-                      "ARPI/SCO/ECO/STAX/MP/HIP-WI/PACE CROPS ONLY","ARPI/SCO/ECO/STAX/MP/HIP WI CROPS ONLY")
-    df[toupper(cause_of_loss_description) %in% index_codes,damage_name_recode := "Area/index plans"]
-
-  }
-
-  return(df)
-}
-
