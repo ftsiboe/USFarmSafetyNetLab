@@ -63,6 +63,7 @@ estimate_fcip_instruments <- function(year, statplan) {
   setDT(adm)
   
   # 3. Prepare contiguous county mapping for smoothing
+  contiguous_county <- fcip_contiguous_county
   setDT(contiguous_county)
   contiguous_county[, state_code := contiguous_state_code]
   contiguous_county[, county_code := contiguous_county_code]

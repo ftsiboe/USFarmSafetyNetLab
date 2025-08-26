@@ -61,6 +61,7 @@ estimate_fcip_unloaded_rate <- function(
   ]
   
   # 2. Build the contiguous-county group for each target county
+  contiguous_county <- fcip_contiguous_county
   group_data <- target_data[contiguous_county, on = .(state_code, county_code), nomatch = 0
   ][, .(state_code = contiguous_state_code, county_code = contiguous_county_code)]
   group_data <- unique(group_data)

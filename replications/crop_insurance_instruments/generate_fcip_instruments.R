@@ -22,7 +22,9 @@
 
 rm(list=ls(all=TRUE)); gc(); library(data.table); library(magrittr)
 devtools::document()
-devtools::load_all()
+#devtools::load_all()
+
+dir.create("./data-raw/data_release/replications", recursive = TRUE)
 
 current_year <- as.numeric(format(Sys.Date(),"%Y")) - 2
 
@@ -104,16 +106,15 @@ instruments <- as.data.frame(
     lapply(
       c((min(sob[["commodity_year"]]) + 22):max(sob[["commodity_year"]])),
       estimate_fcip_instruments,
-      statplan = sob
+      statplan = sob 
     ), fill = TRUE))
 
 # merge Instrument (i.e., target rate) aggregated directly from RMA’s actuarial data master 
 adm <- tempfile(fileext = ".rds")
 download.file(
-  "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/adm/fcip_demand_instruments_from_adm.rds",
+  "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/adm_extracts/fcip_aph_base_rate.rds",
   adm, mode = "wb", quiet = TRUE)
 adm <- readRDS(adm)
-# adm <- readRDS(paste0("./data-raw/data_release/fcip_demand_instruments_from_adm.rds"))
 adm <- as.data.table(adm)
 
 instruments <- merge( instruments,adm, by= intersect(names(instruments), names(adm)), all  = TRUE)
@@ -149,5 +150,6 @@ instruments <- instruments[!is.na(tau_final) & is.finite(tau_final) & tau_final 
 # Save the processed data to an RDS file for use
 
 instruments[, data_source := "Key instrumental variables for crop insurance demand as discussed in Tsiboe & Turner (2023)"]
-saveRDS(instruments, "./data-raw/data_release/fcip_demand_instruments.rds")
+
+saveRDS(instruments, "./data-raw/data_release/replications/fcip_demand_instruments.rds")
 
