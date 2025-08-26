@@ -36,7 +36,7 @@ sobcov_full <- data.table::rbindlist(
       tryCatch({
         sobcov <- tempfile(fileext = ".rds")
         download.file(
-          paste0("https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/sob/sobcov_",year,".rds"),
+          paste0("https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/sob/sobcov_",year,".rds"),
           sobcov, mode = "wb", quiet = TRUE)
         sobcov <- readRDS(sobcov)
         # sobcov <- readRDS(paste0("./data-raw/data_release/sobcov_",year,".rds"))
@@ -53,9 +53,9 @@ sobcov <- sobcov_full[, .(
 
 sobscc <- tempfile(fileext = ".rds")
 download.file(
-  "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/sob/sobscc_1948_1988.rds",
+  "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/sob/sobscc_1948_1988.rds",
   sobscc, mode = "wb", quiet = TRUE)
-  sobscc <- readRDS(sobscc)
+sobscc <- readRDS(sobscc)
 # sobscc <- readRDS(paste0("./data-raw/data_release/sobscc_1948_1988.rds"))
 sobscc <- sobscc[, .(
   insured_area     = sum(net_reported_quantity, na.rm = TRUE),
@@ -112,7 +112,7 @@ instruments <- as.data.frame(
 # merge Instrument (i.e., target rate) aggregated directly from RMA’s actuarial data master 
 adm <- tempfile(fileext = ".rds")
 download.file(
-  "https://github.com/ftsiboe/US-FarmSafetyNet-Lab/releases/download/adm_extracts/fcip_aph_base_rate.rds",
+  "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/adm_extracts/fcip_aph_base_rate.rds",
   adm, mode = "wb", quiet = TRUE)
 adm <- readRDS(adm)
 adm <- as.data.table(adm)
