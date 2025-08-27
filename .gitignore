@@ -22,8 +22,7 @@ data-raw/data_release/**
 !data-raw/data_release/*.R
 
 # -------------------------
-# replications: ignore broadly
-# allow only top-level .R in projects
+# replications: 
 # -------------------------
 replications/*
 

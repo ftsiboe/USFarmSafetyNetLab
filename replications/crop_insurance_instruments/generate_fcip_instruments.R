@@ -24,7 +24,7 @@ rm(list=ls(all=TRUE)); gc(); library(data.table); library(magrittr)
 devtools::document()
 #devtools::load_all()
 
-dir.create("./data-raw/data_release/replications", recursive = TRUE)
+dir.create("./data-raw/data_release/reps", recursive = TRUE)
 
 current_year <- as.numeric(format(Sys.Date(),"%Y")) - 2
 
@@ -151,5 +151,5 @@ instruments <- instruments[!is.na(tau_final) & is.finite(tau_final) & tau_final 
 
 instruments[, data_source := "Key instrumental variables for crop insurance demand as discussed in Tsiboe & Turner (2023)"]
 
-saveRDS(instruments, "./data-raw/data_release/replications/fcip_demand_instruments.rds")
+saveRDS(instruments, "./data-raw/data_release/reps/fcip_demand_instruments.rds")
 

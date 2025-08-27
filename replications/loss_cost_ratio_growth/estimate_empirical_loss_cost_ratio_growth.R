@@ -29,13 +29,13 @@ gc()
 devtools::document()
 
 # Create directories for storing output (if they don’t already exist)
-dir_estimations <- "./data-raw/fastscratch/replications/loss_cost_ratio_growth/output/estimations/"
+dir_estimations <- "./data-raw/fastscratch/reps/loss_cost_ratio_growth/output/estimations/"
 
 if (!dir.exists(dir_estimations)) {
   dir.create(dir_estimations, recursive = TRUE)
 }
 
-replications_release <- "./data-raw/data_release/replications"
+replications_release <- "./data-raw/data_release/reps"
 
 if (!dir.exists(replications_release)) {
   dir.create(replications_release, recursive = TRUE)

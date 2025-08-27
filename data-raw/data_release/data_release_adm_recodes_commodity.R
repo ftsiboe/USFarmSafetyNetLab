@@ -291,3 +291,14 @@ names(adm) <- c("commodity_year","commodity_code","commodity_name","CROP","commo
                 "annimal_flag","annual_flag","perennial_flag","selected_crops_flag")
 
 adm <- as.data.table(adm[complete.cases(adm[c("commodity_year","commodity_code")]),])
+
+adm <- adm[
+  , lapply(.SD, function(x) calculate_mode(x, na.rm = TRUE)),
+  by = c("commodity_year","commodity_code"), 
+  .SDcols = c("CROP","commodity_name","commodity_group")][
+    adm[
+      , lapply(.SD, function(x) max(x, na.rm = TRUE)),
+      by = c("commodity_year","commodity_code"), 
+      .SDcols = c("annimal_flag","annual_flag","perennial_flag","selected_crops_flag")],
+    on = c("commodity_year","commodity_code"), nomatch = 0]
+
