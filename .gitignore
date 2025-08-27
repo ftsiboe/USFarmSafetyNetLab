@@ -1,21 +1,58 @@
+# RStudio cruft
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-job_**.sbatch
+
+# USFarmSafetyNetLab.Rproj
+
+# HPC batch + SLURM logs
+job_*.sbatch
 slurm-*.out
-USFarmSafetyNetLab.Rproj
-data-raw/*
-replications/*
+
+# -------------------------
+# data-raw:
+# -------------------------
+data-raw/**
 !data-raw/*.R
 !data-raw/codestash/
-!data-raw/data_release/
-!data-raw/data_release/*.R
-/data-raw/data_release/*.rds
-/data-raw/data_release/**/
 !data-raw/readmes/
+!data-raw/data_release/
+data-raw/data_release/**
+!data-raw/data_release/*.R
+
+# -------------------------
+# replications: ignore broadly
+# allow only top-level .R in projects
+# -------------------------
+replications/**
+
+# fcip_calibrated_yields: 
 !replications/fcip_calibrated_yields/
+replications/fcip_calibrated_yields/**
+!replications/fcip_calibrated_yields/*.R
+!replications/fcip_calibrated_yields/*.Rmd
+!replications/fcip_calibrated_yields/*.md
+
+# crop_insurance_instruments:
 !replications/crop_insurance_instruments/
+replications/crop_insurance_instruments/**
+!replications/crop_insurance_instruments/*.R
+!replications/crop_insurance_instruments/*.Rmd
+!replications/crop_insurance_instruments/*.md
+
+# loss_cost_ratio_growth: 
 !replications/loss_cost_ratio_growth/
-!replications/crop_insurance_instruments/
+replications/loss_cost_ratio_growth/**
+!replications/loss_cost_ratio_growth/*.R
+!replications/loss_cost_ratio_growth/*.Rmd
+!replications/loss_cost_ratio_growth/*.md
+
+# fcip_demand_response: 
+!replications/fcip_demand_response/
+replications/fcip_demand_response/**
+!replications/fcip_demand_response/*.R
+!replications/fcip_demand_response/*.Rmd
+!replications/fcip_demand_response/*.md
+
 
