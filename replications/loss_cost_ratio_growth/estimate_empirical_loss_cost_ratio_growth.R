@@ -45,7 +45,7 @@ if (!dir.exists(replications_release)) {
 # Load the full set of “sobscc” data for all available years
 sobscc <- tempfile(fileext = ".rds")
 download.file(
-  "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/sob/sobscc_1948_1988.rds",
+  "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/sob/sobscc_all.rds",
   sobscc, mode = "wb", quiet = TRUE)
 sobscc <- readRDS(sobscc)
 
