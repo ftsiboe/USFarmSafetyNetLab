@@ -29,17 +29,17 @@ replications/**
 
 # fcip_calibrated_yields: 
 !replications/fcip_calibrated_yields/
-replications/fcip_calibrated_yields/**
-!replications/fcip_calibrated_yields/*.R
-!replications/fcip_calibrated_yields/*.Rmd
-!replications/fcip_calibrated_yields/*.md
+# replications/fcip_calibrated_yields/**
+# !replications/fcip_calibrated_yields/*.R
+# !replications/fcip_calibrated_yields/*.Rmd
+# !replications/fcip_calibrated_yields/*.md
 
 # crop_insurance_instruments:
 !replications/crop_insurance_instruments/
-replications/crop_insurance_instruments/**
-!replications/crop_insurance_instruments/*.R
-!replications/crop_insurance_instruments/*.Rmd
-!replications/crop_insurance_instruments/*.md
+# replications/crop_insurance_instruments/**
+# !replications/crop_insurance_instruments/*.R
+# !replications/crop_insurance_instruments/*.Rmd
+# !replications/crop_insurance_instruments/*.md
 
 # loss_cost_ratio_growth: 
 !replications/loss_cost_ratio_growth/
