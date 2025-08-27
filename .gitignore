@@ -13,7 +13,7 @@ slurm-*.out
 # -------------------------
 # data-raw:
 # -------------------------
-data-raw/**
+data-raw/*
 !data-raw/*.R
 !data-raw/codestash/
 !data-raw/readmes/
@@ -25,30 +25,18 @@ data-raw/data_release/**
 # replications: ignore broadly
 # allow only top-level .R in projects
 # -------------------------
-replications/**
+replications/*
 
-# fcip_calibrated_yields: 
 !replications/fcip_calibrated_yields/
-# replications/fcip_calibrated_yields/**
-# !replications/fcip_calibrated_yields/*.R
-# !replications/fcip_calibrated_yields/*.Rmd
-# !replications/fcip_calibrated_yields/*.md
 
-# crop_insurance_instruments:
 !replications/crop_insurance_instruments/
-# replications/crop_insurance_instruments/**
-# !replications/crop_insurance_instruments/*.R
-# !replications/crop_insurance_instruments/*.Rmd
-# !replications/crop_insurance_instruments/*.md
 
-# loss_cost_ratio_growth: 
 !replications/loss_cost_ratio_growth/
 replications/loss_cost_ratio_growth/**
 !replications/loss_cost_ratio_growth/*.R
 !replications/loss_cost_ratio_growth/*.Rmd
 !replications/loss_cost_ratio_growth/*.md
 
-# fcip_demand_response: 
 !replications/fcip_demand_response/
 replications/fcip_demand_response/**
 !replications/fcip_demand_response/*.R
