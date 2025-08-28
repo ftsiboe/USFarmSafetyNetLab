@@ -23,7 +23,7 @@ names(sob) <- c("crop_yr","crop_cd","crop")
 
 sob$crop_yr <- as.numeric(as.character(sob$crop_yr))
 sob$crop_cd <- as.numeric(as.character(sob$crop_cd))
-sob$crop <- toupper(sob$crop)
+sob$crop <- toupper(as.character(sob$crop))
 
 
 adm <- as.data.frame(
@@ -42,6 +42,7 @@ adm <- unique(adm[c("commodity_year","commodity_code","commodity_name")])
 names(adm) <- c("crop_yr","crop_cd","crop")
 adm$crop_yr <- as.numeric(as.character(adm$crop_yr))
 adm$crop_cd <- as.numeric(as.character(adm$crop_cd))
+adm$crop <- toupper(as.character(adm$crop))
 
 adm <- rbind(unique(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/1995-2010 clean/CROSS_REFERENCE_DATA_1997_2010.rds"))[names(adm)]),adm)
 adm$crop <- toupper(adm$crop)

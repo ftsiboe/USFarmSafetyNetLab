@@ -18,6 +18,6 @@ source(paste0(dir_data_release,"/scripts/data_release_adm.R"))
 source(paste0(dir_data_release,"/scripts/data_release_ice.R"))
 
 # NASS Data
-# source(paste0(dir_data_release,"/scripts/data_release_nass.R"))
+source(paste0(dir_data_release,"/scripts/data_release_nass.R"))
 
 

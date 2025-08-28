@@ -9,7 +9,6 @@ slurm-*.out
 data-raw/*
 !data-raw/scripts/
 !data-raw/replications/
-data-raw/replications/*
 
 !data-raw/replications/fcip_calibrated_yields/
 
