@@ -3,43 +3,28 @@
 .Rhistory
 .RData
 .Ruserdata
-
 # USFarmSafetyNetLab.Rproj
-
-# HPC batch + SLURM logs
 job_*.sbatch
 slurm-*.out
-
-# -------------------------
-# data-raw:
-# -------------------------
 data-raw/*
-!data-raw/*.R
-!data-raw/codestash/
-!data-raw/readmes/
-!data-raw/data_release/
-data-raw/data_release/**
-!data-raw/data_release/*.R
+!data-raw/scripts/
+!data-raw/replications/
+data-raw/replications/*
 
-# -------------------------
-# replications: 
-# -------------------------
-replications/*
+!data-raw/replications/fcip_calibrated_yields/
 
-!replications/fcip_calibrated_yields/
+!data-raw/replications/crop_insurance_instruments/
 
-!replications/crop_insurance_instruments/
+!data-raw/replications/loss_cost_ratio_growth/
+data-raw/replications/loss_cost_ratio_growth/**
+!data-raw/replications/loss_cost_ratio_growth/*.R
+!data-raw/replications/loss_cost_ratio_growth/*.Rmd
+!data-raw/replications/loss_cost_ratio_growth/*.md
 
-!replications/loss_cost_ratio_growth/
-replications/loss_cost_ratio_growth/**
-!replications/loss_cost_ratio_growth/*.R
-!replications/loss_cost_ratio_growth/*.Rmd
-!replications/loss_cost_ratio_growth/*.md
-
-!replications/fcip_demand_response/
-replications/fcip_demand_response/**
-!replications/fcip_demand_response/*.R
-!replications/fcip_demand_response/*.Rmd
-!replications/fcip_demand_response/*.md
+!data-raw/replications/fcip_demand_response/
+data-raw/replications/fcip_demand_response/**
+!data-raw/replications/fcip_demand_response/*.R
+!data-raw/replications/fcip_demand_response/*.Rmd
+!data-raw/replications/fcip_demand_response/*.md
 
 

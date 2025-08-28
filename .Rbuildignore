@@ -24,7 +24,6 @@ USFarmSafetyNetLab.Rproj
 ^codemeta\.json$
 ^\.github$
 data-raw
-replications
 README.Rmd
 data/README.Rmd
 data/README.md
