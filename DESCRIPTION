@@ -22,10 +22,10 @@ RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Depends: R (>= 4.1.0)
 Imports:
-    rfcip, data.table, dplyr, doBy, plm, purrr,
-    readr, rvest, sp, spdep, stringr, terra, classInt, janitor, ggrepel,
+    rfcip, rfsa, data.table, dplyr, doBy, plm, purrr,
+    readr, rvest, sp, spdep, stringr, terra, classInt, janitor, ggrepel, usmap,
     tidyr, tigris, xml2, moments, stats, sf, utils, urbnmapr, ggplot2, gridExtra, gtable
-Remotes: github::dylan-turner25/rfcip, github::UrbanInstitute/urbnmapr
+Remotes: github::dylan-turner25/rfcip, github::UrbanInstitute/urbnmapr, github::dylan-turner25/rfsa
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 LazyData: true
 Cite-us: If you find it useful, please consider staring the repository and citing the following studies

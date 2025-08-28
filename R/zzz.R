@@ -38,7 +38,21 @@
     rank_among_outcomes reinsurance_year sd unit_structure_rename filename time
     area_km2 cause_of_loss_description centroid
     coverage_level_percent_recode coverage_type_code_recode cx cy
-    damage_name_recode geometry is_small label state_abbv value_cat
+    damage_name_recode geometry is_small label state_abbv value_cat fcip_contiguous_county
+        county_acreage county_cd coverage_level_dominant
+    coverage_level_percent_aggregate coverage_level_percent_avg
+    coverage_level_percent_max coverage_level_percent_wavg crop_cd
+    crop_yr data fcip_recodes_commodity_groupings
+    fcip_recodes_insurance_plan fcip_recodes_practice fips fsaCropAcreage
+    fsa_crop_linker fsa_planted_acres harvest_price na.omit
+    nassSurvey_AREA_BEARING nassSurvey_AREA_HARVESTED
+    nassSurvey_AREA_PLANTED nass_index_for_price_recived
+    nass_state_rental_rates net_reporting_level_amount period_farmbill
+    planted_acres pool potential_liability_amount premium_per_liability
+    price projected_price reporting_level_type
+    standardized_liability_amount state_cd subsidy_bins
+    subsidy_per_premium subsidy_rate_65 subsidy_rate_75 tau_adm
+    triger_level
       ",
         "\\s+"
       )[[1]]
