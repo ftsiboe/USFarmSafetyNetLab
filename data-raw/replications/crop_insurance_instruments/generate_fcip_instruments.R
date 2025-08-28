@@ -24,6 +24,12 @@ rm(list=ls(all=TRUE)); gc(); library(data.table); library(magrittr)
 devtools::document()
 #devtools::load_all()
 
+dir_reps <- "./data-raw/release/reps"
+
+if (!dir.exists(dir_reps)) {
+  dir.create(dir_reps, recursive = TRUE)
+}
+
 source("https://raw.githubusercontent.com/ftsiboe/rfcipDemand/main/R/estimate_fcip_instruments.R")
 
 fcip_contiguous_county <- tempfile(fileext = ".rds")
@@ -110,7 +116,7 @@ sob[, lcr := indemnity_amount / liability_amount]
 instruments <- as.data.frame(
   data.table::rbindlist(
     lapply(
-      c((min(sob[["commodity_year"]]) + 22):max(sob[["commodity_year"]])),
+      c((min(sob[["commodity_year"]]) + 22):max(sob[["commodity_year"]]))[1:2],
       estimate_fcip_instruments,
       statplan = sob 
     ), fill = TRUE))
@@ -157,5 +163,5 @@ instruments <- instruments[!is.na(tau_final) & is.finite(tau_final) & tau_final 
 
 instruments[, data_source := "Key instrumental variables for crop insurance demand as discussed in Tsiboe & Turner (2023)"]
 
-saveRDS(instruments, "./data-raw/release/reps/fcip_demand_instruments.rds")
+saveRDS(instruments, paste0(dir_reps,"/fcip_demand_instruments.rds"))
 
