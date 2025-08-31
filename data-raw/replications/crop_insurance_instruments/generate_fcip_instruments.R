@@ -116,7 +116,7 @@ sob[, lcr := indemnity_amount / liability_amount]
 instruments <- as.data.frame(
   data.table::rbindlist(
     lapply(
-      c((min(sob[["commodity_year"]]) + 22):max(sob[["commodity_year"]]))[1:2],
+      c((min(sob[["commodity_year"]]) + 22):max(sob[["commodity_year"]])),
       estimate_fcip_instruments,
       statplan = sob 
     ), fill = TRUE))
