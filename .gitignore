@@ -3,7 +3,7 @@
 .Rhistory
 .RData
 .Ruserdata
-# USFarmSafetyNetLab.Rproj
+USFarmSafetyNetLab.Rproj
 job_*.sbatch
 slurm-*.out
 data-raw/*
@@ -26,4 +26,12 @@ data-raw/replications/fcip_demand_response/**
 !data-raw/replications/fcip_demand_response/*.Rmd
 !data-raw/replications/fcip_demand_response/*.md
 
+# Hidden Safety Net of Underutilized Supplemental Insurance in US Agriculture 
+# Francis Tsiboe, Hunter Biram, Amy Hagerman
+!data-raw/replications/hidden_safetynet/
+data-raw/replications/hidden_safetynet/data/
+data-raw/replications/hidden_safetynet/output/
+!data-raw/replications/hidden_safetynet/*.R
+!data-raw/replications/hidden_safetynet/*.Rmd
+!data-raw/replications/hidden_safetynet/*.md
 
