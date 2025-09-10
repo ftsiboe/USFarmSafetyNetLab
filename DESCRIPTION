@@ -21,8 +21,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Depends: R (>= 4.1.0)
-Imports: data.table, moments, janitor, readr, stats, stringr, sf, urbnmapr, ggrepel, grid, gridExtra, gtable, ggplot2,
-  classInt, terra, doBy, plm, sp, spdep, tidyr, tigris, xml2
+Imports: data.table, moments, janitor, readr, stats, stringr, sf, urbnmapr, ggrepel, grid, gridExtra, gtable, ggplot2, 
+  classInt, terra, doBy, plm, sp, spdep, tidyr, tigris, xml2, rfcip
 Remotes: github::dylan-turner25/rfcip, github::UrbanInstitute/urbnmapr, github::dylan-turner25/rfsa
 Suggests: dplyr, rvest, purrr, rfcip, knitr, rmarkdown, testthat (>= 3.0.0)
 LazyData: true
