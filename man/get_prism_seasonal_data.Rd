@@ -18,7 +18,7 @@ get_prism_seasonal_data(
 
 \item{simnum}{Integer climate-scenario code to keep (default \code{0}, observed).}
 
-\item{convert_precip}{One of \code{"inch"} (default; converts mm → inches), \code{"mm"} (ensure millimeters), or \code{"none"} (leave as-is).}
+\item{convert_precip}{One of \code{"inch"} (default; converts mm to inches), \code{"mm"} (ensure millimeters), or \code{"none"} (leave as-is).}
 
 \item{cache_dir}{Optional directory to cache the \code{.rds} file. Defaults to \code{tempdir()}.}
 
@@ -33,12 +33,12 @@ with \verb{ppt, tmin, tmax, tavg, freeze} and all \verb{DD*} columns.
 \description{
 All weather variables were first aggregated to the county level as the
 weighted mean of all the PRISM grids within each county, using the proportion
-of each PRISM grid related to the respective crop’s cover based on cropland
-data layers (CDLs) from NASS CropScape (2008–2022) as the aggregation weights.
-Subsequently, the weather variables were further aggregated over each year’s
+of each PRISM grid related to the respective crop's cover based on cropland
+data layers (CDLs) from NASS CropScape (2008-2022) as the aggregation weights.
+Subsequently, the weather variables were further aggregated over each year's
 growing season for each crop and county.
 
-This function fetches those \strong{pre-aggregated} (county × crop × year) growing-season
+This function fetches those \strong{pre-aggregated} (county/crop/year) growing-season
 summaries for a single year, filters to a chosen climate scenario (\code{SimNum}),
 standardizes column names, optionally converts precipitation units, and
 averages across commodity \emph{types} within each \code{commodity_code} (relevant for wheat).
@@ -60,25 +60,17 @@ historic value.
 \item \code{commodity_code} : commodity code
 \itemize{
 \item \code{ppt}  : precipitation (inches if \code{convert_precip="inch"}, mm if \code{"mm"}),
-\item \code{tmin} : mean daily minimum temperature (°C),
-\item \code{tmax} : mean daily maximum temperature (°C),
-\item \code{tavg} : mean daily average temperature (°C),
-\item \code{freeze}: exposure to temperatures below 0°C (°C·days; as provided),
+\item \code{tmin} : mean daily minimum temperature (C),
+\item \code{tmax} : mean daily maximum temperature (C),
+\item \code{tavg} : mean daily average temperature (C),
+\item \code{freeze}: exposure to temperatures below 0C down to 100 C,
 \item Degree-day summaries \verb{DD*}
 \itemize{
-\item \code{DD1}    : degree days from 0–10°C,
-\item \code{DD2_28} : degree days from 10–28°C, ... up to \code{DD2_35},
-\item \code{DD3_28} : degree days above 28°C, ... up to \code{DD3_35}.
+\item \code{DD1}    : degree days from 0-10C,
+\item \code{DD2_28} : degree days from 10-28C, ... up to \code{DD2_35},
+\item \code{DD3_28} : degree days above 28C, ... up to \code{DD3_35}.
 }
 }
-}
-
-\strong{Column renames (for merging with other datasets):}
-\itemize{
-\item \code{crop_yr}  → \code{commodity_year}
-\item \code{state_cd} → \code{state_code}
-\item \code{county_cd}→ \code{county_code}
-\item \code{crop_cd}  → \code{commodity_code}
 }
 }
 \examples{

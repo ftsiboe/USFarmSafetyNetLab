@@ -3,12 +3,12 @@
 #' @description
 #' All weather variables were first aggregated to the county level as the
 #' weighted mean of all the PRISM grids within each county, using the proportion
-#' of each PRISM grid related to the respective crop’s cover based on cropland
-#' data layers (CDLs) from NASS CropScape (2008–2022) as the aggregation weights.
-#' Subsequently, the weather variables were further aggregated over each year’s
+#' of each PRISM grid related to the respective crop's cover based on cropland
+#' data layers (CDLs) from NASS CropScape (2008-2022) as the aggregation weights.
+#' Subsequently, the weather variables were further aggregated over each year's
 #' growing season for each crop and county.
 #'
-#' This function fetches those **pre-aggregated** (county × crop × year) growing-season
+#' This function fetches those **pre-aggregated** (county/crop/year) growing-season
 #' summaries for a single year, filters to a chosen climate scenario (`SimNum`),
 #' standardizes column names, optionally converts precipitation units, and
 #' averages across commodity *types* within each `commodity_code` (relevant for wheat).
@@ -26,24 +26,18 @@
 #' - `county_code` : county code
 #' - `commodity_code` : commodity code
 #'   - `ppt`  : precipitation (inches if `convert_precip="inch"`, mm if `"mm"`),
-#'   - `tmin` : mean daily minimum temperature (°C),
-#'   - `tmax` : mean daily maximum temperature (°C),
-#'   - `tavg` : mean daily average temperature (°C),
-#'   - `freeze`: exposure to temperatures below 0°C (°C·days; as provided),
+#'   - `tmin` : mean daily minimum temperature (C),
+#'   - `tmax` : mean daily maximum temperature (C),
+#'   - `tavg` : mean daily average temperature (C),
+#'   - `freeze`: exposure to temperatures below 0C down to 100 C,
 #'   - Degree-day summaries `DD*` 
-#'      - `DD1`    : degree days from 0–10°C,
-#'      - `DD2_28` : degree days from 10–28°C, ... up to `DD2_35`,
-#'      - `DD3_28` : degree days above 28°C, ... up to `DD3_35`.
-#'
-#' **Column renames (for merging with other datasets):**
-#' - `crop_yr`  → `commodity_year`
-#' - `state_cd` → `state_code`
-#' - `county_cd`→ `county_code`
-#' - `crop_cd`  → `commodity_code`
+#'      - `DD1`    : degree days from 0-10C,
+#'      - `DD2_28` : degree days from 10-28C, ... up to `DD2_35`,
+#'      - `DD3_28` : degree days above 28C, ... up to `DD3_35`.
 #'
 #' @param year Integer; the year to download (e.g., `2020`).
 #' @param simnum Integer climate-scenario code to keep (default `0`, observed).
-#' @param convert_precip One of `"inch"` (default; converts mm → inches), `"mm"` (ensure millimeters), or `"none"` (leave as-is).
+#' @param convert_precip One of `"inch"` (default; converts mm to inches), `"mm"` (ensure millimeters), or `"none"` (leave as-is).
 #' @param cache_dir Optional directory to cache the `.rds` file. Defaults to `tempdir()`.
 #' @param overwrite Logical; if `TRUE`, re-download even if cached. Default `FALSE`.
 #' @param quiet Logical; silence `download.file()` output. Default `TRUE`.
