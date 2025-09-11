@@ -15,7 +15,7 @@ if (!dir.exists(dir_data_release)) {
   dir.create(dir_data_release, recursive = TRUE)
 }
 
-for(dir in c("sob","col","adm","nass","fsa")){
+for(dir in c("sob","col","adm","nass","fsa","adm_legacy")){
   if (!dir.exists(paste0(dir_data_release,"/",dir))){
     dir.create(paste0(dir_data_release,"/",dir), recursive = TRUE)
   }

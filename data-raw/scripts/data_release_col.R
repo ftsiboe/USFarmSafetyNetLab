@@ -9,33 +9,40 @@ download_rma_web_data_files(
   file_name = "colsom",
   dest = paste0(dir_data_release,"/col"))
 
+colsom_all <- list.files(paste0(dir_data_release,"/col"),pattern = "colsom",full.names = T)
+colsom_all <- colsom_all[!grepl("pdf|all",colsom_all)]
+colsom_all <- data.table::rbindlist(
+  lapply(colsom_all,function(i){readRDS(i)}), fill = TRUE)
+saveRDS(colsom_all,paste0(dir_data_release,"/col/colsom_all.rds"));rm(colsom_all);gc()
+
 utils::download.file(
   "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/cause_of_loss/COL_Summary_of_Business_with_Month_All_Years.pdf",
   destfile = paste0(dir_data_release,"/col/colsom_field_description.pdf"),mode= "wb",quiet    = TRUE)
 
-# Cause of Loss Indemnities Only 
+
+# # Cause of Loss Indemnities Only 
 # download_rma_web_data_files(
-#   years = 1989:2009, 
+#   years = 1989:2009,
 #   file_name = "col_indem",
 #   dest = paste0(dir_data_release,"/col"))
 # 
 # utils::download.file(
 #   "https://pubfs-rma.fpac.usda.gov/pub/Miscellaneous_Files/cause_of_loss/indem_only/col%20indemnities%20only.pdf",
 #   destfile = paste0(dir_data_release,"/col/col_indemnities_only.pdf"),mode= "wb",quiet    = TRUE)
-
-# Cause of Loss Indemnities With Month of Loss
+# 
+# # Cause of Loss Indemnities With Month of Loss
 # download_rma_web_data_files(
-#   years = 1989:2009, 
+#   years = 1989:2009,
 #   file_name = "col_month",
 #   dest = paste0(dir_data_release,"/col"))
 # 
 # utils::download.file(
 #   "https://pubfs-rma.fpac.usda.gov/pub/Miscellaneous_Files/cause_of_loss/indem_only_month/col%20indemnities%20with%20month.pdf",
 #   destfile = paste0(dir_data_release,"/col/col_indemnities_with_month.pdf"),mode= "wb",quiet    = TRUE)
-
-# Cause of Loss Summary of Business [1989-2009]
+# 
+# # Cause of Loss Summary of Business [1989-2009]
 # download_rma_web_data_files(
-#   years = 1989:2009, 
+#   years = 1989:2009,
 #   file_name = "col_sob",
 #   dest = paste0(dir_data_release,"/col"))
 # 

@@ -173,6 +173,7 @@ download_rma_web_data_files <- function(
 #' }
 #' @export
 standardize_fcip_column_names <- function(df) {
+  df <- as.data.frame(df)
   names(df)[names(df) %in% "crop_yr"]               <- "commodity_year"
   names(df)[names(df) %in% "state_cd"]              <- "state_code"
   names(df)[names(df) %in% "state_ab"]              <- "state_abbreviation"
@@ -180,7 +181,8 @@ standardize_fcip_column_names <- function(df) {
   names(df)[names(df) %in% "county"]                <- "county_name"
   names(df)[names(df) %in% "crop_cd"]               <- "commodity_code"
   names(df)[names(df) %in% "crop"]                  <- "commodity_name"
-  names(df)[names(df) %in% "typ_cd"]                  <- "type_code"
+  names(df)[names(df) %in% "typ_cd"]                <- "type_code"
+  names(df)[names(df) %in% "pract_cd"]              <- "practice_code"
   names(df)[names(df) %in% "ins_plan_cd"]           <- "insurance_plan_code"
   names(df)[names(df) %in% "ins_plan_ab"]           <- "insurance_plan_abbreviation"
   names(df)[names(df) %in% "cov_typ"]               <- "coverage_type_code"
@@ -209,6 +211,25 @@ standardize_fcip_column_names <- function(df) {
   names(df)[names(df) %in% "month_ab"]              <- "month_of_loss_name"
   names(df)[names(df) %in% "det_acre_qty"]          <- "indemnified_quantity"
   names(df)[names(df) %in% "pnt_acre_qty"]          <- "net_planted_qty"
+  
+  
+  names(df)[names(df) %in% "Ycr"]        <- "reference_amount"
+  names(df)[names(df) %in% "Expo"]       <- "exponent_value"
+  names(df)[names(df) %in% "Rr"]         <- "reference_rate"
+  names(df)[names(df) %in% "Rf"]         <- "fixed_rate"
+  names(df)[names(df) %in% "Prior_Ycr"]  <- "prior_year_reference_amount"
+  names(df)[names(df) %in% "Prior_Expo"] <- "prior_year_exponent_value"
+  names(df)[names(df) %in% "Prior_Rr"]   <- "prior_year_reference_rate"
+  names(df)[names(df) %in% "Prior_Rf"]   <- "prior_year_fixed_rate"
+  
+  names(df)[names(df) %in% "Rd"]          <- "rate_differential_factor" 
+  names(df)[names(df) %in% "Fu_BU"]       <- "unit_residual_factor"  
+  names(df)[names(df) %in% "Fu_EU"]       <- "enterprise_unit_residual_factor"  
+  names(df)[names(df) %in% "Prior_Rd"]    <- "prior_year_rate_differential_factor"  
+  names(df)[names(df) %in% "Prior_Fu_EU"] <- "prior_year_enterprise_unit_residual_factor"  
+  names(df)[names(df) %in% "Prior_Fu_BU"] <- "prior_year_unit_residual_factor" 
+  
+  names(df) <- tolower(gsub("[.]","_",names(df)))
   
   df
 }
