@@ -12,6 +12,10 @@ adm <- as.data.frame(
         tryCatch({ 
           df <- rfcip::get_adm_data(year = year,dataset = "A00070_SubsidyPercent")
           df$commodity_year <- year
+          df$insurance_plan_code <- as.numeric(as.character(df$insurance_plan_code))
+          df$coverage_level_percent <- as.numeric(as.character(df$coverage_level_percent))
+          df$coverage_type_code <- as.character(df$coverage_type_code)
+          df$unit_structure_code <- as.character(df$unit_structure_code)
           return(df)
         }, error = function(e){return(NULL)})
       }), fill = TRUE))
@@ -153,6 +157,11 @@ adm_legacy <- as.data.frame(
           return(SOB0)
         }, error = function(e){return(NULL)})
       }), fill = TRUE))
+
+adm_legacy$insurance_plan_code <- as.numeric(as.character(adm_legacy$insurance_plan_code))
+adm_legacy$coverage_level_percent <- as.numeric(as.character(adm_legacy$coverage_level_percent))
+adm_legacy$coverage_type_code <- as.character(adm_legacy$coverage_type_code)
+adm_legacy$unit_structure_code <- as.character(adm_legacy$unit_structure_code)
 
 adm_legacy$unit_structure_code <- ifelse(adm_legacy$unit_structure_code %in% c("",NA),"OU",adm_legacy$unit_structure_code)
 

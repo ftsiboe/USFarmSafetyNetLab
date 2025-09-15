@@ -9,7 +9,7 @@ slurm-*.out
 data-raw/*
 !data-raw/scripts/
 !data-raw/replications/
-
+!data-raw/supplementary_files/ 
 !data-raw/replications/fcip_calibrated_yields/
 
 !data-raw/replications/crop_insurance_instruments/

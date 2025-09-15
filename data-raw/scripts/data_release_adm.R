@@ -57,8 +57,6 @@ data <- as.data.table(data)
 data[, data_source := "USDA-RMA, Actuarial Data Master supplemented data from legacy ADM files"]
 saveRDS(data,file=paste0(dir_data_release,"/adm/premium_subsidy_schedule.rds"))
 
-
-
 # # Verify auth first (nice sanity check)
 # if (requireNamespace("gh", quietly = TRUE)) try(gh::gh_whoami(), silent = TRUE)
 # 
@@ -77,7 +75,7 @@ saveRDS(data,file=paste0(dir_data_release,"/adm/premium_subsidy_schedule.rds"))
 
 # 3) Upload the assets
 piggyback::pb_upload(
-  list.files(paste0(dir_data_release,"/adm"), full.names = TRUE, recursive = TRUE),
+  list.files(paste0(dir_data_release,"/adm"), full.names = TRUE, recursive = TRUE,pattern = "premium_subsidy_schedule.rds"),
   repo  = "ftsiboe/USFarmSafetyNetLab",
   tag   = "adm_extracts",
   overwrite = TRUE

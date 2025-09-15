@@ -94,3 +94,8 @@ df <- unique(df[, c("commodity_year","insurance_plan_code","coverage_level_perce
 df <- df[complete.cases(df)]
 
 df <- data.table::as.data.table(rbind(as.data.frame(df),SOB0))
+
+df <- df[, lapply(.SD, function(x) mean(x, na.rm = TRUE)),
+         by = c("commodity_year","insurance_plan_code","coverage_level_percent"), 
+         .SDcols = c("ao_expense_subsidy_percent")]
+
