@@ -411,7 +411,7 @@ enrich_with_structural_breaks <- function(sob) {
 #' @return data.table with \code{subsidy_bins} (character labels)
 #' @import data.table
 #' @export
-enrich_with_subsidy_bins <- function(sob, lo = 0.40, hi = 0.80, step = 0.02) {
+enrich_with_subsidy_bins <- function(sob, lo = 0.40, hi = 0.80, step = 0.05) {
 
   DT <- copy(as.data.table(sob))
 
