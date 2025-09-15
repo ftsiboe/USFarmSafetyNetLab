@@ -4,7 +4,7 @@
 \alias{enrich_with_subsidy_bins}
 \title{Add coarse subsidy bins (e.g., SUB040, SUB042, ..., SUB080)}
 \usage{
-enrich_with_subsidy_bins(sob, lo = 0.4, hi = 0.8, step = 0.02)
+enrich_with_subsidy_bins(sob, lo = 0.4, hi = 0.8, step = 0.05)
 }
 \arguments{
 \item{sob}{data.frame/data.table with \code{subsidy_amount}, \code{total_premium_amount}}

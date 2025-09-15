@@ -50,6 +50,14 @@ contiguous_county <- as.data.table(contiguous_county)
 contiguous_county[, data_source := "USDA-RMA, Actuarial Data Master - A0123"]
 saveRDS(contiguous_county,file=paste0(dir_data_release,"/adm/fcip_contiguous_county.rds"))
 
+# premium subsidy schedule
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+source(paste0("data-raw/scripts/data_release_adm_premium_subsidy_schedule.R"))
+data <- as.data.table(data)
+data[, data_source := "USDA-RMA, Actuarial Data Master supplemented data from legacy ADM files"]
+saveRDS(data,file=paste0(dir_data_release,"/adm/premium_subsidy_schedule.rds"))
+
+
 
 # # Verify auth first (nice sanity check)
 # if (requireNamespace("gh", quietly = TRUE)) try(gh::gh_whoami(), silent = TRUE)
