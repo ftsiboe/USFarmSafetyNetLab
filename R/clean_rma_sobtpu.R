@@ -38,7 +38,27 @@ clean_rma_sobtpu <- function(
   stable_years <- years[!years %in% live_years]
 
   if(length(live_years)>0){
-    live_sobtpu <- get_sob_data(sob_version = "sobtpu", year = live_years,force = TRUE)
+    live_sobtpu <- data.table::rbindlist(
+      lapply(
+        live_years,
+        function(year) {
+          df <- NULL
+          tryCatch({
+            df <- get_sob_data(sob_version = "sobtpu", year = year,force = TRUE)
+          }, error = function(e){NULL})
+          
+          if(is.null(df)){
+            df <- tempfile(fileext = ".rds")
+            download.file(
+              paste0("https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/sob/sobtpu_",year,".rds"),
+              df, mode = "wb", quiet = TRUE)
+            df <- readRDS(df)
+            data.table::setDT(df)
+          }
+          
+          return(df)
+        }), fill = TRUE)
+
   }else{
     live_sobtpu <- NULL
   }
