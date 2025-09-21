@@ -11,12 +11,14 @@ legacy_list <- list.files(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMast
 legacy_list <- legacy_list[grepl(paste0(1996:2010,collapse ="|"),legacy_list)]
 legacy_list <- legacy_list[grepl("base_rate|coverage_level_differential|insurance_dates|area_index|area_rate",legacy_list)]
 
+legacy_price_list <- list.files(paste0(farmpolicylab,"rmaFCIPdata/rmaPrices/Archive/addendum/"), full.names = TRUE, recursive = TRUE)
+
 lapply(
-  legacy_list,
+  c(legacy_list,legacy_price_list),
   function(y){
-    data <- readRDS(y)
-    data <- standardize_fcip_column_names(data)
-    saveRDS(as.data.table(data),file=file.path(dir_data_release,"adm_legacy",basename(y)))
+    df <- readRDS(y)
+    df <- standardize_fcip_column_names(df)
+    saveRDS(as.data.table(df),file=file.path(dir_data_release,"adm_legacy",basename(y)))
     invisible()
   })
 

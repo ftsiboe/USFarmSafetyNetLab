@@ -212,7 +212,9 @@ standardize_fcip_column_names <- function(df) {
   names(df)[names(df) %in% "det_acre_qty"]          <- "indemnified_quantity"
   names(df)[names(df) %in% "pnt_acre_qty"]          <- "net_planted_qty"
   
-  
+  names(df)[names(df) %in% "Price_Estab"] <- "established_price"
+  names(df)[names(df) %in% "Price_Addtl"] <- "additional_price"
+
   names(df)[names(df) %in% "Ycr"]        <- "reference_amount"
   names(df)[names(df) %in% "Expo"]       <- "exponent_value"
   names(df)[names(df) %in% "Rr"]         <- "reference_rate"
@@ -231,7 +233,7 @@ standardize_fcip_column_names <- function(df) {
   
   names(df) <- tolower(gsub("[.]","_",names(df)))
   
-  df
+  return(df)
 }
 
 #' Harmonize names/codes in a data table of insurance elections

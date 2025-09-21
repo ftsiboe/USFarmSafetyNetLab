@@ -31,7 +31,7 @@ adm_legacy <- as.data.frame(
       2001:2010,
       function(year) {
         tryCatch({ 
-          year <- 2010
+          # year <- 2010
           # Premium Subsidy                                      ####
           Subsidy_sob <- as.data.frame(readRDS(paste0(dir_data_release,"/sob/sobtpu_",year,".rds")))
           Subsidy_sob <- doBy::summaryBy(list(c("total_premium_amount","subsidy_amount"),c("insurance_plan_code","coverage_level_percent","coverage_type_code","unit_structure_code")),
@@ -144,8 +144,6 @@ adm_legacy <- as.data.frame(
             SOB0$ADM_Subsidy <- ifelse(SOB0$unit_structure_code %in% c("WU") & round(SOB0$coverage_level_percent*100) %in%  85:85, 0.56,SOB0$ADM_Subsidy)
             
           }
-          
-          
           
           SOB0$subsidy_percent <- ifelse(SOB0$ADM_Subsidy %in% c(NaN,NA,Inf,-Inf,0),round(SOB0$SOB_Subsidy,4),SOB0$ADM_Subsidy)
           SOB0 <- SOB0[c("insurance_plan_code","coverage_level_percent","coverage_type_code","unit_structure_code","subsidy_percent")]
