@@ -16,7 +16,8 @@
 #' @param iterations   Number of smoothing passes to perform (default 5).
 #' @param fun          A function to aggregate neighbor values; must take a numeric vector and return a single numeric (default mean).
 #' @param n_classes    Number of categories for Jenks natural-breaks classification (default 10).
-#'
+#' @param contiguity Either "rook" (shared edge) or "queen" (edge or corner). Default "rook".
+#' 
 #' @return An **sf** object of all U.S. counties with these new columns:  
 #'   - estimate: your original values (NA where missing)  
 #'   - estimate_smooth: the same values after neighborhood-function imputation  
@@ -35,45 +36,62 @@ smooth_county_estimates <- function(
     estimate_col  = "estimate",
     iterations    = 5,
     fun           = mean,
-    n_classes     = 10) {
-  # 1) load all U.S. counties
+    n_classes     = 10,
+    contiguity    = c("rook","queen")) {
+  
+  contiguity <- match.arg(contiguity)
+  
   counties_sf <- urbnmapr::get_urbn_map("counties", sf = TRUE)
   
-  # 2) join in user estimates by FIPS
   by_arg <- stats::setNames(fip_col, "county_fips")
   map_sf <- dplyr::left_join(counties_sf, data, by = by_arg)
   
-  # 3) (optional) convert to terra::SpatVector
+  # optional: keep for downstream compatibility
   counties_vect <- terra::vect(map_sf)
   
-  # 4) build contiguity list via sf
-  nbr_list <- sf::st_touches(map_sf)
+  # neighbors
+  nbr_list <- if (contiguity == "rook") {
+    sf::st_relate(map_sf, pattern = "F***1****")
+  } else {
+    sf::st_touches(map_sf)
+  }
   
-  # 5) iterative neighbor-function smoothing
-  sm      <- map_sf[[estimate_col]]
-  missing <- which(is.na(sm))
+  sm <- map_sf[[estimate_col]]
+  
+  # we will only ever write into cells that were NA at the start
+  missing_idx <- which(is.na(sm))
   
   for (i in seq_len(iterations)) {
-    sm_new <- sm
-    sm_new[missing] <- sapply(missing, function(j) {
-      ngb_vals <- sm[nbr_list[[j]]]
-      ngb_vals <- ngb_vals[!is.na(ngb_vals)]
-      if (length(ngb_vals) == 0) {
-        NA_real_
-      } else {
-        fun(ngb_vals)
-      }
-    })
-    sm <- sm_new
+    # which of the originally-missing are still NA?
+    todo <- missing_idx[is.na(sm[missing_idx])]
+    if (!length(todo)) break
+    
+    fill_vals <- vapply(todo, function(j) {
+      ngb <- nbr_list[[j]]
+      if (!length(ngb)) return(NA_real_)
+      vals <- sm[ngb]
+      vals <- vals[is.finite(vals)]
+      if (!length(vals)) NA_real_ else fun(vals)
+    }, numeric(1))
+    
+    # only write where we actually got a number
+    write_idx <- todo[is.finite(fill_vals)]
+    if (length(write_idx)) sm[write_idx] <- fill_vals[is.finite(fill_vals)]
   }
   
   map_sf$estimate_smooth <- sm
-  # 6) classify the smoothed estimates using Jenks natural breaks
-  #    use unique values to avoid duplicate-break errors
-  uniq_vals <- unique(sm[!is.na(sm)])
-  brks      <- unique(classInt::classIntervals(uniq_vals,
-                                               n = n_classes,
-                                               style = "jenks")$brks)
+  
+  # Jenks classification (cap k and silence harmless warnings)
+  uniq_vals <- unique(sm[is.finite(sm)])
+  if (!length(uniq_vals)) {
+    map_sf$estimate_cat <- factor(NA_character_)
+    return(map_sf)
+  }
+  k <- max(1L, min(n_classes, length(uniq_vals)))
+  brks <- suppressWarnings(
+    unique(classInt::classIntervals(uniq_vals, n = k, style = "jenks")$brks)
+  )
+  
   map_sf <- map_sf |>
     dplyr::mutate(
       estimate_cat = cut(
@@ -81,13 +99,14 @@ smooth_county_estimates <- function(
         breaks         = brks,
         include.lowest = TRUE,
         labels         = paste0(
-          format(round(head(brks, -1), 2), nsmall = 2),
-          "-",
+          format(round(head(brks, -1), 2), nsmall = 2), "-",
           format(round(tail(brks, -1), 2), nsmall = 2)
         )
       )
     )
   
   map_sf
-  
 }
+
+
+
