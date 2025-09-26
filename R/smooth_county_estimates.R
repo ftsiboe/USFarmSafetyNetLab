@@ -36,7 +36,7 @@ smooth_county_estimates <- function(
     estimate_col  = "estimate",
     iterations    = 5,
     fun           = mean,
-    n_classes     = 10,
+    n_classes     = 1,
     contiguity    = c("rook","queen")) {
   
   contiguity <- match.arg(contiguity)
@@ -81,31 +81,34 @@ smooth_county_estimates <- function(
   
   map_sf$estimate_smooth <- sm
   
-  # # Jenks classification (cap k and silence harmless warnings)
-  # uniq_vals <- unique(sm[is.finite(sm)])
-  # if (!length(uniq_vals)) {
-  #   map_sf$estimate_cat <- factor(NA_character_)
-  #   return(map_sf)
-  # }
-  # k <- max(1L, min(n_classes, length(uniq_vals)))
-  # brks <- suppressWarnings(
-  #   unique(classInt::classIntervals(uniq_vals, n = k, style = "jenks")$brks)
-  # )
-  # 
-  # map_sf <- map_sf |>
-  #   dplyr::mutate(
-  #     estimate_cat = cut(
-  #       estimate_smooth,
-  #       breaks         = brks,
-  #       include.lowest = TRUE,
-  #       labels         = paste0(
-  #         format(round(head(brks, -1), 2), nsmall = 2), "-",
-  #         format(round(tail(brks, -1), 2), nsmall = 2)
-  #       )
-  #     )
-  #   )
-  # 
-  # map_sf
+  if(n_classes > 1){
+    # Jenks classification (cap k and silence harmless warnings)
+    uniq_vals <- unique(sm[is.finite(sm)])
+    if (!length(uniq_vals)) {
+      map_sf$estimate_cat <- factor(NA_character_)
+      return(map_sf)
+    }
+    k <- max(1L, min(n_classes, length(uniq_vals)))
+    brks <- suppressWarnings(
+      unique(classInt::classIntervals(uniq_vals, n = k, style = "jenks")$brks)
+    )
+    
+    map_sf <- map_sf |>
+      dplyr::mutate(
+        estimate_cat = cut(
+          estimate_smooth,
+          breaks         = brks,
+          include.lowest = TRUE,
+          labels         = paste0(
+            format(round(head(brks, -1), 2), nsmall = 2), "-",
+            format(round(tail(brks, -1), 2), nsmall = 2)
+          )
+        )
+      )
+    
+    map_sf
+  }
+
 }
 
 
