@@ -105,11 +105,10 @@ smooth_county_estimates <- function(
           )
         )
       )
-    
-    map_sf
   }
-
+  
+  map_sf
+  
 }
-
 
 
