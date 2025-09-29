@@ -34,17 +34,12 @@
 #' @param data A `data.frame`/`data.table` with at least `fip_col` and `variable`.
 #' @param fip_col Character. Name of the county ID column in `data`; copied to `"county_fips"`.
 #' @param variable Character. Name of the numeric column in `data` to summarize.
-#' @param distance_metric Character. One of `gw_distance_metric_names()`. Default: `"Euclidean"`.
-#' @param kernel Character. One of `"gaussian"`, `"exponential"`, `"bisquare"`, `"boxcar"`, `"tricube"`.
-#'   Default: `"gaussian"`.
-#' @param target_crs Integer EPSG used to project county geometries when `longlat = FALSE`.
-#'   Default: **5070** (NAD83 / CONUS Albers, meters).
-#' @param draw_rate Numeric in (0, 1]. Fraction of observed counties used during
-#'   bandwidth cross-validation. Default: **0.5** (50%).
-#' @param approach Character. Bandwidth selection approach passed to
-#'   `GWmodel::bw.gwr()`. One of `"CV"`, `"AIC"`, `"AICc"`. Default: `"CV"`.
-#' @param adaptive Logical. Use adaptive (nearest-neighbour count) bandwidth instead
-#'   of fixed distance. Default: `TRUE`.
+#' @param distance_metric Character. One of [gw_distance_metric_names()]. Default: `"Euclidean"`.
+#' @param kernel Character. One of `"gaussian"`, `"exponential"`, `"bisquare"`, `"boxcar"`, `"tricube"`. Default: `"gaussian"`.
+#' @param target_crs Integer EPSG used to project county geometries when `longlat = FALSE`. Default: **5070** (NAD83 / CONUS Albers, meters).
+#' @param draw_rate Numeric in (0, 1]. Fraction of observed counties used during bandwidth cross-validation. Default: **0.5** (50%).
+#' @param approach Character. Bandwidth selection approach passed to `GWmodel::bw.gwr()`. One of `"CV"`, `"AIC"`, `"AICc"`. Default: `"CV"`.
+#' @param adaptive Logical. Use adaptive (nearest-neighbour count) bandwidth instead of fixed distance. Default: `TRUE`.
 #'
 #' @return A `data.table` of GW summary statistics for **all counties**, with a
 #'   `county_fips` column for merging back to polygons. Column names follow
@@ -214,8 +209,7 @@ estimate_gwss_by_county <- function(
 #' \code{GWmodel::gw.dist()}.
 #'
 #' @return A named list of presets, each entry a \code{list(p, theta, longlat)}.
-#' @keywords internal
-#' @noRd
+#' @export
 gw_distance_metric_presets <- function() {
   list(
     # Euclidean / L2
