@@ -238,8 +238,7 @@ gw_distance_metric_presets <- function() {
 #' @param name Character scalar. One of \code{gw_distance_metric_names()}.
 #' @param stop_on_error Logical. If \code{TRUE}, throw for unknown names; else \code{NULL}.
 #' @return \code{list(p, theta, longlat)} or \code{NULL}.
-#' @keywords internal
-#' @noRd
+#' @export
 resolve_distance_metric <- function(name, stop_on_error = TRUE) {
   presets <- gw_distance_metric_presets()
   dm <- presets[[name]]
@@ -252,8 +251,7 @@ resolve_distance_metric <- function(name, stop_on_error = TRUE) {
 
 #' List valid GW distance metric names
 #' @return Character vector of valid preset names.
-#' @keywords internal
-#' @noRd
+#' @export
 gw_distance_metric_names <- function() {
   names(gw_distance_metric_presets())
 }
