@@ -64,6 +64,7 @@
 #' @importFrom urbnmapr get_urbn_map
 #' @importFrom sf st_transform st_point_on_surface
 #' @importFrom sp coordinates
+#' @importFrom methods as
 #' @export
 estimate_gwss_by_county <- function(
     data,
