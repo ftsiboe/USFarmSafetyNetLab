@@ -80,7 +80,7 @@ test_that("non-census cleanup keeps latest variant only", {
   testthat::local_mocked_bindings(read_html = f_read_html, .package = "xml2")
   testthat::local_mocked_bindings(html_nodes = f_html_nodes,
                                   html_attr  = f_html_attr, .package = "rvest")
-  pkg_ns <- asNamespace("arpcCost")
+  pkg_ns <- asNamespace(pkgload::pkg_name())
   testthat::local_mocked_bindings(download.file = f_download, .env = pkg_ns)
   
   # Pre-place an older file to verify non-census cleanup path doesn’t break
