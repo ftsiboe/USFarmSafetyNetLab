@@ -50,6 +50,7 @@
 #' * \code{\link{process_nass_dataset}} for loading raw Quick Stats data  
 #' 
 #' @import data.table
+#' @family USDA NASS Quick Stats
 #' @export
 get_nass_census_data <- function(
     censuses = c(2022,2017,2012,2007,2002),

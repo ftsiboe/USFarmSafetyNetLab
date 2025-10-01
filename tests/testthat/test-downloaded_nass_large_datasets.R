@@ -32,7 +32,7 @@ test_that("downloaded_nass_large_datasets caches without network", {
                                   html_attr  = f_html_attr, .package = "rvest")
   
   # IMPORTANT: because your function imports download.file, it resolves from your pkg namespace
-  pkg_ns <- asNamespace("arpcCost")  # <-- replace with your package name if different
+  pkg_ns <- asNamespace(pkgload::pkg_name()) 
   testthat::local_mocked_bindings(download.file = f_download, .env = pkg_ns)
   
   # 1) First run should "download" both files

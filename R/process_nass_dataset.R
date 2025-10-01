@@ -45,6 +45,7 @@
 #'
 #' @importFrom data.table fread setDT setnames
 #' @importFrom stringr str_to_title
+#' @family USDA NASS Quick Stats
 #' @export
 #'
 #' @examples
