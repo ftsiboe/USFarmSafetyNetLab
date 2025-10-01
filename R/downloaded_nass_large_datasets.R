@@ -27,6 +27,7 @@
 #'
 #' @importFrom xml2 read_html
 #' @importFrom utils download.file
+#' @family USDA NASS Quick Stats
 #' @export
 #'
 #' @examples
