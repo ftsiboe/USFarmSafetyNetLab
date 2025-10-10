@@ -13,11 +13,8 @@
 #'   \item{size_bytes}{File size in bytes}
 #'   \item{size_mb}{File size in megabytes}
 #'
-#' @examples
-#' \dontrun{
-#' get_file_info()
-#' get_file_info(directory = "./my-data", file_suffix = ".csv")
-#' }
+#' @noRd
+#' @keywords internal
 #' @source coppied from rfcip on 07/24/2025
 get_file_info <- function(directory = "./data-raw", file_suffix = ".rds") {
   # Get list of all files recursively
@@ -62,7 +59,7 @@ get_file_info <- function(directory = "./data-raw", file_suffix = ".rds") {
 #'
 #' @importFrom purrr map
 #' @importFrom readr type_convert
-#' @export
+#' @noRd
 #' @keywords internal
 #'
 #' @examples
