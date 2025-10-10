@@ -60,7 +60,6 @@ get_file_info <- function(directory = "./data-raw", file_suffix = ".rds") {
 #' Invisibly returns `NULL`. Side effects include creation of `.rda` files in `./data/`
 #' and generation of `R/helper_data.R` containing roxygen entries.
 #'
-#' @import dplyr
 #' @importFrom purrr map
 #' @importFrom readr type_convert
 #' @export
