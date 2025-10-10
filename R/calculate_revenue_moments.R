@@ -16,7 +16,7 @@
 #'   - lres2:   same as lapv (for clarity)
 #'   - cdf:     empirical probability of loss (P(X < mu))
 #' @import moments
-#' @importFrom stats median var
+#' @importFrom stats median var sd
 #' @export
 calculate_revenue_moments <- function(x) {
   mu    <- mean(x,     na.rm = TRUE)
