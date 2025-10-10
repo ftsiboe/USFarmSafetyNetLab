@@ -88,12 +88,11 @@ build_internal_datasets <- function(dir_source = "./data-raw/internal_datasets",
   # keep only files that are less than the size threshold (in MB). Applied to
   # maximum size over all years
   max_sizes <- file_info |>
-    group_by(.data$file_name) |>
-    summarize(max_size = max(.data$size_mb)) |>
-    filter(.data$max_size < size_threshold)
+    dplyr::group_by(.data$file_name) |>
+    dplyr::summarize(max_size = max(.data$size_mb)) |>
+    dplyr::filter(.data$max_size < size_threshold)
   
-  file_info <- file_info |>
-    filter(.data$file_name %in% max_sizes$file_name)
+  file_info <- file_info |> filter(.data$file_name %in% max_sizes$file_name)
   
   # if "./R/helper_data.R" already exists, rename it with the date appended
   if(file.exists("./R/helper_data.R")){
