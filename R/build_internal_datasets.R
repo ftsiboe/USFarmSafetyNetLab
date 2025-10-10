@@ -88,7 +88,7 @@ build_internal_datasets <- function(dir_source = "./data-raw/internal_datasets",
     dplyr::summarize(max_size = max(.data$size_mb)) |>
     dplyr::filter(.data$max_size < size_threshold)
   
-  file_info <- file_info |> filter(.data$file_name %in% max_sizes$file_name)
+  file_info <- file_info |> dplyr::filter(.data$file_name %in% max_sizes$file_name)
   
   # if "./R/helper_data.R" already exists, rename it with the date appended
   if(file.exists("./R/helper_data.R")){
