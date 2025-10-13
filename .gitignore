@@ -1,0 +1,8 @@
+# RStudio cruft
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+USFarmSafetyNetLab.Rproj
+data-raw/*
+!data-raw/scripts/
