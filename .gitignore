@@ -6,3 +6,4 @@
 USFarmSafetyNetLab.Rproj
 data-raw/*
 !data-raw/scripts/
+!data-raw/supplementary_files/

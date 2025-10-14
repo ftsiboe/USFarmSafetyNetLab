@@ -65,9 +65,9 @@ feel free to open issues, submit pull requests, or provide feedback and
 suggestions to further enrich the resources provided here.
 
 Go to the [**USFarmSafetyNetLab
-wiki**](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/wiki) to explore
+wiki**](https://github.com/ftsiboe/USFarmSafetyNetLab/wiki) to explore
 other pages in this repository
 
 If you find it useful, please star this project and cite our papers
 found at [Publications co‐authored by
-Contributors](https://github.com/ftsiboe/US-FarmSafetyNet-Lab/wiki/Publications-co%E2%80%90authored-by-Contributors)
+Contributors](https://github.com/ftsiboe/USFarmSafetyNetLab/wiki/Publications-co%E2%80%90authored-by-Contributors)

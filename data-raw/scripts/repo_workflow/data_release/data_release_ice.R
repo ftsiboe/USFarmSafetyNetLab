@@ -45,18 +45,6 @@ df[, data_source := "USDA-RMA, Insurance Control Elements - PASS - D00154"]
 saveRDS(df,file=paste0(dir_data_release,"/ice/ice_yield_type_code.rds"))
 
 # Send  Insurance Control Elements to Github
-# tryCatch({
-#   piggyback::pb_release_delete(repo = "ftsiboe/USFarmSafetyNetLab", tag = "ice")
-# }, error = function(e){NULL})
-# 
-# piggyback::pb_release_create(
-#   repo = "ftsiboe/USFarmSafetyNetLab", 
-#   tag = "ice",
-#   name = " Insurance Control Elements",
-#   body = "Various items aggregated from the FCIP's  Insurance Control Elements")
-# 
-# #piggyback::pb_new_release( repo = "ftsiboe/USFarmSafetyNetLab", tag  = "ice")
-
 piggyback::pb_upload(
   list.files(paste0(dir_data_release,"/ice"), full.names = TRUE, recursive = TRUE),
   repo = "ftsiboe/USFarmSafetyNetLab", tag  = "ice",overwrite = TRUE)

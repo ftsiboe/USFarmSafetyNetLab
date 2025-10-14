@@ -152,28 +152,6 @@ sobscc_all <- rbind(sobcov_all[
 saveRDS(sobscc_all,file=paste0(dir_data_release,"/sob/sobscc_all.rds"))
 
 # Send Summary of Business to Github
-#  tryCatch({
-#   piggyback::pb_release_delete(repo = "ftsiboe/USFarmSafetyNetLab", tag = "sob")
-# }, error = function(e){NULL})
-# 
-# piggyback::pb_release_create(  
-#   repo = "ftsiboe/USFarmSafetyNetLab", 
-#   tag = "sob",
-#   name = "Summary of Business",
-#   body = paste("Summary of Business data breaks out FCIP participation at variaous levels:",
-#                paste0("**sobtpu** aggregates loss experience for groups of producers who are ",
-#                       "similarly defined by their contract choice (i), the insurance pool they selected (j), ",
-#                       "and the crop year (t). Contract choices combine insurance plan (e.g., APH, RP), ",
-#                       "coverage level, and unit structure (e.g., Optional [OU], Enterprise [EU]). ",
-#                       "Pools are the most granular rate‐setting level and are distinguished by county, commodity, ",
-#                       "crop type, and practice (e.g., irrigated, organic).", collapse = ""),
-#                paste0("**sobcov** aggregates loss experience for groups of producers who are ",
-#                       "similarly defined by their coverage level, county, commodity, and  commodity year.", collapse = ""),
-#                paste0("**sobscc** aggregates loss experience for groups of producers who are ",
-#                       "similarly defined by their county, commodity, and  commodity year.", collapse = ""),sep = "\n\n"))
-#
-#piggyback::pb_new_release( repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob")
-
 piggyback::pb_upload(
   list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobtpu"),
   repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob",overwrite = TRUE)

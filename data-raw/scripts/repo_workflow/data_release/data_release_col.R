@@ -95,18 +95,49 @@ utils::download.file(
 
 
 # Send Cause of Loss to Github       
-# tryCatch({
-#   piggyback::pb_release_delete(repo = "ftsiboe/USFarmSafetyNetLab", tag = "col")
-# }, error = function(e){NULL})
-# piggyback::pb_release_create(
-#   repo = "ftsiboe/USFarmSafetyNetLab", 
-#   tag  = "col",
-#   name = "Cause of Loss",
-#   body = "Cause of Loss breaks out FCIP participation by peril")
+# piggyback::pb_upload(
+#   list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE),
+#   repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
 # 
-# piggyback::pb_new_release( repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col")
+# col_list <- list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE)
+# 
+# col_list <- col_list[!grepl("colsom_",col_list)]
+# col_list <- col_list[!grepl("col_month_",col_list)]
+# col_list <- col_list[!grepl("col_indem_",col_list)]
+# col_list <- col_list[!grepl(".pdf|.xlsx",col_list)]
+# col_list <- col_list[!grepl("col_sob_",col_list)]
 
 piggyback::pb_upload(
-  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE),
+  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "colsom_"),
+  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
+
+Sys.sleep(60)
+
+piggyback::pb_upload(
+  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "col_month_"),
+  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
+
+Sys.sleep(60)
+
+piggyback::pb_upload(
+  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "col_indem_"),
+  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
+
+Sys.sleep(60)
+
+piggyback::pb_upload(
+  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = ".pdf"),
+  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
+
+Sys.sleep(60)
+
+piggyback::pb_upload(
+  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = ".xlsx"),
+  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
+
+Sys.sleep(60)
+
+piggyback::pb_upload(
+  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "col_sob_"),
   repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
 

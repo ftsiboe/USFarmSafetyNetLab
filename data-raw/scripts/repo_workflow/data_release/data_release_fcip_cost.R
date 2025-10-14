@@ -1,6 +1,7 @@
 
 rm(list=ls(all=TRUE))
-source("data-raw/scripts/environment_setup.R")
+
+source("data-raw/scripts/repo_workflow/environment_setup.R")
 
 devtools::document()
 
