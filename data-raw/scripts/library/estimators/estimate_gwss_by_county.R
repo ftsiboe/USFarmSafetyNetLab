@@ -48,19 +48,8 @@
 #'   `value_LSSke`, etc. Attributes attached: `"bandwidth"`, `"distance_params"`,
 #'   `"kernel"`, `"approach"`, `"adaptive"`. Returns `NULL` when there are
 #'   < 5 observed counties.
-#'
-#' @section Imputation workflow:
-#' \preformatted{
-#' set.seed(123)
-#' gw <- estimate_gwss_by_county(
-#'   data = my_data, fip_col = "county_fips", variable = "my_var"
-#' )
-#' sf_out <- counties_sf |>
-#'   dplyr::left_join(gw[, c("county_fips","value_LM")], by = "county_fips") |>
-#'   dplyr::mutate(my_var_imputed = dplyr::if_else(is.finite(my_var), my_var, value_LM))
-#' }
 #' 
-#' @import GWmodel data.table
+#' @import data.table
 #' @importFrom urbnmapr get_urbn_map
 #' @importFrom sf st_transform st_point_on_surface
 #' @importFrom sp coordinates
