@@ -5,6 +5,8 @@ source("data-raw/scripts/repo_workflow/environment_setup.R")
 
 devtools::document()
 
+library(dplyr)
+
 sob <- as.data.frame(
   data.table::rbindlist(
     list(
@@ -24,7 +26,7 @@ names(sob) <- c("crop_yr","crop_cd","crop")
 sob$crop_yr <- as.numeric(as.character(sob$crop_yr))
 sob$crop_cd <- as.numeric(as.character(sob$crop_cd))
 sob$crop <- toupper(as.character(sob$crop))
-
+length(unique(sob$crop))
 
 adm <- as.data.frame(
   data.table::rbindlist(
@@ -43,15 +45,18 @@ adm <- unique(adm[c("commodity_year","commodity_code","commodity_name")])
 names(adm) <- c("crop_yr","crop_cd","crop")
 adm$crop_yr <- as.numeric(as.character(adm$crop_yr))
 adm$crop_cd <- as.numeric(as.character(adm$crop_cd))
+length(unique(adm$crop))
 
 adm <- rbind(unique(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/1995-2010 clean/CROSS_REFERENCE_DATA_1997_2010.rds"))[names(adm)]),adm)
 adm$crop <- toupper(adm$crop)
+length(unique(adm$crop))
 
 adm <- adm[c("crop_yr","crop_cd","crop")]
 names(adm) <- c("crop_yr","crop_cd","crop_adm")
 
 adm <- unique(dplyr::full_join(adm,sob,by=c("crop_yr","crop_cd")))
 rm(sob)
+length(unique(adm$crop))
 
 adm$crop <- ifelse(adm$crop_adm %in% NA,adm$crop,adm$crop_adm)
 adm <- adm[complete.cases(adm),]
@@ -65,21 +70,26 @@ adm$crop <- ifelse(adm$crop %in% "LEMONS","LEMON",adm$crop)
 adm$crop <- ifelse(adm$crop %in% "LIMES","LIME",adm$crop)
 adm$crop <- ifelse(adm$crop %in% "MANDARINS/TANGERINES","MANDARIN/TANGERINE",adm$crop)
 
-adm <- unique(adm[c("crop_yr","crop_cd","crop")])
-adm <- adm[order(adm$crop_cd),]
-row.names(adm) <- 1:nrow(adm)
-adm$flag_crop <- ifelse(adm$crop_cd != lag(adm$crop_cd),adm$crop,NA)
-adm$flag_crop[1] <- adm$crop[1]
-adm$flag_crop <-zoo::na.locf(adm$flag_crop,na.rm = F)
+# Start with unique rows (as you had)
+adm1 <- adm |>
+  distinct(crop_yr, crop_cd, crop)
 
-flaged_crops <- adm[!adm$flag_crop == adm$crop,]
+# For each crop_cd, pick the most frequent crop label (mode)
+code_map <- adm1 |>
+  count(crop_cd, crop, sort = TRUE) |>
+  group_by(crop_cd) |>
+  slice_max(n, with_ties = FALSE) |>
+  ungroup() |>
+  transmute(crop_cd, crop_mode = crop)
 
-for(ii in 1:nrow(flaged_crops)){
-  adm$crop <- ifelse(adm$crop_cd %in% flaged_crops$crop_cd[ii],
-                     mode(adm[adm$crop %in% c(flaged_crops$crop[ii],flaged_crops$flag_crop[ii]),"crop"]),adm$crop)
-}
+# Replace crop with the per-code mode and dedupe
+adm_fixed <- adm1 |>
+  left_join(code_map, by = "crop_cd") |>
+  mutate(crop = coalesce(crop_mode, crop)) |>
+  select(-crop_mode) |>
+  distinct(crop_yr, crop_cd, crop)
 
-adm <- unique(adm[c("crop_yr","crop_cd","crop")])
+adm <- unique(adm_fixed[c("crop_yr","crop_cd","crop")])
 adm$keep <- 1
 
 agrcomm <-  as.data.frame(

@@ -3,6 +3,9 @@
 # remotes::install_github("dylan-turner25/rfcip", force = TRUE,upgrade="never")
 # remotes::install_github("dylan-turner25/rfsa", force = TRUE,upgrade="never")
 library(rfcip)
+
+mode <- function(x,na.rm = T) {ux <- unique(x); ux[which.max(tabulate(match(x, ux)))]}
+
 dir_data_release = "data-raw/release"
 if(Sys.info()['sysname'] %in% "Windows"){
   farmpolicylab <- paste0(gsub("OneDrive","Dropbox",Sys.getenv("OneDriveConsumer")),"/farmpolicylab/database/")
