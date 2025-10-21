@@ -34,6 +34,7 @@ adm <- as.data.frame(
         tryCatch({ 
           df <- get_adm_data(year = year,dataset = "A00420_Commodity", force=TRUE)
           df$commodity_year <- year
+          df$commodity_name <- toupper(as.character(df$commodity_name))
           return(df)
         }, error = function(e){return(NULL)})
       }), fill = TRUE))
@@ -42,7 +43,6 @@ adm <- unique(adm[c("commodity_year","commodity_code","commodity_name")])
 names(adm) <- c("crop_yr","crop_cd","crop")
 adm$crop_yr <- as.numeric(as.character(adm$crop_yr))
 adm$crop_cd <- as.numeric(as.character(adm$crop_cd))
-adm$crop <- toupper(as.character(adm$crop))
 
 adm <- rbind(unique(readRDS(paste0(farmpolicylab,"rmaFCIPdata/rmaActuarialDataMaster/Archive/1995-2010 clean/CROSS_REFERENCE_DATA_1997_2010.rds"))[names(adm)]),adm)
 adm$crop <- toupper(adm$crop)

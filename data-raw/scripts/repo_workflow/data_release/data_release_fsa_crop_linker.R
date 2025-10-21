@@ -1,6 +1,6 @@
 
 rm(list = ls(all = TRUE));gc();library(rfcip);library(rfsa)
-source("data-raw/scripts/environment_setup.R")
+source("data-raw/scripts/repo_workflow/environment_setup.R")
 
 devtools::document()
 

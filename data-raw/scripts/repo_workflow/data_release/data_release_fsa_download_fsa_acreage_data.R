@@ -2,25 +2,8 @@
 # clear all output
 library("rvest")
 library(tidyverse)
-# load libraries
-# library(future.apply)
-# library(magrittr)
-# 
-# 
-# library("tidyr")
-# library(dplyr)
-# library(data.table)
-# library(parallel)
-# library(readxl)
-
-source("data-raw/scripts/environment_setup.R")
-
-# set up a multisession
-#plan(multisession)
-
-
-dir.create(paste0(dir_fastscratch,"/fsa_acreage/trash"), recursive = TRUE)
-dir.create(paste0(dir_fastscratch,"/fsa_acreage/raw"), recursive = TRUE)
+rm(list=ls(all=TRUE));gc()
+source("data-raw/scripts/repo_workflow/environment_setup.R")
 
 for(dir in c("fsa_acreage")){
   if (!dir.exists(paste0(dir_data_release,"/",dir))){
@@ -31,10 +14,6 @@ for(dir in c("fsa_acreage")){
 # define years to get data for
 start_year <- 2009
 end_year   <- as.numeric(substr(Sys.Date(),1,4)) # automatically set to current year
-
-# custom function to extract release date
-# get release dates of data to be referenced by the following function
-# scrape release dates from FSA site to get day of release
 
 # define url
 URL <- "https://www.fsa.usda.gov/news-room/efoia/electronic-reading-room/frequently-requested-information/crop-acreage-data"
@@ -47,11 +26,11 @@ title  <- rvest::html_nodes(pg, "a") |> html_text()
 refs   <- html_attr(rvest::html_nodes(pg, "a"),"href")
 acreage_urls <- cbind.data.frame(title,refs)
 colnames(acreage_urls) <- c("raw_string","url")
-acreage_urls$day <- NA
+acreage_urls$day  <- NA
 acreage_urls$month <- NA
-acreage_urls$year <- NA
-acreage_urls$date <- as.Date(NA)
-acreage_urls <- acreage_urls[grepl(".zip",acreage_urls$url),]
+acreage_urls$year  <- NA
+acreage_urls$date  <- as.Date(NA)
+acreage_urls       <- acreage_urls[grepl(".zip",acreage_urls$url),]
 
 # clean dates
 for(k in seq_len(length(acreage_urls$raw_string))){
@@ -104,8 +83,8 @@ for(k in seq_len(length(acreage_urls$raw_string))){
   
 }
 
-acreage_urls$year <- ifelse(acreage_urls$year %in% NA,as.numeric(gsub("[^0-9]","",acreage_urls$raw_string)),acreage_urls$year)
-acreage_urls$date <- as.Date(ifelse(acreage_urls$date %in% NA,as.Date(paste0(acreage_urls$year,"-01-01"), "%Y-%m-%d"),acreage_urls$date))
+acreage_urls$year  <- ifelse(acreage_urls$year %in% NA,as.numeric(gsub("[^0-9]","",acreage_urls$raw_string)),acreage_urls$year)
+acreage_urls$date  <- as.Date(ifelse(acreage_urls$date %in% NA,as.Date(paste0(acreage_urls$year,"-01-01"), "%Y-%m-%d"),acreage_urls$date))
 acreage_urls$day   <- as.numeric(format(acreage_urls$date,"%d"))
 acreage_urls$month <- as.numeric(format(acreage_urls$date,"%m"))
 acreage_urls$year  <- as.numeric(format(acreage_urls$date,"%Y"))
@@ -119,169 +98,139 @@ acreage_urls$url <- paste0("https://www.fsa.usda.gov",acreage_urls$url)
 # remove urls that aren't in the range of start_year to end_year
 acreage_urls_in_range <- acreage_urls |> filter(year >= start_year, year <= end_year)
 
+acreage_urls_in_range$filename <- paste0("raw_fsa_acreage_data_",acreage_urls_in_range$year,"_",format(acreage_urls_in_range$date,"%y%m%d"),".zip")
 
 # download the raw data using the urls identified above
-{
-  # loop over each element of the above list and download the data
+lapply(
+  1:nrow(acreage_urls_in_range),
+  function(i){
+    file_name_path <-  file.path(paste0(dir_data_release,"/fsa_acreage"),acreage_urls_in_range$filename[i])
+    if(! basename(file_name_path) %in% dirname(file_name_path)){
+      download.file(paste0(acreage_urls_in_range$url[i]), destfile = file_name_path,mode="wb")
+    } 
+  })
+
+# download the intended use codes
+download.file("https://www.fsa.usda.gov/sites/default/files/documents/intended_use_codes.pdf",
+              destfile=paste0(dir_data_release,"/fsa_acreage/","intended_use_codes.pdf"),mode="wb")
+
+# extract and combine headers
+temp_directory <- file.path(tools::R_user_dir("USFarmSafetyNetLab", which = "cache"),"fsa_acreage")
+if (!dir.exists(temp_directory)) dir.create(temp_directory, recursive = TRUE)
+lapply(
+  list.files(file.path(dir_data_release,"fsa_acreage"), pattern = "raw_fsa_acreage_data_",full.names = T),
+  function(i){
+    utils::unzip(i, exdir = temp_directory)
+  })
+
+
+# extract and combine headers
+headers_combined <- data.table::rbindlist(
   lapply(
-    1:nrow(acreage_urls_in_range),
+    list.files(file.path(dir_data_release,"fsa_acreage"), pattern = "raw_fsa_acreage_data_",full.names = T)[2],
     function(i){
-      if(! paste0("raw_fsa_acreage_data_",acreage_urls_in_range$year[i],"_",format(acreage_urls_in_range$date[i],"%y%m%d"),".zip") %in% 
-         list.files(path=paste0(dir_data_release,"/fsa_acreage"))){
-        download.file(paste0(acreage_urls_in_range$url[i]),
-                      destfile=paste0(dir_data_release,"/fsa_acreage/raw_fsa_acreage_data_",acreage_urls_in_range$year[i],
-                                      "_",format(acreage_urls_in_range$date[i],"%y%m%d"),".zip"),mode="wb")
-      } 
-    })
+      year <- as.numeric(substr(gsub("[^0-9]","",i),1,4))
+      if(year %in% c(2009:2011)){
+        sheet <- "Sheet1"
+      }else {
+        sheet <- "county_data"
+      }
+      utils::unzip(i, exdir = temp_directory)
+      headers_combined <- list()
+      for(j in list.files(temp_directory, pattern = ".xls",full.names = T)){
+        acres <- as.data.frame(readxl::read_excel(j, sheet = sheet))
+        headers_combined[[length(headers_combined)+1]] <- data.frame(file=j,sheet=sheet,year=year,old=names(acres))
+        rm(acres)
+      }
+      return(  data.table::rbindlist(headers_combined, fill = TRUE))
+    }), fill = TRUE)
+
+table(headers_combined$year,headers_combined$old)
+
+
+
+# clean the data that was downloaded above
+{
+  # combine headers and covert to a data frame
+
   
-  # clear the Trash folder
-  file.remove(list.files(paste0(dir_fastscratch,"/fsa_acreage/trash"), full.names = T))
   
-  # extract the zip files
-  acreage_urls_in_range$file_name <- NA
-  for(i in 1:nrow(acreage_urls_in_range)){
-    tryCatch({
-    zip_return <-  unzip(paste0(dir_fastscratch,"/fsa_acreage/raw_fsa_acreage_data_",acreage_urls_in_range$year[i],
-                                "_",format(acreage_urls_in_range$date[i],"%y%m%d"),".zip"),
-                         exdir=paste0(dir_fastscratch,"/fsa_acreage/trash"),overwrite=T)
-    
-    acreage_urls_in_range$file_name[i] <- zip_return
-    
-    print(i)
-  }, error=function(e){})
-    
+
+
+
+  # States <- rgdal::readOGR(dsn =Dr.PLY,layer = "USA_States")@data
+  #
+  # States$state_cd <- States$STATEFP
+  # States$state <- States$NAME
+  # States$state_ab  <- States$STUSPS
+  #
+  # Counties <- rgdal::readOGR(dsn = Dr.PLY,layer = "USA_Counties")@data
+  #
+  # Counties$county_cd <- Counties$COUNTYFP
+  # Counties$county <- Counties$NAME
+  # Counties$state_cd <- Counties$STATEFP
+
+  i <- unique(acreage_urls_in_range$date)[8]
+  for(i in unique(acreage_urls_in_range$date)){
+
+
+    meta_data <- acreage_urls_in_range[which(acreage_urls_in_range$date == i),]
+    if(nrow(meta_data) > 1){
+      stop("meta_data has more than 1 row")
+    }
+
+    year <- meta_data$year
+    if(meta_data$month == 1){
+      year <- year - 1 # adjust to previous year if month is january
+    }
+
+    if(year %in% c(2009:2011)){
+      sheet <- "Sheet1"
+    } else {
+      sheet <- "county_data"
+    }
+
+    acres <- as.data.frame(readxl::read_excel(meta_data$file_name, sheet = sheet))
+
+    if(acres[1,1] == "state_fsa_code"){
+      acres <- acres[-1,]
+    }
+
+    names(acres) <- gsub("state_fsa_code","State Code",names(acres))
+    names(acres) <- gsub("county_fsa_code","County Code",names(acres))
+    names(acres) <- tolower(gsub(" ","_",names(acres)))
+    names(acres) <- gsub("crop_codes","crop_code",names(acres))
+    names(acres) <- gsub("state_county_code","fips",names(acres))
+
+
+    acres$state_cd <- stringr::str_pad(as.numeric(as.character(acres$state_code)),2,pad="0")
+    acres$county_cd <- stringr::str_pad(as.numeric(as.character(acres$county_code)),3,pad="0")
+
+    acres$crop_yr <- year
+
+    acres$release_date <- meta_data$date
+    acres$release_month <- meta_data$month
+    acres$release_year <- meta_data$year
+    acres$release_day <- meta_data$day
+
+    # enforce column data types
+    for(c in c("state_code","county_code","crop_code","fips","planted_acres",
+               "volunteer_acres","failed_acres","prevented_acres",
+               "not_planted_acres",
+               "planted_and_failed_acres","state_cd","county_cd","crop_yr",
+               "release_month","release_year","release_day")){
+      acres[,c] <- as.numeric(acres[,c])
+    }
+    acres$release_date <- as.Date(acres$release_date)
+
+
+    saveRDS(acres,paste0(Dr.FSA,"Output","/fsa_acres_",gsub("-","_",meta_data$date),".rds"))
+
+
+    print(year)
   }
 
-  # download the intended use codes ----------------------------------------------
-  download.file("https://www.fsa.usda.gov/sites/default/files/documents/intended_use_codes.pdf",
-                destfile=paste0(dir_data_release,"/fsa_acreage/","intended_use_codes.pdf"),mode="wb")
-  
 }
-
-
-
-
-
-
-
-
-
-
-# 
-# # clean the data that was downloaded above
-# {
-#   Fxn.headers <- function(file){
-#     
-#     year <- as.numeric(substr(gsub("./data-raw/fsaCropAcreage/Trash/|FINAL_|Revised_","",file),1,4))
-#     if(year %in% c(2009:2011)){
-#       sheet <- "Sheet1"
-#     } else {
-#       sheet <- "county_data"
-#     }
-#     # files <- list.files(paste0(Dr.FSA,"Trash"),
-#     #                     pattern = paste0(year,"_fsa_acres"),
-#     # full.names = T)
-#     acres <- as.data.frame(readxl::read_excel(file, sheet = sheet))
-#     acres <- data.frame(year=year,old=names(acres))
-#     return(acres)
-#   }
-#   
-#   # I try to avoid parallelization for reproducible code because you have to
-#   # start considering system architecture. For example, mclapply does not allow
-#   # more than one core to be used for windows systems. Thus, I usually write loops
-#   # unless the code is impractically slow when run in series.
-#   Headers <- list()
-#   index <- 1
-#   for(f in list.files(paste0(Dr.FSA,"Trash"),full.names = T) ){
-#     Headers[[index]] <- Fxn.headers(f)
-#     index <- index + 1
-#   }
-#   
-#   # combine and covert to a data frame
-#   headers_combined <- data.frame(rep(NA,nrow(Headers[[1]])))
-#   for(k in 1:length(Headers)){
-#     temp <- Headers[[k]]
-#     year <- unique(temp$year)
-#     names(temp) <- c("year",year)
-#     temp <- temp[,-1]
-#     headers_combined[,k] <- temp
-#     colnames(headers_combined)[k] <- year
-#   }
-#   
-#   
-#   # States <- rgdal::readOGR(dsn =Dr.PLY,layer = "USA_States")@data
-#   # 
-#   # States$state_cd <- States$STATEFP
-#   # States$state <- States$NAME
-#   # States$state_ab  <- States$STUSPS 
-#   # 
-#   # Counties <- rgdal::readOGR(dsn = Dr.PLY,layer = "USA_Counties")@data
-#   # 
-#   # Counties$county_cd <- Counties$COUNTYFP
-#   # Counties$county <- Counties$NAME
-#   # Counties$state_cd <- Counties$STATEFP
-#   
-#   i <- unique(acreage_urls_in_range$date)[8]
-#   for(i in unique(acreage_urls_in_range$date)){
-#     
-#     
-#     meta_data <- acreage_urls_in_range[which(acreage_urls_in_range$date == i),]
-#     if(nrow(meta_data) > 1){
-#       stop("meta_data has more than 1 row")
-#     }
-#     
-#     year <- meta_data$year
-#     if(meta_data$month == 1){
-#       year <- year - 1 # adjust to previous year if month is january
-#     }
-#     
-#     if(year %in% c(2009:2011)){
-#       sheet <- "Sheet1"
-#     } else {
-#       sheet <- "county_data"
-#     }
-#     
-#     acres <- as.data.frame(readxl::read_excel(meta_data$file_name, sheet = sheet))
-#     
-#     if(acres[1,1] == "state_fsa_code"){
-#       acres <- acres[-1,]
-#     }
-#     
-#     names(acres) <- gsub("state_fsa_code","State Code",names(acres))
-#     names(acres) <- gsub("county_fsa_code","County Code",names(acres))
-#     names(acres) <- tolower(gsub(" ","_",names(acres)))
-#     names(acres) <- gsub("crop_codes","crop_code",names(acres))
-#     names(acres) <- gsub("state_county_code","fips",names(acres))
-#     
-#     
-#     acres$state_cd <- stringr::str_pad(as.numeric(as.character(acres$state_code)),2,pad="0")
-#     acres$county_cd <- stringr::str_pad(as.numeric(as.character(acres$county_code)),3,pad="0")
-#     
-#     acres$crop_yr <- year
-#     
-#     acres$release_date <- meta_data$date
-#     acres$release_month <- meta_data$month
-#     acres$release_year <- meta_data$year
-#     acres$release_day <- meta_data$day
-#     
-#     # enforce column data types
-#     for(c in c("state_code","county_code","crop_code","fips","planted_acres",
-#                "volunteer_acres","failed_acres","prevented_acres",
-#                "not_planted_acres",
-#                "planted_and_failed_acres","state_cd","county_cd","crop_yr",
-#                "release_month","release_year","release_day")){
-#       acres[,c] <- as.numeric(acres[,c])
-#     }
-#     acres$release_date <- as.Date(acres$release_date)
-#     
-#     
-#     saveRDS(acres,paste0(Dr.FSA,"Output","/fsa_acres_",gsub("-","_",meta_data$date),".rds"))
-#     
-#     
-#     print(year)
-#   }
-#   
-# }
 # 
 # 
 # # combine into a single fsaCropAcreage dataset

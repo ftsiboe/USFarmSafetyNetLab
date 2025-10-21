@@ -152,6 +152,9 @@ sobscc_all <- rbind(sobcov_all[
 saveRDS(sobscc_all,file=paste0(dir_data_release,"/sob/sobscc_all.rds"))
 
 # Send Summary of Business to Github
+
+#inventory <- file.info(list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobtpu"))
+
 piggyback::pb_upload(
   list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobtpu"),
   repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob",overwrite = TRUE)

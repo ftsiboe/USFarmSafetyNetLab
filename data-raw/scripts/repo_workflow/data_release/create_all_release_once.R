@@ -80,7 +80,13 @@ piggyback::pb_release_create(
 )
 
 
-
+# USDA FSA Data - Extracts
+piggyback::pb_release_create(
+  repo = "ftsiboe/USFarmSafetyNetLab",
+  tag  = "fsa_extracts",
+  name = "USDA FSA Data - Extracts",
+  body = "Various items aggregated from USDA FSA"
+)
 
 
 
