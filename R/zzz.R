@@ -26,7 +26,7 @@
     sector_desc short_desc state state_alpha state_code state_fips_code
     statisticcat_desc su su_class su_practice su_use type_code type_name
     type_recode unit_desc unit_structure_code unit_structure_recode
-    unit_structure_rename util_practice_desc value",
+    unit_structure_rename util_practice_desc value map",
         "\\s+"
       )[[1]]
     )
