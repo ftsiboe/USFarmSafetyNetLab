@@ -56,19 +56,7 @@
 #' - `@source` from the first non-`NA` `data_source`
 #' - `@usage data(<file_out>)`
 #' - The final string literal `" <file_out> "` so the object is indexed by roxygen
-#'
-#' @examples
-#' \dontrun{
-#' # Suppose you have yearly RDS files like:
-#' #   data-raw/2022_ABC12345_mytable.rds
-#' #   data-raw/2023_ABC12345_mytable.rds
-#' files <- list.files("data-raw", pattern = "\\.rds$", full.names = TRUE, recursive = TRUE)
-#' build_internal_datasets(files, size_threshold = 10)
-#' # -> writes ./data/mytable.rda and regenerates R/helper_data.R
-#' }
-#'
-#' @importFrom purrr map
-#' @importFrom readr type_convert
+#' 
 #' @noRd
 #' @keywords internal
 build_internal_datasets <- function(source_files, size_threshold = 5 ){
