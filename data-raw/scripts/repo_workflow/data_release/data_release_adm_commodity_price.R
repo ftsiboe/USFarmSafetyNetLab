@@ -33,14 +33,24 @@ setnames(price_legacy,
          new = c("commodity_year", "commodity_code", "state_code", "county_code", "type_code", "practice_code",
                  "projected_price","harvest_price"))
 
+price_legacy[, c(intersect(FCIP_INSURANCE_POOL, names(price_legacy))) := lapply(
+  .SD, function(x) as.numeric(as.character(x))
+), .SDcols = intersect(FCIP_INSURANCE_POOL, names(price_legacy))]
+
 price <-data.table::rbindlist(
   lapply(
     2011:as.numeric(format(Sys.Date(),"%Y")),
     function(y){
-      get_adm_data(year = y, dataset="A00810_Price")[
+      df <- get_adm_data(year = y, dataset="A00810_Price")[
         , lapply(.SD, function(x) mean(x, na.rm = TRUE)),
         by = c("commodity_year",FCIP_INSURANCE_POOL),
         .SDcols = c("price_volatility_factor","projected_price","harvest_price","catastrophic_price")]
+      
+      df[, c(intersect(FCIP_INSURANCE_POOL, names(df))) := lapply(
+        .SD, function(x) as.numeric(as.character(x))
+      ), .SDcols = intersect(FCIP_INSURANCE_POOL, names(df))]
+      
+      
     }), fill = TRUE)
 
 
