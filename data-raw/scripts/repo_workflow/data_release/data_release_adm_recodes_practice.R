@@ -18,7 +18,7 @@ adm <- as.data.frame(
       2011:as.numeric(format(Sys.Date(), "%Y")),
       function(year) {
         tryCatch({ 
-          df <- get_adm_data(year = year,dataset = "A00510_Practice")
+          df <- get_adm_data(year = year,dataset = "A00510_Practice", force=TRUE)
           df$commodity_year <- year
           return(df)
         }, error = function(e){return(NULL)})

@@ -10,7 +10,7 @@ adm <- as.data.frame(
       2011:as.numeric(format(Sys.Date(), "%Y")),
       function(year) {
         tryCatch({ 
-          df <- rfcip::get_adm_data(year = year,dataset = "A00070_SubsidyPercent")
+          df <- rfcip::get_adm_data(year = year,dataset = "A00070_SubsidyPercent", force=TRUE)
           df$commodity_year <- year
           df$insurance_plan_code <- as.numeric(as.character(df$insurance_plan_code))
           df$coverage_level_percent <- as.numeric(as.character(df$coverage_level_percent))

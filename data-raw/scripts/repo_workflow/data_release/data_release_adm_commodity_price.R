@@ -41,7 +41,7 @@ price <-data.table::rbindlist(
   lapply(
     2011:as.numeric(format(Sys.Date(),"%Y")),
     function(y){
-      df <- get_adm_data(year = y, dataset="A00810_Price")[
+      df <- get_adm_data(year = y, dataset="A00810_Price", force=TRUE)[
         , lapply(.SD, function(x) mean(x, na.rm = TRUE)),
         by = c("commodity_year",FCIP_INSURANCE_POOL),
         .SDcols = c("price_volatility_factor","projected_price","harvest_price","catastrophic_price")]
