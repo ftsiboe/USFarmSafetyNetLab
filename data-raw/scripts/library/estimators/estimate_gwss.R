@@ -66,9 +66,7 @@
 #' *Geographically Weighted Regression: The Analysis of Spatially Varying Relationships.*
 #' John Wiley & Sons.
 #'
-#' @import data.table sf sp methods
-#' @importFrom stats as.formula
-#' @importFrom utils head
+#' @import data.table 
 #' @export
 estimate_gwss_by_point <- function(
     locat_observed,
@@ -312,10 +310,6 @@ estimate_gwss_by_point <- function(
 #'   < 5 observed counties.
 #' 
 #' @import data.table
-#' @importFrom urbnmapr get_urbn_map
-#' @importFrom sf st_transform st_point_on_surface
-#' @importFrom sp coordinates
-#' @importFrom methods as
 #' @export
 estimate_gwss_by_county <- function(
     data,
@@ -381,11 +375,11 @@ estimate_gwss_by_county <- function(
   
   # --- Polygons -> Points (summary = all; data = observed) ---------------------
   pts_sf_all <- sf::st_point_on_surface(sf_join)
-  pts_sp_all <- as(pts_sf_all, "Spatial")
+  pts_sp_all <- methods::as(pts_sf_all, "Spatial")
   stopifnot(inherits(pts_sp_all, "SpatialPointsDataFrame"))
   
   pts_sf_obs <- sf::st_point_on_surface(sf_obs)
-  pts_sp_obs <- as(pts_sf_obs, "Spatial")
+  pts_sp_obs <- methods::as(pts_sf_obs, "Spatial")
   stopifnot(inherits(pts_sp_obs, "SpatialPointsDataFrame"))
   
   coords_all <- sp::coordinates(pts_sp_all)  # n_all x 2
