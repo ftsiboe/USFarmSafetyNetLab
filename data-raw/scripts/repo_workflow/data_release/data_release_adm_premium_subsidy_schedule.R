@@ -16,14 +16,15 @@ adm <- as.data.frame(
           df$coverage_level_percent <- as.numeric(as.character(df$coverage_level_percent))
           df$coverage_type_code <- as.character(df$coverage_type_code)
           df$unit_structure_code <- as.character(df$unit_structure_code)
+          df$commodity_code <- as.character(df$commodity_code)
           return(df)
         }, error = function(e){return(NULL)})
       }), fill = TRUE))
+adm <- adm[adm$commodity_code %in% NA,]
 adm$unit_structure_code <- ifelse(adm$unit_structure_code %in% c("",NA),"OU",adm$unit_structure_code)
 adm <- doBy::summaryBy(list(c("subsidy_percent"),
                             c("commodity_year","insurance_plan_code","coverage_level_percent","coverage_type_code","unit_structure_code")),
                                data=adm, FUN=mean,keep.names = T,na.rm=T)
-
 # 2) Prepend archived 2001–2010 
 adm_legacy <- as.data.frame(
   data.table::rbindlist(

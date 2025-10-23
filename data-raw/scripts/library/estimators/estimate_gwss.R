@@ -66,7 +66,7 @@
 #' *Geographically Weighted Regression: The Analysis of Spatially Varying Relationships.*
 #' John Wiley & Sons.
 #'
-#' @import data.table GWmodel sf sp methods
+#' @import data.table sf sp methods
 #' @importFrom stats as.formula
 #' @importFrom utils head
 #' @export
@@ -311,7 +311,7 @@ estimate_gwss_by_point <- function(
 #'   `"kernel"`, `"approach"`, `"adaptive"`. Returns `NULL` when there are
 #'   < 5 observed counties.
 #' 
-#' @import GWmodel data.table
+#' @import data.table
 #' @importFrom urbnmapr get_urbn_map
 #' @importFrom sf st_transform st_point_on_surface
 #' @importFrom sp coordinates
