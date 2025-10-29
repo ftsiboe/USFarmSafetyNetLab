@@ -49,7 +49,7 @@
 #'     \item \code{Fu_EU}, \code{Fu_BU}
 #'     \item \code{commodity_year}
 #'   }
-#'
+#' 
 #' @import data.table
 #' @importFrom stats lm coef
 #' @export
@@ -88,8 +88,8 @@ get_continuous_rating_parameters <- function(
       # ensure full set
       nm <- c("(Intercept)", "x1", "x2", "x3", "x4", "x5")
       cf <- cf[nm]
-      setNames(as.numeric(cf), c("b0","b1","b2","b3","b4","b5"))
-    }, error = function(e) setNames(rep(NA_real_, 6L), c("b0","b1","b2","b3","b4","b5")))
+      stats::setNames(as.numeric(cf), c("b0","b1","b2","b3","b4","b5"))
+    }, error = function(e) stats::setNames(rep(NA_real_, 6L), c("b0","b1","b2","b3","b4","b5")))
     out
   }
   
@@ -122,7 +122,7 @@ get_continuous_rating_parameters <- function(
     
   }else{
     ADM <- tempfile(fileext = ".rds")
-    download.file(
+    utils::download.file(
       paste0("https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/adm_legacy/base_rate_",year,".rds"),
       ADM, mode = "wb", quiet = TRUE)
     ADM <- readRDS(ADM)
@@ -172,7 +172,7 @@ get_continuous_rating_parameters <- function(
     )
   }else{
     Rd <- tempfile(fileext = ".rds")
-    download.file(
+    utils::download.file(
       paste0("https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/adm_legacy/coverage_level_differential_",year,".rds"),
       Rd, mode = "wb", quiet = TRUE)
     Rd <- readRDS(Rd)
