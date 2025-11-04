@@ -309,7 +309,7 @@ plot_fcip_main_outcomes <- function(
         legend.title     = element_blank(),
         legend.text      = element_text(size=7.5),
         strip.text       = element_text(size = 10),
-        strip.background = element_rect(fill = "white", colour = "black", size = 1))
+        strip.background = element_blank())
   }
   
   labs <- data[grepl("liability",tolower(data$colume_outcome)) & 
@@ -330,7 +330,7 @@ plot_fcip_main_outcomes <- function(
     labs(x="\nCommodity year", y = "") +
     facet_wrap(~colume_outcome, ncol = 2, scale="free") +
     guides(fill = guide_legend(nrow = NN,override.aes = list(size=3))) +
-    general_theme + time_scale_theme 
+    general_theme #+ time_scale_theme 
   
   if(!is.null(palette)){
     fig <- fig + scale_fill_manual(values = palette,na.value = "white", name = colume_grouping)
