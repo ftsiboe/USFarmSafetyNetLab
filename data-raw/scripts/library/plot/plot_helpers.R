@@ -34,31 +34,17 @@
 #' @import ggrepel
 #' @importFrom grid unit
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' library(sf)
-#' # Assume `my_data` has columns: state_code, value_cat, value
-#' gg <- plot_us_states_choropleth(
-#'   data = my_data,
-#'   legend_title = "Category",
-#'   palette = c("#003524", "#00583D", "#A0BD78", "#BED73B",
-#'               "#BE5E27", "#FFC425", "#FEF389", "#D7E5C8",
-#'               "#9DD9F7", "#51ABA0", "#0F374B")
-#' )
-#' print(gg)
-#' }
 plot_us_states_choropleth <- function(
     data,
     legend_title = NULL,
     palette = c(
-      "#003524", # Dark Green
-      "#00583D", # NDSU Green
-      "#A0BD78", # Sage
-      "#BED73B", # Lime Green
       "#BE5E27", # Rust
       "#FFC425", # NDSU Yellow
       "#FEF389", # Lemon Yellow
+      "#BED73B", # Lime Green
+      "#A0BD78", # Sage
+      "#00583D", # NDSU Green
+      "#003524", # Dark Green
       "#D7E5C8", # Pale Sage
       "#9DD9F7", # Morning Sky
       "#51ABA0", # Teal
@@ -77,21 +63,21 @@ plot_us_states_choropleth <- function(
   us_sf$state_code <- as.numeric(as.character(us_sf$state_fips))
   
   # Join user data to base map and drop missing categories
-  sf_object <- us_sf %>%
-    dplyr::left_join(data, by = "state_code") %>%
+  sf_object <- us_sf |>
+    dplyr::left_join(data, by = "state_code") |>
     dplyr::filter(!is.na(value_cat))
   
   # Create labels: two-line state abbreviation and rounded value
   sf_object$label <- paste0(
     sf_object$state_abbv, "\n",
-    sprintf("%.1f", round(sf_object$value, 1))
+    sprintf("%.2f", round(sf_object$value, 1))
   )
   
   # Transform to equal-area projection for area and centroid calculations
   sf_eqarea <- st_transform(sf_object, 5070)
   
   # Compute area in km^2 and flag "small" states (< 50,000 km^2)
-  sf_object <- sf_object %>%
+  sf_object <- sf_object |>
     dplyr::mutate(
       area_km2 = as.numeric(st_area(sf_eqarea) / 1e6),
       is_small = area_km2 < 50000
