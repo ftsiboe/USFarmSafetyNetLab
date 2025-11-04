@@ -311,8 +311,8 @@ plot_fcip_main_outcomes <- function(
   
   fig <- ggplot()+
     geom_bar(data=data,aes(x = colume_year, y= value,
-                 group=ranking,color=ranking,fill=ranking),
-             stat = "identity",color="black") +
+                 group=ranking,color=ranking,fill=ranking,color=ranking),
+             stat = "identity") +
     labs(x="\nCommodity year", y = "") +
     facet_wrap(~colume_outcome, ncol = 2, scale="free") +
     guides(fill = guide_legend(nrow = NN,override.aes = list(size=3))) +
@@ -320,6 +320,7 @@ plot_fcip_main_outcomes <- function(
   
   if(!is.null(palette)){
     fig <- fig + scale_fill_manual(values = palette,na.value = "white", name = colume_grouping)
+    fig <- fig + scale_color_manual(values = palette,na.value = "white", name = colume_grouping)
   }
   
   fig
