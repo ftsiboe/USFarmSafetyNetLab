@@ -296,15 +296,20 @@ plot_fcip_main_outcomes <- function(
   
   if(is.null(general_theme)){
     general_theme <- ers_theme() +
-      theme(plot.title= element_text(size=10.5),
-            axis.title= element_text(size=10,color="black"),
-            axis.text = element_text(size=10,color="black"),
-            axis.title.y= element_text(size=10,color="black"),
-            legend.title=element_blank(),
-            legend.text=element_text(size=9),
-            plot.caption = element_text(size=10),
-            strip.text = element_text(size = 10),
-            strip.background = element_rect(fill = "white", colour = "black", size = 1))
+      theme(
+        plot.title       = element_text(size=10.5),
+        plot.caption     = element_blank(),
+        plot.subtitle    = element_text(size = 12),
+        axis.title.y     = element_text(size=10, color="black"),
+        axis.title.x     = element_text(size=10, color="black"),
+        axis.text.y      = element_text(size=9),
+        axis.text.x      = element_text(size=9, color="black", angle = 90, vjust = 0.5),
+        legend.position  = c(0.80,0.10),
+        legend.key.size  = unit(0.5,"cm"),
+        legend.title     = element_blank(),
+        legend.text      = element_text(size=7.5),
+        strip.text       = element_text(size = 10),
+        strip.background = element_rect(fill = "white", colour = "black", size = 1))
   }
   
   labs <- data[grepl("liability",tolower(data$colume_outcome)) & 
@@ -322,18 +327,10 @@ plot_fcip_main_outcomes <- function(
     geom_bar(data=data,aes(x = colume_year, y= value,
                  group=ranking,color=ranking,fill=ranking),
              stat = "identity",color="black") +
-    labs(x="Commodity year", y = "") +
+    labs(x="\nCommodity year", y = "") +
     facet_wrap(~colume_outcome, ncol = 2, scale="free_y") +
     guides(fill = guide_legend(nrow = NN,override.aes = list(size=3))) +
-    general_theme + time_scale_theme +
-    theme(plot.caption = element_blank(),
-          plot.subtitle = element_text(size = 12),
-          axis.title.x= element_text(size=10,color="black"),
-          axis.text.x = element_text(size=10,color="black",angle = 90,vjust = 0.5),
-          legend.position=c(0.80,0.10),
-          legend.key.size = unit(0.5,"cm"),
-          legend.text=element_text(size=7.5),
-          strip.background = element_blank())
+    general_theme + time_scale_theme 
   
   if(!is.null(palette)){
     fig <- fig + scale_fill_manual(values = palette,na.value = "white", name = colume_grouping)
