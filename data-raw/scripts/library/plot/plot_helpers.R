@@ -301,7 +301,7 @@ plot_fcip_main_outcomes <- function(
         plot.caption     = element_blank(),
         plot.subtitle    = element_text(size = 12),
         axis.title.y     = element_text(size=10, color="black"),
-        axis.title.x     = element_text(size=10, color="black"),
+        axis.title.x     = element_blank(),
         axis.text.y      = element_text(size=9),
         axis.text.x      = element_text(size=9, color="black", angle = 90, vjust = 0.5),
         legend.position  = c(0.80,0.10),
@@ -328,7 +328,7 @@ plot_fcip_main_outcomes <- function(
                  group=ranking,color=ranking,fill=ranking),
              stat = "identity",color="black") +
     labs(x="\nCommodity year", y = "") +
-    facet_wrap(~colume_outcome, ncol = 2, scale="free_y") +
+    facet_wrap(~colume_outcome, ncol = 2, scale="free") +
     guides(fill = guide_legend(nrow = NN,override.aes = list(size=3))) +
     general_theme + time_scale_theme 
   
