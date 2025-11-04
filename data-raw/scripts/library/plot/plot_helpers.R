@@ -307,12 +307,13 @@ plot_fcip_main_outcomes <- function(
             strip.background = element_rect(fill = "white", colour = "black", size = 1))
   }
   
-  labs <- data[data$colume_outcome %in% "(B) Liability amount in U.S. dollars" & 
+  labs <- data[grepl("liability",tolower(data$colume_outcome)) & 
                  data$colume_year %in% max(data$colume_year,na.rm=T),]
   
   labs <- labs[order(-labs$value),]
   
   data$ranking <- as.numeric(as.character(factor(data$colume_grouping,levels = labs$colume_grouping, labels = 1:nrow(labs))))
+  
   data$ranking <- factor(data$ranking,levels = 1:nrow(labs), labels = labs$colume_grouping)
   
   NN <- length(unique(as.character(data$colume_grouping)))
