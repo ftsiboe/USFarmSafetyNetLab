@@ -203,6 +203,147 @@ plot_us_states_choropleth <- function(
 }
 
 
+#' Plot FCIP Main Outcomes (Faceted Bar Charts)
+#'
+#' Creates a faceted bar chart of FCIP outcomes over time by a chosen grouping,
+#' with a shared x-axis (commodity year) and a legend. Facets are determined by
+#' an “outcome” column in `data` (e.g., liability vs. acres), allowing one or
+#' more panels depending on the unique values present.
+#'
+#' @description
+#' The function expects `data` to contain:
+#' - a numeric/factor year column (specified via `colume_year`);
+#' - a numeric `value` column (bar heights);
+#' - a categorical “outcome” column (specified via `colume_outcome`) used for
+#'   faceting; and
+#' - an optional grouping column (specified via `colume_grouping`) used to color/
+#'   fill bars and determine legend entries.
+#'
+#' For legend ordering, the function ranks groups using the subset of rows from
+#' the most recent year *within the facet whose label equals*
+#' `"(B) Liability amount in U.S. dollars"`. If your outcome labels differ, you
+#' may want to harmonize them or adjust the code that builds `labs`.
+#'
+#' @param data A `data.frame` (or `data.table`) with at least the columns:
+#'   `value`, the column named by `colume_year`, the column named by
+#'   `colume_outcome`, and (optionally) the column named by `colume_grouping`.
+#' @param colume_outcome Character scalar. Name of the column in `data` that
+#'   defines facet panels (e.g., outcome labels such as
+#'   `"(A) Net reported acres"` and `"(B) Liability amount in U.S. dollars"`).
+#' @param colume_year Character scalar. Name of the year column in `data`
+#'   (x-axis, typically the FCIP commodity year).
+#' @param colume_grouping Character scalar or `NULL`. Name of the grouping
+#'   column in `data` used for fill/color and legend entries. If `NULL`, all
+#'   bars are treated as a single group.
+#' @param time_scale_theme Optional `ggplot2` scale/theme element controlling the
+#'   x-axis (e.g., `scale_x_continuous(...)`). If `NULL`, a default scale is
+#'   applied using the unique values of the supplied year column.
+#' @param general_theme Optional `ggplot2` theme applied to the figure. If
+#'   `NULL`, `ers_theme()` is used and further tweaked (text sizes, legend
+#'   layout, facet strips). Requires that `ers_theme()` is available in scope.
+#' @param palette Optional character vector of HEX colors used by
+#'   `scale_fill_manual()`. If provided, it is applied to the grouping legend.
+#'
+#' @return A `ggplot` object.
+#'
+#' @details
+#' Internally, the function:
+#' 1. Copies the columns named by `colume_outcome`, `colume_grouping`, and
+#'    `colume_year` into standard placeholders used in aesthetics.
+#' 2. Builds a ranking of groups from the latest year within the facet whose
+#'    label equals `"(B) Liability amount in U.S. dollars"`, then maps that
+#'    ranking to legend order.
+#' 3. Draws a bar chart of `value ~ year`, colored/filled by group, and
+#'    `facet_wrap()`s by outcome (free y-scales).
+#' 4. Applies the supplied or default x-axis scale and theme, plus optional
+#'    manual fill palette.
+#'
+#' @note
+#' The parameter names use **`colume_*`** (typo preserved for backward
+#' compatibility). Consider aliasing/renaming in a future version.
+#'
+#' @import ggplot2
+#' @importFrom grid unit
+#' @export
+plot_fcip_main_outcomes <- function(
+    data,
+    colume_outcome,
+    colume_year,
+    colume_grouping = NULL,
+    time_scale_theme = NULL,
+    general_theme = NULL,
+    palette = c("#003524", #  (Dark Green)
+                "#00583D", #  (NDSU Green)
+                "#A0BD78", #  (Sage)
+                "#BED73B", #  (Lime Green)
+                "#D7E5C8", #  (Pale Sage)
+                "#FEF389", #  (Lemon Yellow)
+                "#FFC425", #  (NDSU Yellow)
+                "#BE5E27", #  (Rust)
+                "#9DD9F7", #  (Morning Sky)
+                "#51ABA0", #  (Teal)
+                "#0F374B") #  (Night)
+){
+  
+  data <- as.data.frame(data)
+  data$colume_outcome  <- data[,colume_outcome]
+  data$colume_grouping <- data[,colume_grouping]
+  data$colume_year     <- data[,colume_year]
+
+  if(is.null(time_scale_theme)){
+    time_scale_theme = scale_x_continuous(breaks = unique(data$colume_year),labels = unique(data$colume_year))
+  }
+  
+  if(is.null(general_theme)){
+    general_theme <- ers_theme() +
+      theme(plot.title= element_text(size=10.5),
+            axis.title= element_text(size=10,color="black"),
+            axis.text = element_text(size=10,color="black"),
+            axis.title.y= element_text(size=10,color="black"),
+            legend.title=element_blank(),
+            legend.text=element_text(size=9),
+            plot.caption = element_text(size=10),
+            strip.text = element_text(size = 10),
+            strip.background = element_rect(fill = "white", colour = "black", size = 1))
+  }
+  
+  labs <- data[data$colume_outcome %in% "(B) Liability amount in U.S. dollars" & 
+                 data$colume_year %in% max(data$colume_year,na.rm=T),]
+  
+  labs <- labs[order(-labs$value),]
+  
+  data$ranking <- as.numeric(as.character(factor(data$colume_grouping,levels = labs$colume_grouping, labels = 1:nrow(labs))))
+  data$ranking <- factor(data$ranking,levels = 1:nrow(labs), labels = labs$colume_grouping)
+  
+  NN <- length(unique(as.character(data$colume_grouping)))
+  
+  fig <- ggplot()+
+    geom_bar(data=data,aes(x = colume_year, y= value,
+                 group=ranking,color=ranking,fill=ranking),
+             stat = "identity",color="black") +
+    labs(x="Commodity year", y = "") +
+    facet_wrap(~colume_outcome, ncol = 2, scale="free_y") +
+    guides(fill = guide_legend(nrow = NN,override.aes = list(size=3))) +
+    general_theme + time_scale_theme +
+    theme(plot.caption = element_blank(),
+          plot.subtitle = element_text(size = 12),
+          axis.title.x= element_text(size=10,color="black"),
+          axis.text.x = element_text(size=10,color="black",angle = 90,vjust = 0.5),
+          legend.position=c(0.80,0.10),
+          legend.key.size = unit(0.5,"cm"),
+          legend.text=element_text(size=7.5),
+          strip.background = element_blank())
+  
+  if(!is.null(palette)){
+    fig <- fig + scale_fill_manual(values = palette,na.value = "white", name = colume_grouping)
+  }
+  
+  fig
+
+  return(fig)
+}
+
+
 #' Plot Liability and Net Reported Acres Faceted by a Grouping Variable
 #'
 #' Produces a two-panel bar chart:
@@ -293,10 +434,10 @@ plot_liability_and_acres <- function(
                 "#00583D", #  (NDSU Green)
                 "#A0BD78", #  (Sage)
                 "#BED73B", #  (Lime Green)
-                "#BE5E27", #  (Rust)
-                "#FFC425", #  (NDSU Yellow)
-                "#FEF389", #  (Lemon Yellow)
                 "#D7E5C8", #  (Pale Sage)
+                "#FEF389", #  (Lemon Yellow)
+                "#FFC425", #  (NDSU Yellow)
+                "#BE5E27", #  (Rust)
                 "#9DD9F7", #  (Morning Sky)
                 "#51ABA0", #  (Teal)
                 "#0F374B") #  (Night)
