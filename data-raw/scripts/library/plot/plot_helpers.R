@@ -193,14 +193,14 @@ plot_us_states_choropleth <- function(
 #'
 #' Creates a faceted bar chart of FCIP outcomes over time by a chosen grouping,
 #' with a shared x-axis (commodity year) and a legend. Facets are determined by
-#' an “outcome” column in `data` (e.g., liability vs. acres), allowing one or
+#' an "outcome" column in `data` (e.g., liability vs. acres), allowing one or
 #' more panels depending on the unique values present.
 #'
 #' @description
 #' The function expects `data` to contain:
 #' - a numeric/factor year column (specified via `colume_year`);
 #' - a numeric `value` column (bar heights);
-#' - a categorical “outcome” column (specified via `colume_outcome`) used for
+#' - a categorical "outcome" column (specified via `colume_outcome`) used for
 #'   faceting; and
 #' - an optional grouping column (specified via `colume_grouping`) used to color/
 #'   fill bars and determine legend entries.
