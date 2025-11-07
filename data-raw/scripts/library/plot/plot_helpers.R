@@ -314,7 +314,7 @@ plot_fcip_main_outcomes <- function(
                  group=ranking,color=ranking,fill=ranking,color=ranking),
              stat = "identity") +
     labs(x="\nCommodity year", y = "") +
-    facet_wrap(~colume_outcome, ncol = 2, scale="free") +
+    facet_wrap(~colume_outcome, ncol = 2, scales ="free") +
     guides(fill = guide_legend(nrow = NN,override.aes = list(size=3))) +
     general_theme #+ time_scale_theme 
   
