@@ -45,7 +45,7 @@
 #' - Assumes both reference datasets from **rfcipDemand** are available with the
 #'   specified columns (including the source's spelling `index_for_price_recived`).
 #' - Monthly means are computed with `na.rm = TRUE`.
-#' - If you need one row per year, post-aggregate:  
+#' - If you need one row per year, post-aggregate:
 #'   `dt[, .(PPIPR = mean(PPIPR, na.rm = TRUE)), by = commodity_year]`.
 #'
 #' @import data.table
@@ -53,22 +53,22 @@
 get_price_indices <- function(current_year = NULL){
   # Make explicit, isolated copies as data.tables (avoid accidental by-ref changes)
   
-  # Download SOBTPU release 
+  # Download SOBTPU release
   annual <- tempfile(fileext = ".rds")
-  download.file(
+  utils::download.file(
     "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/nass_extracts/nass_index_for_price_recived.rds",
     annual, mode = "wb", quiet = TRUE)
   annual <- readRDS(annual)
   data.table::setDT(annual)
   
-  # Download SOBTPU release 
+  # Download SOBTPU release
   monthly <- tempfile(fileext = ".rds")
-  download.file(
+  utils::download.file(
     "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/nass_extracts/nass_us_ag_price_index_monthly.rds",
     monthly, mode = "wb", quiet = TRUE)
   monthly <- readRDS(monthly)
   data.table::setDT(monthly)
-
+  
   if(is.null(current_year)){
     current_year <- max(annual$commodity_year,na.rm=T)
   }
@@ -128,6 +128,4 @@ get_price_indices <- function(current_year = NULL){
   
   price_indices
 }
-
-
 
