@@ -57,6 +57,13 @@ data <- as.data.table(data)
 data[, data_source := "USDA-RMA, Actuarial Data Master supplemented data from legacy ADM files"]
 saveRDS(data,file=paste0(dir_data_release,"/adm/premium_subsidy_schedule.rds"))
 
+# pp guarantee adjustment factor
+rm(list= ls()[!(ls() %in% c(Keep.List))])
+source(paste0("data-raw/scripts/repo_workflow/data_release/data_release_adm_prevent_plant_factor.R"))
+data <- as.data.table(data)
+data[, data_source := "USDA-RMA, Actuarial Data Master supplemented data from legacy ADM files"]
+saveRDS(data,file=paste0(dir_data_release,"/adm/pp_guarantee_adjustment_factor.rds"))
+
 
 # Upload the assets
 piggyback::pb_upload(
