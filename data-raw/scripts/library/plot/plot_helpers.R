@@ -123,12 +123,12 @@ plot_us_states_choropleth <- function(
   if(keep_all_states){
     fig <- geom_sf(
       data = us_sf,
-      colour = "black", fill = NA, size = 0.1
+      colour = "black", fill = na.value, size = 0.1
     )
   }else{
     fig <- geom_sf(
       data = us_sf[us_sf$state_abbv %in% unique(sf_object$state_abbv),],
-      colour = "black", fill = NA, size = 0.1
+      colour = "black", fill = na.value, size = 0.1
     )
   }
   
