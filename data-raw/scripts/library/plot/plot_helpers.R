@@ -18,7 +18,7 @@
 #'   if `NULL`, no table is added.
 #' @param label_size label size for sgeom_sf_text
 #' @param na.value The aesthetic value to use for missing (NA) values
-#' @param keep_all_states FALSE
+#' @param keep_all_states keep all states 
 #' @return A `ggplot` object showing the US states choropleth with annotated labels.
 #' 
 #' @details
@@ -54,7 +54,8 @@ plot_us_states_choropleth <- function(
     ),
     table_grob = NULL,
     label_size = 2.5,
-    na.value = "white"
+    na.value = "white",
+    keep_all_states = FALSE
 ) {
   # If no legend title is provided, set blank to suppress default
   if (is.null(legend_title)) {
@@ -137,7 +138,7 @@ plot_us_states_choropleth <- function(
       data = big_states,
       aes(label = label),
       size = label_size, fontface = "bold"
-    ) +
+    ) + 
     # Repelled labels for small western states
     geom_text_repel(
       data = west_small,
