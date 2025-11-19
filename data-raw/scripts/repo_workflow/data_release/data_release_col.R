@@ -93,6 +93,17 @@ utils::download.file(
   "https://pubfs-rma.fpac.usda.gov/pub/Miscellaneous_Files/cause_of_loss/prem_and_indem/col%20summary%20of%20business.pdf",
   destfile = paste0(dir_data_release,"/col/col_sob_hist_field_description.pdf"),mode= "wb",quiet    = TRUE)
 
+stagecode <- readxl::read_excel(paste0(dir_data_release,"/col/stage_code_listing.xlsx"), sheet = "Stage Codes")
+names(stagecode) <- stagecode[4,]
+stagecode <- stagecode |>  tidyr::gather(crop_yr, value, 3:ncol(stagecode))
+stagecode <- as.data.frame(stagecode[stagecode$value %in% "X",1:3])
+names(stagecode) <- c("stage_code","stage_code_description","commodity_year")
+stagecode$stage_code <- as.character(toupper(trimws(gsub("\\s+", " ", gsub("[\r\n]", "", as.character(stagecode$stage_code))), which = c("both"))))
+stagecode$commodity_year <-as.numeric(as.character(gsub("[^0-9]","",stagecode$commodity_year)))
+stagecode<-stagecode[!stagecode$commodity_year %in% NA,]
+write.csv(stagecode,paste0(dir_data_release,"/col/stagecodelisting1989-forward.csv"))
+saveRDS(as.data.table(stagecode),file=paste0(dir_data_release,"/col/stagecodelisting1989-forward.rds"))
+
 
 # Send Cause of Loss to Github       
 # piggyback::pb_upload(
@@ -132,7 +143,7 @@ piggyback::pb_upload(
 Sys.sleep(60)
 
 piggyback::pb_upload(
-  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = ".xlsx"),
+  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "stagecode"),
   repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
 
 Sys.sleep(60)

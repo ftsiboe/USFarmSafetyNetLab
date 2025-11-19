@@ -17,6 +17,13 @@ sobtpu_all <- list.files(paste0(dir_data_release,"/sob"),pattern = "sobtpu",full
 sobtpu_all <- sobtpu_all[!grepl("pdf|all",sobtpu_all)]
 sobtpu_all <- data.table::rbindlist(
   lapply(sobtpu_all,function(i){readRDS(i)}), fill = TRUE)
+
+# sobtpu_all[
+#   , lapply(.SD, function(x) sum(x, na.rm = TRUE)),
+#   by = c("commodity_year"),
+#   .SDcols = c("net_reporting_level_amount",
+#               "liability_amount","total_premium_amount","subsidy_amount","indemnity_amount")]
+
 saveRDS(sobtpu_all,paste0(dir_data_release,"/sob/sobtpu_all.rds"));rm(sobtpu_all);gc()
 
 ## 2. Summary of business by State/County/Crop/Insurance Plan/Coverage Category/Coverage Level

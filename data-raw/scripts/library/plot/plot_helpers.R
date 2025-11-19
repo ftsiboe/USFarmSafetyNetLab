@@ -17,6 +17,7 @@
 #' @param table_grob A `grob` object (e.g. from `gridExtra::tableGrob`) to annotate on the map;
 #'   if `NULL`, no table is added.
 #' @param label_size label size for sgeom_sf_text
+#' @param na.value The aesthetic value to use for missing (NA) values
 #' @return A `ggplot` object showing the US states choropleth with annotated labels.
 #'
 #' @details
@@ -51,7 +52,8 @@ plot_us_states_choropleth <- function(
       "#0F374B"  # Night
     ),
     table_grob = NULL,
-    label_size = 2.5
+    label_size = 2.5,
+    na.value = "white"
 ) {
   # If no legend title is provided, set blank to suppress default
   if (is.null(legend_title)) {
@@ -153,7 +155,7 @@ plot_us_states_choropleth <- function(
     # Apply custom palette and legend title
     scale_fill_manual(
       values = palette,
-      na.value = "white",
+      na.value = na.value,
       name = legend_title
     ) +
     guides(fill = guide_legend(ncol = 1)) +

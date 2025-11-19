@@ -136,9 +136,9 @@ download_rma_web_data_files <- function(
         .SD, function(x) trimws(gsub("\\s+", " ", gsub("[\r\n]", "", as.character(as.character(x)))), which = c("both"))), 
         .SDcols = intersect(FCIP_FORCE_CHARACTER_KEYS, names(data))]
 
-      data[, c(intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))) := lapply(
-        .SD, function(x) as.numeric(as.character(x))), 
-        .SDcols = intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))]
+      # data[, c(intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))) := lapply(
+      #   .SD, function(x) as.numeric(as.character(x))), 
+      #   .SDcols = intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))]
       
       data <- harmonize_codes_and_names(data)
       
