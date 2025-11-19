@@ -111,28 +111,18 @@ plot_us_states_choropleth <- function(
   west_small <- dplyr::filter(small_states, cx <= mid_x)
   
   # Build the ggplot object
-  fig <- ggplot() +
-    # Fill states by category
-    geom_sf(
-      data = sf_object,
-      aes(fill = value_cat),
-      colour = NA, size = 0.2
-    ) 
-  
-  # Draw state borders
   if(keep_all_states){
-    fig <- geom_sf(
-      data = us_sf,
-      colour = "black", fill = na.value, size = 0.1
-    )
+    fig <- ggplot() + geom_sf(data = us_sf,colour = "black", fill = na.value, size = 0.1)
   }else{
-    fig <- geom_sf(
-      data = us_sf[us_sf$state_abbv %in% unique(sf_object$state_abbv),],
-      colour = "black", fill = na.value, size = 0.1
-    )
+    fig <- ggplot()
   }
   
   fig <- fig +
+    # Fill states by category
+    geom_sf(data = sf_object,aes(fill = value_cat),colour = NA, size = 0.2) + 
+    geom_sf(
+    data = us_sf[us_sf$state_abbv %in% unique(sf_object$state_abbv),],
+    colour = "black", fill = na.value, size = 0.1) +
     # Labels for big states
     geom_sf_text(
       data = big_states,
