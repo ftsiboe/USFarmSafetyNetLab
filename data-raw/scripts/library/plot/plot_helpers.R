@@ -18,8 +18,9 @@
 #'   if `NULL`, no table is added.
 #' @param label_size label size for sgeom_sf_text
 #' @param na.value The aesthetic value to use for missing (NA) values
+#' @param keep_all_states FALSE
 #' @return A `ggplot` object showing the US states choropleth with annotated labels.
-#'
+#' 
 #' @details
 #' - Uses `urbnmapr::get_urbn_map(map = "states", sf = TRUE)` to fetch a US states basemap.
 #' - Joins the input data on `state_code` and filters out states with missing `value_cat`.
@@ -115,12 +116,22 @@ plot_us_states_choropleth <- function(
       data = sf_object,
       aes(fill = value_cat),
       colour = NA, size = 0.2
-    ) +
-    # Draw state borders
-    geom_sf(
+    ) 
+  
+  # Draw state borders
+  if(keep_all_states){
+    fig <- geom_sf(
+      data = us_sf,
+      colour = "black", fill = NA, size = 0.1
+    )
+  }else{
+    fig <- geom_sf(
       data = us_sf[us_sf$state_abbv %in% unique(sf_object$state_abbv),],
       colour = "black", fill = NA, size = 0.1
-    ) +
+    )
+  }
+  
+  fig <- fig +
     # Labels for big states
     geom_sf_text(
       data = big_states,
