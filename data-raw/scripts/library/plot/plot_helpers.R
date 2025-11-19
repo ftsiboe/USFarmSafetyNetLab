@@ -122,7 +122,7 @@ plot_us_states_choropleth <- function(
     geom_sf(data = sf_object,aes(fill = value_cat),colour = NA, size = 0.2) + 
     geom_sf(
     data = us_sf[us_sf$state_abbv %in% unique(sf_object$state_abbv),],
-    colour = "black", fill = na.value, size = 0.1) +
+    colour = "black", fill = NA, size = 0.1) +
     # Labels for big states
     geom_sf_text(
       data = big_states,
