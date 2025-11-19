@@ -119,7 +119,7 @@ plot_us_states_choropleth <- function(
     # Draw state borders
     geom_sf(
       data = us_sf[us_sf$state_abbv %in% unique(sf_object$state_abbv),],
-      colour = "gray", fill = NA, size = 0.01
+      colour = "black", fill = NA, size = 0.1
     ) +
     # Labels for big states
     geom_sf_text(
