@@ -21,7 +21,6 @@
 #'
 #' @import data.table
 #' @importFrom rfcip get_sob_data
-#' @importFrom utils download.file
 #' @export
 clean_rma_sobtpu <- function(
     years = as.numeric(format(Sys.Date(),"%Y"))-1,
@@ -32,11 +31,14 @@ clean_rma_sobtpu <- function(
     harmonize_coverage_level_percent = TRUE,
     harmonize_unit_structure_code = TRUE
 ){
+  
+  temporary_dir <- tempdir()
+  
   # Pull SOB-TPU data
   current_year <- as.numeric(format(Sys.Date(),"%Y"))
   live_years   <- years[years %in% (current_year-5):current_year]
   stable_years <- years[!years %in% live_years]
-
+  
   if(length(live_years)>0){
     live_sobtpu <- data.table::rbindlist(
       lapply(
@@ -48,35 +50,39 @@ clean_rma_sobtpu <- function(
           }, error = function(e){NULL})
           
           if(is.null(df)){
-            df <- tempfile(fileext = ".rds")
-            download.file(
-              paste0("https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/sob/sobtpu_",year,".rds"),
-              df, mode = "wb", quiet = TRUE)
-            df <- readRDS(df)
+            piggyback::pb_download(
+              file = paste0("sobtpu_",year,".rds"),
+              dest = temporary_dir,
+              repo = "ftsiboe/USFarmSafetyNetLab",
+              tag  = "sob",
+              overwrite = TRUE)
+            df <- readRDS(file.path(temporary_dir,paste0("sobtpu_",year,".rds")))
             data.table::setDT(df)
           }
           
           return(df)
         }), fill = TRUE)
-
+    
   }else{
     live_sobtpu <- NULL
   }
-
+  
   if(length(stable_years)>0){
-    stable_sobtpu <- tempfile(fileext = ".rds")
-    download.file(
-      "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/sob/sobtpu_all.rds",
-      stable_sobtpu, mode = "wb", quiet = TRUE)
-    stable_sobtpu <- readRDS(stable_sobtpu)
+    piggyback::pb_download(
+      file = "sobtpu_all.rds",
+      dest = temporary_dir,
+      repo = "ftsiboe/USFarmSafetyNetLab",
+      tag  = "sob",
+      overwrite = TRUE)
+    stable_sobtpu <- readRDS(file.path(temporary_dir,"sobtpu_all.rds"))
     data.table::setDT(stable_sobtpu)
     stable_sobtpu <- stable_sobtpu[commodity_year %in% stable_years]
   }else{
     stable_sobtpu <- NULL
   }
-
+  
   sob <- data.table::rbindlist(list(live_sobtpu,stable_sobtpu), fill = TRUE)
-
+  
   # Ensure data.table and expected columns
   setDT(sob)
   needed <- c(
@@ -93,15 +99,15 @@ clean_rma_sobtpu <- function(
       paste(missing_cols, collapse = ", ")
     ))
   }
-
+  
   # Basic filters
   if (addon_only)  sob <- sob[coverage_type_code != "C"]
   if (acres_only)  sob <- sob[reporting_level_type == "Acres"]
-
+  
   # Coerce types for robust recoding
   sob[, insurance_plan_code := as.integer(insurance_plan_code)]
   sob[, coverage_level_percent := as.numeric(coverage_level_percent)]
-
+  
   # Harmonize plan codes (only if requested)
   # These three plans of insurance are similar but not identical. Some differences are:
   # * CRC bases the insurance guarantee on the higher of the base price or the harvest period price.
@@ -118,13 +124,13 @@ clean_rma_sobtpu <- function(
     # IP[42], RP-HPE[3], [25] -> RP-HPE[3]
     sob[insurance_plan_code %in% c(25L, 42L, 3L), insurance_plan_code := 3L]
   }
-
+  
   # Now, if user requested a subset of (harmonized) plans, apply it here
   if (!is.null(insurance_plan)) {
     keep_plans <- as.integer(insurance_plan)
     sob <- sob[insurance_plan_code %in% keep_plans]
   }
-
+  
   # Optionally harmonize unit structure codes
   # OU - Optional Unit;
   # UD - OU established by UDO; UA - OU established by WUA
@@ -138,7 +144,7 @@ clean_rma_sobtpu <- function(
     sob[unit_structure_code %in% c("EU", "EP", "EC", "WU"),unit_structure_code := "EU"]
     sob[unit_structure_code %in% "BU",unit_structure_code := "BU"]
   }
-
+  
   # Optionally normalize coverage levels
   if (isTRUE(harmonize_coverage_level_percent)) {
     # Convert >1 to decimals
@@ -148,7 +154,7 @@ clean_rma_sobtpu <- function(
     # fix floating artifacts to 2 decimals
     sob[!is.na(coverage_level_percent),coverage_level_percent := as.numeric(sprintf("%.2f", coverage_level_percent))]
   }
-
+  
   # Aggregate (do NOT force to {1,2,3} unless you truly want that)
   sob <- sob[
     ,
@@ -165,9 +171,9 @@ clean_rma_sobtpu <- function(
       unit_structure_code, insurance_plan_code, coverage_type_code, coverage_level_percent
     )
   ]
-
+  
   # Keep rows with positive liability amount
   sob <- sob[is.finite(liability_amount) & liability_amount > 0]
-
+  
   sob[]
 }
