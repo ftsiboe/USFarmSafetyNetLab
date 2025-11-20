@@ -27,8 +27,8 @@ equals the year's price-received index divided by the index in \code{current_yea
 \details{
 \strong{Data sources (from \code{rfcipDemand}):}
 \itemize{
-\item \code{nass_index_for_price_recived} (annual; expects \code{commodity_year}, \code{index_for_price_recived}).
-\item \code{nass_us_ag_price_index_monthly} (monthly U.S. agricultural price index; expects
+\item \code{nassSurveyPriceRecivedIndex} (annual; expects \code{commodity_year}, \code{index_for_price_recived}).
+\item \code{nassAgPriceMonthlyIndex} (monthly U.S. agricultural price index; expects
 \code{year}, \code{comm}, \code{index}).
 }
 
