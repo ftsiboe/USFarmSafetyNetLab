@@ -8,8 +8,8 @@
 #'
 #' @details
 #' **Data sources (from `rfcipDemand`):**
-#' - `nass_index_for_price_recived` (annual; expects `commodity_year`, `index_for_price_recived`).
-#' - `nass_us_ag_price_index_monthly` (monthly U.S. agricultural price index; expects
+#' - `nassSurveyPriceRecivedIndex` (annual; expects `commodity_year`, `index_for_price_recived`).
+#' - `nassAgPriceMonthlyIndex` (monthly U.S. agricultural price index; expects
 #'   `year`, `comm`, `index`).
 #'
 #' **Synthesizing the current year (if missing in the annual table):**
@@ -51,22 +51,24 @@
 #' @import data.table
 #' @export
 get_price_indices <- function(current_year = NULL){
-  # Make explicit, isolated copies as data.tables (avoid accidental by-ref changes)
   
-  # Download SOBTPU release
-  annual <- tempfile(fileext = ".rds")
-  utils::download.file(
-    "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/nass_extracts/nass_index_for_price_recived.rds",
-    annual, mode = "wb", quiet = TRUE)
-  annual <- readRDS(annual)
+  temporary_dir <- tempdir()
+  piggyback::pb_download(
+    file = "nassSurveyPriceRecivedIndex.rds",
+    dest = temporary_dir,
+    repo = "ftsiboe/USFarmSafetyNetLab",
+    tag  = "nass_extracts",
+    overwrite = TRUE)
+  annual <- readRDS(file.path(temporary_dir,"nassSurveyPriceRecivedIndex.rds"))
   data.table::setDT(annual)
   
-  # Download SOBTPU release
-  monthly <- tempfile(fileext = ".rds")
-  utils::download.file(
-    "https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/nass_extracts/nass_us_ag_price_index_monthly.rds",
-    monthly, mode = "wb", quiet = TRUE)
-  monthly <- readRDS(monthly)
+  piggyback::pb_download(
+    file = "nassAgPriceMonthlyIndex.rds",
+    dest = temporary_dir,
+    repo = "ftsiboe/USFarmSafetyNetLab",
+    tag  = "nass_extracts",
+    overwrite = TRUE)
+  monthly <- readRDS(file.path(temporary_dir,"nassAgPriceMonthlyIndex.rds"))
   data.table::setDT(monthly)
   
   if(is.null(current_year)){
