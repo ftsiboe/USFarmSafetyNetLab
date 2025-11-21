@@ -49,12 +49,14 @@
 #'     \item \code{Fu_EU}, \code{Fu_BU}
 #'     \item \code{commodity_year}
 #'   }
-#' 
+#'
 #' @import data.table
 #' @importFrom stats lm coef
 #' @export
 get_continuous_rating_parameters <- function(
     year,harmonize_insurance_plan_code = TRUE) {
+  
+  temporary_dir <- tempdir()
   
   stopifnot(length(year) == 1L, is.numeric(year), is.finite(year))
   
@@ -121,13 +123,14 @@ get_continuous_rating_parameters <- function(
     )
     
   }else{
-    ADM <- tempfile(fileext = ".rds")
-    utils::download.file(
-      paste0("https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/adm_legacy/base_rate_",year,".rds"),
-      ADM, mode = "wb", quiet = TRUE)
-    ADM <- readRDS(ADM)
+    piggyback::pb_download(
+      file = paste0("base_rate_",year,".rds"),
+      dest = temporary_dir,
+      repo = "ftsiboe/USFarmSafetyNetLab",
+      tag  = "adm_legacy",
+      overwrite = TRUE)
+    ADM <- readRDS(file.path(temporary_dir,paste0("base_rate_",year,".rds")))
     data.table::setDT(ADM)
-    
   }
   
   to_numeric(ADM, force_numeric_keys)
@@ -171,11 +174,13 @@ get_continuous_rating_parameters <- function(
       rfcip::get_adm_data(year = year, dataset = "A01040_CoverageLevelDifferential", force = TRUE)
     )
   }else{
-    Rd <- tempfile(fileext = ".rds")
-    utils::download.file(
-      paste0("https://github.com/ftsiboe/USFarmSafetyNetLab/releases/download/adm_legacy/coverage_level_differential_",year,".rds"),
-      Rd, mode = "wb", quiet = TRUE)
-    Rd <- readRDS(Rd)
+    piggyback::pb_download(
+      file = paste0("coverage_level_differential_",year,".rds"),
+      dest = temporary_dir,
+      repo = "ftsiboe/USFarmSafetyNetLab",
+      tag  = "adm_legacy",
+      overwrite = TRUE)
+    Rd <- readRDS(file.path(temporary_dir,paste0("coverage_level_differential_",year,".rds")))
     data.table::setDT(Rd)
   }
   
@@ -202,9 +207,10 @@ get_continuous_rating_parameters <- function(
   ), by = .(commodity_code, state_code, county_code)]
   
   # base rate at PF==1 for each county/commodity/plan
-  ADM_base <- ADM[PF == 1 & is.finite(Rr),
-                  .(Rr = mean(Rr, na.rm = TRUE)),
-                  by = .(commodity_code, state_code, county_code, insurance_plan_code)]
+  ADM_base <- ADM[
+    PF == 1 & is.finite(Rr),
+    .(Rr = mean(Rr, na.rm = TRUE)),
+    by = .(commodity_code, state_code, county_code, insurance_plan_code)]
   
   # county/commodity/plan/CL-level differentials (averaged)
   Rd <- Rd[, .(Rd = mean(rate_differential_factor, na.rm = TRUE)),
