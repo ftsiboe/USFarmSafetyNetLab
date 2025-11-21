@@ -324,6 +324,8 @@ flag_prevent_plant_experience <- function(
     prevent_plant_status := 4
   ]
 
+  sobtpu_full[indemnity_amount %in% 0, prevent_plant_status := 0]
+  
   return(sobtpu_full)
 }
 
