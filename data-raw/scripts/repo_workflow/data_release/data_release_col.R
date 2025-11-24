@@ -52,38 +52,39 @@ utils::download.file(
 
 
 # Cause of Loss Summary of Business [Hist]
-temp_zip <- tempfile(fileext = ".zip")
-utils::download.file(
-  "https://pubfs-rma.fpac.usda.gov/pub/Miscellaneous_Files/cause_of_loss/prem_and_indem/col_sob_hist.zip",
-  destfile = temp_zip,mode     = "wb",quiet    = TRUE)
-temp_txt <- tempfile()
-utils::unzip(zipfile = temp_zip, exdir = temp_txt)
-data <- utils::read.delim2(
-  file= list.files(temp_txt, full.names = TRUE),sep= "|",header = FALSE,skipNul = TRUE)
-unlink(temp_zip)
-unlink(temp_txt, recursive = TRUE)
-colnames(data) <- layouts_fcip$col_sob
-data <- data[layouts_fcip$col_sob]
+# temp_zip <- tempfile(fileext = ".zip")
+# utils::download.file(
+#   "https://pubfs-rma.fpac.usda.gov/pub/Miscellaneous_Files/cause_of_loss/prem_and_indem/col_sob_hist.zip",
+#   destfile = temp_zip,mode     = "wb",quiet    = TRUE)
+# temp_txt <- tempfile()
+# utils::unzip(zipfile = temp_zip, exdir = temp_txt)
+# data <- utils::read.delim2(
+#   file= list.files(temp_txt, full.names = TRUE),sep= "|",header = FALSE,skipNul = TRUE)
+# unlink(temp_zip)
+# unlink(temp_txt, recursive = TRUE)
+# colnames(data) <- layouts_fcip$col_sob
+# data <- data[layouts_fcip$col_sob]
+# 
+# data <- as.data.table(data)
+# 
+# data[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))) := lapply(
+#   .SD, function(x) as.numeric(as.character(x))), 
+#   .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))]
+# 
+# data[, c(intersect(FCIP_FORCE_CHARACTER_KEYS, names(data))) := lapply(
+#   .SD, function(x) trimws(gsub("\\s+", " ", gsub("[\r\n]", "", as.character(as.character(x)))), which = c("both"))), 
+#   .SDcols = intersect(FCIP_FORCE_CHARACTER_KEYS, names(data))]
+# 
+# data[, c(intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))) := lapply(
+#   .SD, function(x) as.numeric(as.character(x))), 
+#   .SDcols = intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))]
+# 
+# data[,loss_ratio := indemnity_amount/total_premium_amount]
+# data <- data[!liability_amount %in% c(0,NA,Inf,-Inf)]
+# 
+# saveRDS(data,file=paste0(dir_data_release,"/col/col_sob_hist.rds"))
 
-data <- as.data.table(data)
-
-data[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))) := lapply(
-  .SD, function(x) as.numeric(as.character(x))), 
-  .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(data))]
-
-data[, c(intersect(FCIP_FORCE_CHARACTER_KEYS, names(data))) := lapply(
-  .SD, function(x) trimws(gsub("\\s+", " ", gsub("[\r\n]", "", as.character(as.character(x)))), which = c("both"))), 
-  .SDcols = intersect(FCIP_FORCE_CHARACTER_KEYS, names(data))]
-
-data[, c(intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))) := lapply(
-  .SD, function(x) as.numeric(as.character(x))), 
-  .SDcols = intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(data))]
-
-data[,loss_ratio := indemnity_amount/total_premium_amount]
-data <- data[!liability_amount %in% c(0,NA,Inf,-Inf)]
-
-saveRDS(data,file=paste0(dir_data_release,"/col/col_sob_hist.rds"))
-
+col_sob_hist <- readRDS(paste0(dir_data_release,"/col/col_sob_hist.rds"))
 
 # Stage Code Listing
 utils::download.file(
@@ -119,8 +120,13 @@ saveRDS(as.data.table(stagecode),file=paste0(dir_data_release,"/col/stagecodelis
 # col_list <- col_list[!grepl("col_sob_",col_list)]
 
 piggyback::pb_upload(
-  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "colsom_"),
+  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "stagecode"),
   repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
+
+inventory_colsom <- file.info(list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "colsom_"))
+inventory_colsom <- inventory_colsom[as.Date(inventory_colsom$mtime) %in% max(as.Date(inventory_colsom$mtime)),]
+inventory_colsom <- row.names(inventory_colsom)
+piggyback::pb_upload(inventory_colsom,repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
 
 Sys.sleep(60)
 
@@ -138,12 +144,6 @@ Sys.sleep(60)
 
 piggyback::pb_upload(
   list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = ".pdf"),
-  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
-
-Sys.sleep(60)
-
-piggyback::pb_upload(
-  list.files(paste0(dir_data_release,"/col"), full.names = TRUE, recursive = TRUE,pattern = "stagecode"),
   repo = "ftsiboe/USFarmSafetyNetLab", tag  = "col",overwrite = TRUE)
 
 Sys.sleep(60)

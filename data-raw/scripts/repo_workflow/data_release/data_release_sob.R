@@ -18,12 +18,6 @@ sobtpu_all <- sobtpu_all[!grepl("pdf|all",sobtpu_all)]
 sobtpu_all <- data.table::rbindlist(
   lapply(sobtpu_all,function(i){readRDS(i)}), fill = TRUE)
 
-# sobtpu_all[
-#   , lapply(.SD, function(x) sum(x, na.rm = TRUE)),
-#   by = c("commodity_year"),
-#   .SDcols = c("net_reporting_level_amount",
-#               "liability_amount","total_premium_amount","subsidy_amount","indemnity_amount")]
-
 saveRDS(sobtpu_all,paste0(dir_data_release,"/sob/sobtpu_all.rds"));rm(sobtpu_all);gc()
 
 ## 2. Summary of business by State/County/Crop/Insurance Plan/Coverage Category/Coverage Level
@@ -93,54 +87,56 @@ saveRDS(sobcov_all,paste0(dir_data_release,"/sob/sobcov_all.rds"))
 #           overwrite = TRUE, recursive = FALSE, copy.mode = TRUE)
 
 ## 4. Summary of business by State/County/Crop
-temp_zip <- tempfile(fileext = ".zip")
-utils::download.file(
-  "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/sobscc_1948_1988.zip",
-  destfile = temp_zip,mode     = "wb",quiet    = TRUE)
-temp_txt <- tempfile()
-utils::unzip(zipfile = temp_zip, exdir = temp_txt)
-sobscc_1948_1988 <- utils::read.delim2(
-  file= list.files(temp_txt, full.names = TRUE),sep= "|",header = FALSE,skipNul = TRUE)
-unlink(temp_zip)
-unlink(temp_txt, recursive = TRUE)
-colnames(sobscc_1948_1988) <- c(
-  "commodity_year",
-  "state_code",
-  "state_abbreviation",
-  "county_code",
-  "county_name",
-  "commodity_code",
-  "commodity_name",
-  "policies_sold_count",
-  "policies_earning_premium_count",
-  "policies_indemnified_count",
-  "units_earning_premium_count",
-  "units_indemnified_count",
-  "net_reported_quantity",
-  "liability_amount",
-  "total_premium_amount",
-  "subsidy_amount",
-  "indemnity_amount",
-  "loss_ratio")
+# temp_zip <- tempfile(fileext = ".zip")
+# utils::download.file(
+#   "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/sobscc_1948_1988.zip",
+#   destfile = temp_zip,mode     = "wb",quiet    = TRUE)
+# temp_txt <- tempfile()
+# utils::unzip(zipfile = temp_zip, exdir = temp_txt)
+# sobscc_1948_1988 <- utils::read.delim2(
+#   file= list.files(temp_txt, full.names = TRUE),sep= "|",header = FALSE,skipNul = TRUE)
+# unlink(temp_zip)
+# unlink(temp_txt, recursive = TRUE)
+# colnames(sobscc_1948_1988) <- c(
+#   "commodity_year",
+#   "state_code",
+#   "state_abbreviation",
+#   "county_code",
+#   "county_name",
+#   "commodity_code",
+#   "commodity_name",
+#   "policies_sold_count",
+#   "policies_earning_premium_count",
+#   "policies_indemnified_count",
+#   "units_earning_premium_count",
+#   "units_indemnified_count",
+#   "net_reported_quantity",
+#   "liability_amount",
+#   "total_premium_amount",
+#   "subsidy_amount",
+#   "indemnity_amount",
+#   "loss_ratio")
+# 
+# sobscc_1948_1988 <- data.table::as.data.table(sobscc_1948_1988)
+# sobscc_1948_1988[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(sobscc_1948_1988))) := lapply(
+#   .SD, function(x) as.numeric(as.character(x))), 
+#   .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(sobscc_1948_1988))]
+# 
+# sobscc_1948_1988[, c(intersect(FCIP_FORCE_CHARACTER_KEYS, names(sobscc_1948_1988))) := lapply(
+#   .SD, function(x) trimws(gsub("\\s+", " ", gsub("[\r\n]", "", as.character(as.character(x)))), which = c("both"))), 
+#   .SDcols = intersect(FCIP_FORCE_CHARACTER_KEYS, names(sobscc_1948_1988))]
+# 
+# sobscc_1948_1988[, c(intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(sobscc_1948_1988))) := lapply(
+#   .SD, function(x) as.numeric(as.character(x))), 
+#   .SDcols = intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(sobscc_1948_1988))]
+# 
+# saveRDS(sobscc_1948_1988,file=paste0(dir_data_release,"/sob/sobscc_1948_1988.rds"))
+# 
+# utils::download.file(
+#   "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOB_State_County_Commodity_1948_1988.pdf",
+#   destfile = paste0(dir_data_release,"/sob/sobscc_field_description.pdf"),mode= "wb",quiet    = TRUE)
 
-sobscc_1948_1988 <- data.table::as.data.table(sobscc_1948_1988)
-sobscc_1948_1988[, c(intersect(FCIP_FORCE_NUMERIC_KEYS, names(sobscc_1948_1988))) := lapply(
-  .SD, function(x) as.numeric(as.character(x))), 
-  .SDcols = intersect(FCIP_FORCE_NUMERIC_KEYS, names(sobscc_1948_1988))]
-
-sobscc_1948_1988[, c(intersect(FCIP_FORCE_CHARACTER_KEYS, names(sobscc_1948_1988))) := lapply(
-  .SD, function(x) trimws(gsub("\\s+", " ", gsub("[\r\n]", "", as.character(as.character(x)))), which = c("both"))), 
-  .SDcols = intersect(FCIP_FORCE_CHARACTER_KEYS, names(sobscc_1948_1988))]
-
-sobscc_1948_1988[, c(intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(sobscc_1948_1988))) := lapply(
-  .SD, function(x) as.numeric(as.character(x))), 
-  .SDcols = intersect(FCIP_FORCE_AMOUNT_VARIABLES, names(sobscc_1948_1988))]
-
-saveRDS(sobscc_1948_1988,file=paste0(dir_data_release,"/sob/sobscc_1948_1988.rds"))
-
-utils::download.file(
-  "https://pubfs-rma.fpac.usda.gov/pub/Web_Data_Files/Summary_of_Business/state_county_crop/SOB_State_County_Commodity_1948_1988.pdf",
-  destfile = paste0(dir_data_release,"/sob/sobscc_field_description.pdf"),mode= "wb",quiet    = TRUE)
+sobscc_1948_1988 <- reaeRDS(paste0(dir_data_release,"/sob/sobscc_1948_1988.rds"))
 
 sobscc_all <- rbind(sobcov_all[
   , lapply(.SD, function(x) sum(x, na.rm = TRUE)),
@@ -159,22 +155,20 @@ sobscc_all <- rbind(sobcov_all[
 saveRDS(sobscc_all,file=paste0(dir_data_release,"/sob/sobscc_all.rds"))
 
 # Send Summary of Business to Github
-
-#inventory <- file.info(list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobtpu"))
-
-piggyback::pb_upload(
-  list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobtpu"),
-  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob",overwrite = TRUE)
-
+inventory_sobtpu <- file.info(list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobtpu"))
+inventory_sobtpu <- inventory_sobtpu[as.Date(inventory_sobtpu$mtime) %in% max(as.Date(inventory_sobtpu$mtime)),]
+inventory_sobtpu <- row.names(inventory_sobtpu)
+piggyback::pb_upload(inventory_sobtpu,repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob",overwrite = TRUE)
 Sys.sleep(60)
 
-piggyback::pb_upload(
-  list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobscc"),
-  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob",overwrite = TRUE)
-
+inventory_sobscc <- file.info(list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobscc"))
+inventory_sobscc <- inventory_sobscc[as.Date(inventory_sobscc$mtime) %in% max(as.Date(inventory_sobscc$mtime)),]
+inventory_sobscc <- row.names(inventory_sobscc)
+piggyback::pb_upload(inventory_sobscc,repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob",overwrite = TRUE)
 Sys.sleep(60)
 
-piggyback::pb_upload(
-  list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobcov"),
-  repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob",overwrite = TRUE)
+inventory_sobcov <- file.info(list.files(paste0(dir_data_release,"/sob"), full.names = TRUE, recursive = TRUE,pattern = "sobcov"))
+inventory_sobcov <- inventory_sobcov[as.Date(inventory_sobcov$mtime) %in% max(as.Date(inventory_sobcov$mtime)),]
+inventory_sobcov <- row.names(inventory_sobcov)
+piggyback::pb_upload(inventory_sobcov,repo = "ftsiboe/USFarmSafetyNetLab", tag  = "sob",overwrite = TRUE)
 
