@@ -294,7 +294,7 @@ estimate_gwss_by_point <- function(
 #' @param data A `data.frame`/`data.table` with at least `fip_col` and `variable`.
 #' @param fip_col Character. Name of the county ID column in `data`; copied to `"county_fips"`.
 #' @param variable Character. Name of the numeric column in `data` to summarize.
-#' @param distance_metric Character. One of [gw_distance_metric_names()]. Default: `"Euclidean"`.
+#' @param distance_metric Character. One of `gw_distance_metric_names()`. Default: `"Euclidean"`.
 #' @param kernel Character. One of `"gaussian"`, `"exponential"`, `"bisquare"`, `"boxcar"`, `"tricube"`. Default: `"gaussian"`.
 #' @param target_crs Integer EPSG used to project county geometries when `longlat = FALSE`. Default: **5070** (NAD83 / CONUS Albers, meters).
 #' @param draw_rate Numeric in (0, 1]. Fraction of observed counties used during bandwidth cross-validation. Default: **0.5** (50%).
