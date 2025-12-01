@@ -1,0 +1,35 @@
+Package: USFarmSafetyNetLab
+Type: Package
+Title: US Farm Safety Net Lab
+Version: 0.0.0.9000
+Author: Francis Tsiboe [aut, cre] (<https://orcid.org/0000-0001-5984-1072>)
+Maintainer: Francis Tsiboe <ftsiboe@hotmail.com>
+Contributor: -
+Reviewer: -
+Creator: Francis Tsiboe
+Description: This repository centralizes research outputs, analytical tools, and
+ resources for exploring and evaluating the United States agricultural safety net
+ programs. It supports analysis of key programs including the Federal Crop Insurance
+ Program (FCIP), the Noninsured Crop Disaster Assistance Program (NAP), Price Loss
+ Coverage (PLC), Agricultural Risk Coverage (ARC), and various ad-hoc disaster
+ assistance programs.
+License: GPL-3 + file LICENSE
+URL: https://github.com/you/USFarmSafetyNetLab
+BugReports: https://github.com/you/USFarmSafetyNetLab/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+VignetteBuilder: knitr
+Depends: R (>= 4.1.0)
+Imports: readr, purrr, data.table, doBy, janitor, plm, sp, spdep, stringr, terra, tidyr, tigris, xml2
+Remotes: github::dylan-turner25/rfcip, github::UrbanInstitute/urbnmapr, github::dylan-turner25/rfsa
+Suggests: dplyr, rvest, knitr, rmarkdown, rfcip, withr, piggyback, testthat (>= 3.0.0)
+LazyData: true
+LazyDataCompression: gzip
+Cite-us: If you find it useful, please consider staring the repository and citing the following studies
+  - Tsiboe, F. and Turner, D. (2025). "Incorporating buy‐up price loss coverage into the United States
+    farm safety net." Applied Economic Perspectives and Policy.
+  - Tsiboe, F., et al. (2025). "Risk reduction impacts of crop insurance in the United States."
+    Applied Economic Perspectives and Policy.
+  - Gaku, S. and Tsiboe, F. (2024). Evaluation of alternative farm safety net program combination
+    strategies. Agricultural Finance Review.
