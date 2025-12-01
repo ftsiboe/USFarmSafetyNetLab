@@ -59,27 +59,6 @@ The full set of valid Quick Stats API parameter names can be retrieved with:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{rnassqs::nassqs_params()
 }\if{html}{\out{</div>}}
 }
-\examples{
-\dontrun{
-# National annual average price received for all CROPS in 2020:
-dt1 <- process_nass_dataset(
-  large_dataset       = "crops",
-  statisticcat_desc = "PRICE RECEIVED",
-  nassqs_params = list( agg_level_desc = "NATIONAL", year = 2020 ))
-
-# State-level marketing-year average price for soybeans:
-dt2 <- process_nass_dataset(
-  large_dataset       = "crops",
-  statisticcat_desc = "PRICE RECEIVED",
-  nassqs_params     = list(
-    agg_level_desc      = "STATE",
-    short_desc          = "SOYBEANS - PRICE RECEIVED, MEASURED IN $ / BU",
-    reference_period_desc = "MARKETING YEAR",
-    freq_desc           = "ANNUAL"
-  )
-)
-}
-}
 \seealso{
 \itemize{
 \item \code{get_nass_large_datasets()} for downloading the raw Quick Stats files

@@ -29,16 +29,6 @@
 #' @importFrom data.table rbindlist
 #' @importFrom utils download.file
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Download & process ICE tables for 2018 and 2019,
-#' # filtering for any file with "IceAOExpenseSubsidy" in its name
-#' ice_df <- get_ice_data(
-#'   years        = 2018:2019,
-#'   selected_ice = "IceAOExpenseSubsidy"
-#' )
-#' }
 get_ice_data <- function(
     years        = 2012,
     ice_url      = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",

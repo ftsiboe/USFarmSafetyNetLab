@@ -17,10 +17,3 @@ Rename a set of common Federal Crop Insurance Program (FCIP) data frame
 columns to consistent, descriptive names. This ensures uniform naming
 across different data sources and simplifies downstream processing.
 }
-\examples{
-\dontrun{
-# Suppose fcip_raw is loaded with original column names
-fcip_clean <- standardize_fcip_column_names(fcip_raw)
-# Now fcip_clean has standardized, descriptive column names
-}
-}

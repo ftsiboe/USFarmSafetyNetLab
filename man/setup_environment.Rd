@@ -69,15 +69,3 @@ It also sets the following options:
 
 Finally, the random number generator is seeded with the provided \code{seed}.
 }
-\examples{
-\dontrun{
-env <- setup_environment(
-  year_beg = 2015,
-  year_end = 2024,
-  project_name = "HiddenSafetynet2025",
-  fastscratch_directories = c("output/sims", "output/expected")
-)
-str(env$wd)
-}
-
-}

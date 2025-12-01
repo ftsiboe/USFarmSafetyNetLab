@@ -26,10 +26,3 @@ A data frame with columns:
 Scans a specified directory for files with a given suffix and returns a data frame
 containing their file paths, sizes in bytes, and sizes in megabytes.
 }
-\examples{
-\dontrun{
-get_file_info()
-get_file_info(directory = "./my-data", file_suffix = ".csv")
-}
-
-}

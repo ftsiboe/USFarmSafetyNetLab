@@ -14,14 +14,14 @@ Description: This repository centralizes research outputs, analytical tools, and
  Coverage (PLC), Agricultural Risk Coverage (ARC), and various ad-hoc disaster
  assistance programs.
 License: GPL-3 + file LICENSE
-URL: https://github.com/you/USFarmSafetyNetLab
-BugReports: https://github.com/you/USFarmSafetyNetLab/issues
+URL: https://github.com/ftsiboe/USFarmSafetyNetLab
+BugReports: https://github.com/ftsiboe/USFarmSafetyNetLab/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 Depends: R (>= 4.1.0)
-Imports: readr, purrr, data.table, doBy, janitor, plm, sp, spdep, stringr, terra, tidyr, tigris, xml2
+Imports: readr, data.table, doBy, janitor, plm, sp, spdep, stringr, terra, tigris, xml2
 Remotes: github::dylan-turner25/rfcip, github::UrbanInstitute/urbnmapr, github::dylan-turner25/rfsa
 Suggests: dplyr, rvest, knitr, rmarkdown, rfcip, withr, piggyback, testthat (>= 3.0.0)
 LazyData: true

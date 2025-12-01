@@ -34,13 +34,3 @@ downloads them to a temporary location, reads them as pipe-delimited data,
 applies internal cleaning routines, and returns the combined dataset. Original
 text files are discarded after reading.
 }
-\examples{
-\dontrun{
-# Download & process ICE tables for 2018 and 2019,
-# filtering for any file with "IceAOExpenseSubsidy" in its name
-ice_df <- get_ice_data(
-  years        = 2018:2019,
-  selected_ice = "IceAOExpenseSubsidy"
-)
-}
-}

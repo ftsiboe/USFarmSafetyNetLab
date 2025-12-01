@@ -18,6 +18,3 @@ a cleaned data frame
 \description{
 Apply standardized data cleaning opperations
 }
-\examples{
-\dontrun{clean_data(df)}
-}

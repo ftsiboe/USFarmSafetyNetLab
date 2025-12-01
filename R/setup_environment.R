@@ -45,17 +45,6 @@
 #'   \item{seed}{Seed value used for RNG.}
 #' }
 #'
-#' @examples
-#' \dontrun{
-#' env <- setup_environment(
-#'   year_beg = 2015,
-#'   year_end = 2024,
-#'   project_name = "HiddenSafetynet2025",
-#'   fastscratch_directories = c("output/sims", "output/expected")
-#' )
-#' str(env$wd)
-#' }
-#'
 #' @export
 setup_environment <- function(
     year_beg = 2001,

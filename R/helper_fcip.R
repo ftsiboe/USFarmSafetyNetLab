@@ -18,12 +18,6 @@
 #'   
 #' @import data.table
 #' @importFrom utils unzip download.file
-#'  
-#' @examples
-#' \dontrun{
-#' # Get sobtpu data for 2018-2022
-#' download_rma_web_data_files(2018:2022, "sobtpu")
-#' }
 #' @export
 download_rma_web_data_files <- function(
     years,
@@ -165,12 +159,6 @@ download_rma_web_data_files <- function(
 #'
 #' @param df A `data.frame` containing FCIP data with short column names such as `crop_yr`, `state_cd`, etc.
 #' @return The input `df` with Standardized column names:
-#' @examples
-#' \dontrun{
-#' # Suppose fcip_raw is loaded with original column names
-#' fcip_clean <- standardize_fcip_column_names(fcip_raw)
-#' # Now fcip_clean has standardized, descriptive column names
-#' }
 #' @export
 standardize_fcip_column_names <- function(df) {
   df <- as.data.frame(df)
@@ -416,12 +404,6 @@ harmonize_codes_and_names <- function(df){
 #'
 #' @import data.table
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Build and retrieve the lookup of harmonized crop types
-#' lookup_dt <- harmonize_crop_type_codes()
-#' }
 harmonize_crop_type_codes <- function(){
   
   # Download if sobtpu is missing OR more than 7 days old

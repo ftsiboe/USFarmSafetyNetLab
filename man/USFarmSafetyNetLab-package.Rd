@@ -11,8 +11,8 @@ This repository centralizes research outputs, analytical tools, and resources fo
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/you/USFarmSafetyNetLab}
-  \item Report bugs at \url{https://github.com/you/USFarmSafetyNetLab/issues}
+  \item \url{https://github.com/ftsiboe/USFarmSafetyNetLab}
+  \item Report bugs at \url{https://github.com/ftsiboe/USFarmSafetyNetLab/issues}
 }
 
 }

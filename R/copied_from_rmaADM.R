@@ -13,12 +13,6 @@
 #'   \item{size_bytes}{File size in bytes}
 #'   \item{size_mb}{File size in megabytes}
 #' @source copied from https://github.com/dylan-turner25/rmaADM/blob/main/R/helpers.R
-#' @examples
-#' \dontrun{
-#' get_file_info()
-#' get_file_info(directory = "./my-data", file_suffix = ".csv")
-#' }
-#'
 get_file_info <- function(directory = "./data-raw", file_suffix = ".rds") {
   # Get list of all files recursively
   files <- list.files(path = directory, recursive = TRUE, full.names = TRUE, pattern = file_suffix)
@@ -53,7 +47,6 @@ get_file_info <- function(directory = "./data-raw", file_suffix = ".rds") {
 #' @importFrom stringr str_match_all str_extract
 #' @importFrom stats time
 #' @source copied from https://github.com/dylan-turner25/rmaADM/blob/main/R/helpers.R
-#' @examples \dontrun{locate_download_link(year = 2012)}
 locate_download_link <- function(year = 2012,
                                  adm_url = "https://pubfs-rma.fpac.usda.gov/pub/References/actuarial_data_master/",
                                  ice_url = "https://pubfs-rma.fpac.usda.gov/pub/References/insurance_control_elements/PASS/",
@@ -152,7 +145,6 @@ locate_download_link <- function(year = 2012,
 #' @importFrom janitor clean_names
 #' @importFrom readr type_convert
 #' @source copied from https://github.com/dylan-turner25/rmaADM/blob/main/R/helpers.R
-#' @examples \dontrun{clean_data(df)}
 clean_data <- function(df){
   
   # clean column names

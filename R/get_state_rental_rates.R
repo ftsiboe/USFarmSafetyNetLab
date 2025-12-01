@@ -41,13 +41,6 @@
 #' @importFrom sp SpatialPointsDataFrame CRS
 #' @importFrom spdep knearneigh knn2nb nb2mat
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Make sure `process_nass_dataset()` and required packages are loaded
-#' df <- get_state_rental_rates()
-#' head(df)
-#' }
 get_state_rental_rates <- function(dir_source = "./data-raw/fastscratch/nass/"){
   
   # Load and process NASS dataset to get average cropland asset value ($/acre)

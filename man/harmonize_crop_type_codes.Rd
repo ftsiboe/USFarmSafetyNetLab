@@ -50,9 +50,3 @@ when all other types are zero.
 adds a \code{data_source} column, saves to \code{./data-raw/type_recodes.rds}, and returns the result.
 }
 }
-\examples{
-\dontrun{
-# Build and retrieve the lookup of harmonized crop types
-lookup_dt <- harmonize_crop_type_codes()
-}
-}

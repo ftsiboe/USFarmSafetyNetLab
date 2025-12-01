@@ -59,18 +59,6 @@
 #' @importFrom stringr str_to_title
 #' @importFrom stats complete.cases
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Default: national average for corn
-#' get_marketing_year_avg_price()
-#'
-#' # Both state and national for wheat
-#' get_marketing_year_avg_price(
-#'   agg_level_desc = c("STATE", "NATIONAL"),
-#'   short_desc     = "WHEAT - PRICE RECEIVED, MEASURED IN $ / BU"
-#' )
-#' }
 get_marketing_year_avg_price <- function(
     dir_source = "./data-raw/fastscratch/nass/",
     agg_level_desc = c("NATIONAL","STATE","COUNTY"),

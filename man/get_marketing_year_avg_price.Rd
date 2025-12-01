@@ -68,18 +68,6 @@ A \code{data.table} with columns:
 for the marketing year, joins to official RMA commodity codes, applies necessary unit conversions,
 and returns a tidy table of marketing-year average prices.
 }
-\examples{
-\dontrun{
-# Default: national average for corn
-get_marketing_year_avg_price()
-
-# Both state and national for wheat
-get_marketing_year_avg_price(
-  agg_level_desc = c("STATE", "NATIONAL"),
-  short_desc     = "WHEAT - PRICE RECEIVED, MEASURED IN $ / BU"
-)
-}
-}
 \seealso{
 \itemize{
 \item \code{process_nass_dataset()} for the underlying data fetch and filtering

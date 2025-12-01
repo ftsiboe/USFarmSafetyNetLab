@@ -30,6 +30,3 @@ a list of the data and layout file urls with the time the file was last updated 
 \description{
 Locate the download link for the actuarial data master
 }
-\examples{
-\dontrun{locate_download_link(year = 2012)}
-}

@@ -43,10 +43,3 @@ Internally this function relies on:
 \item \code{terra} and \code{tigris} to obtain state geometries.
 }
 }
-\examples{
-\dontrun{
-# Make sure `process_nass_dataset()` and required packages are loaded
-df <- get_state_rental_rates()
-head(df)
-}
-}

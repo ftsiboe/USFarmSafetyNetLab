@@ -47,27 +47,6 @@
 #' @importFrom stringr str_to_title
 #' @family USDA NASS Quick Stats
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # National annual average price received for all CROPS in 2020:
-#' dt1 <- process_nass_dataset(
-#'   large_dataset       = "crops",
-#'   statisticcat_desc = "PRICE RECEIVED",
-#'   nassqs_params = list( agg_level_desc = "NATIONAL", year = 2020 ))
-#'
-#' # State-level marketing-year average price for soybeans:
-#' dt2 <- process_nass_dataset(
-#'   large_dataset       = "crops",
-#'   statisticcat_desc = "PRICE RECEIVED",
-#'   nassqs_params     = list(
-#'     agg_level_desc      = "STATE",
-#'     short_desc          = "SOYBEANS - PRICE RECEIVED, MEASURED IN $ / BU",
-#'     reference_period_desc = "MARKETING YEAR",
-#'     freq_desc           = "ANNUAL"
-#'   )
-#' )
-#' }
 process_nass_dataset <- function(
     dir_source = "./data-raw/fastscratch/nass/",
     large_dataset,
