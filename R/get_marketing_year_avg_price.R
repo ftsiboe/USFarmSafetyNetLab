@@ -63,7 +63,7 @@ get_marketing_year_avg_price <- function(
     dir_source = "./data-raw/fastscratch/nass/",
     agg_level_desc = c("NATIONAL","STATE","COUNTY"),
     short_desc = "CORN, GRAIN - PRICE RECEIVED, MEASURED IN $ / BU") {
-  
+
   ## Fetch and filter raw data
   df <- process_nass_dataset(
     dir_source = dir_source,
@@ -77,6 +77,13 @@ get_marketing_year_avg_price <- function(
             reference_period_desc = "MARKETING YEAR",
             freq_desc = "ANNUAL",
             short_desc = short_desc))
+  
+  df[short_desc %in% "COTTON, COTTONSEED - PRICE RECEIVED, MEASURED IN $ / TON", commodity_name := "Cottonseed"]
+  df[short_desc %in% "COTTON, COTTONSEED - PRICE RECEIVED, MEASURED IN $ / TON", price_received := seed_to_lint_price(seed_price_ton = price_received)]
+  
+  df[short_desc %in% "RICE, MEDIUM-SHORT GRAIN - PRICE RECEIVED, MEASURED IN $ / CWT", commodity_name := "Rice (Medium-Short Grain)"]
+  df[short_desc %in% "RICE, LONG GRAIN - PRICE RECEIVED, MEASURED IN $ / CWT", commodity_name := "Rice (Long Grain)"]
+
   gc()
   
   ## Compute means
@@ -92,7 +99,7 @@ get_marketing_year_avg_price <- function(
   df <- merge(NATIONAL_df, STATE_df,
               by = c("commodity_name", "commodity_year"),
               all = TRUE)
-  df <- df[!is.na(df[["state_code"]])]; gc()
+  df <- df[!(is.infinite(STATE_Mya) & is.infinite(NATIONAL_Mya))]; gc()
   
   ## Clean types & compute final price
   df[["marketing_year_avg_price"]] <- ifelse(
@@ -100,10 +107,8 @@ get_marketing_year_avg_price <- function(
     df[["NATIONAL_Mya"]],
     df[["STATE_Mya"]])
   
-  df <- df[complete.cases(df)]
-  
   # Drop rows with non-finite prices
-  df <- df[is.finite(df[["marketing_year_avg_price"]])]
+  df <- df[!is.infinite(marketing_year_avg_price)]; gc()
   
   # # Keep only rows with finite commodity_name and the four columns you need
   # df <- df[
@@ -111,7 +116,8 @@ get_marketing_year_avg_price <- function(
   #   c("commodity_year","commodity_name","state_code","marketing_year_avg_price")]
   
   # Unit conversions
-  df[commodity_name %in%  c("Canola","Rice","Safflower","Dry Beans","Dry Peas","Sunflowers"),
+  df[commodity_name %in%  c("Canola","Rice","Rice (Medium-Short Grain)","Rice (Long)",
+                            "Safflower","Dry Beans","Dry Peas","Sunflowers"),
      marketing_year_avg_price := marketing_year_avg_price / 100]
   
   # sorghum cwt to bu (code 51)
@@ -125,4 +131,30 @@ get_marketing_year_avg_price <- function(
   ## Tag and return
   df[, data_source := "USDA NASS Quick Stats"]
   return(df)
+}
+
+#' Convert cottonseed price to upland cotton lint-equivalent price
+#' @param seed_price_ton Cottonseed price in dollars per ton ($/ton)
+#' @param lint_turnout   Lint turnout (fraction of seed cotton that is lint),
+#'                       typically between 0.32 and 0.40
+#' @return Lint-equivalent price in cents per pound (¢/lb)
+#' @keywords internal
+#' @noRd
+seed_to_lint_price <- function(seed_price_ton, lint_turnout= 0.35) {
+  
+  if (lint_turnout <= 0 || lint_turnout >= 1) {
+    stop("`lint_turnout` must be between 0 and 1.")
+  }
+  
+  # Convert seed price to $/lb
+  seed_price_lb <- seed_price_ton / 2000
+  
+  # Seed produced per lb of lint
+  seed_per_lint <- (1 - lint_turnout) / lint_turnout
+  
+  # Lint-equivalent price in $/lb
+  lint_equiv_price_lb <- seed_price_lb * seed_per_lint
+  
+  # Return in cents per lb
+  lint_equiv_price_lb * 100
 }
