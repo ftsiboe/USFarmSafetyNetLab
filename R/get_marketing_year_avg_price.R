@@ -96,9 +96,9 @@ get_marketing_year_avg_price <- function(
                     by = c("commodity_name", "commodity_year")]
   
   ## Merge and filter
-  df <- merge(NATIONAL_df, STATE_df,
+  df <- merge(STATE_df, NATIONAL_df, 
               by = c("commodity_name", "commodity_year"),
-              all = TRUE)
+              all.x = TRUE)
   df <- df[!(is.infinite(STATE_Mya) & is.infinite(NATIONAL_Mya))]; gc()
   
   ## Clean types & compute final price
@@ -116,7 +116,7 @@ get_marketing_year_avg_price <- function(
   #   c("commodity_year","commodity_name","state_code","marketing_year_avg_price")]
   
   # Unit conversions
-  df[commodity_name %in%  c("Canola","Rice","Rice (Medium-Short Grain)","Rice (Long)",
+  df[commodity_name %in%  c("Canola","Rice","Rice (Medium-Short Grain)","Rice (Long Grain)",
                             "Safflower","Dry Beans","Dry Peas","Sunflowers"),
      marketing_year_avg_price := marketing_year_avg_price / 100]
   
