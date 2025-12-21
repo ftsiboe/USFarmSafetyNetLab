@@ -145,7 +145,7 @@ locate_download_link <- function(year = 2012,
 #' @importFrom janitor clean_names
 #' @importFrom readr type_convert
 #' @source copied from https://github.com/dylan-turner25/rmaADM/blob/main/R/helpers.R
-clean_data <- function(df){
+clean_adm_data <- function(df){
   
   # clean column names
   df <- janitor::clean_names(df)
@@ -177,6 +177,7 @@ clean_data <- function(df){
       }
     })
   }
+  
   
   # Convert key columns to numeric if they exist
   numeric_cols <- intersect(FCIP_FORCE_NUMERIC_KEYS, names(df))

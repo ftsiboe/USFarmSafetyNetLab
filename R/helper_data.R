@@ -80,7 +80,7 @@
 #' @name nassSurveyMYAprice
 #' @title nassSurveyMYAprice
 #' @description A combined dataset for nassSurveyMYAprice
-#' @format A data frame with 31139 rows and 7 columns covering 1866-2024.
+#' @format A data frame with 33078 rows and 7 columns covering 1866-2024.
 #' @source USDA NASS Quick Stats
 #' @usage data(nassSurveyMYAprice)
 "nassSurveyMYAprice"

@@ -137,7 +137,7 @@ get_marketing_year_avg_price <- function(
 #' @param seed_price_ton Cottonseed price in dollars per ton ($/ton)
 #' @param lint_turnout   Lint turnout (fraction of seed cotton that is lint),
 #'                       typically between 0.32 and 0.40
-#' @return Lint-equivalent price in cents per pound (¢/lb)
+#' @return Lint-equivalent price in cents per pound (cent/lb)
 #' @keywords internal
 #' @noRd
 seed_to_lint_price <- function(seed_price_ton, lint_turnout= 0.35) {
