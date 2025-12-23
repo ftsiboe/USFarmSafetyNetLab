@@ -58,8 +58,8 @@ get_ice_data <- function(
               utils::download.file(download_link, destfile = tmp, mode = "wb")
               dt  <- readr::read_delim(tmp, delim = "|",
                                        col_names = TRUE, show_col_types = FALSE)
-              FCIP_FORCE_NUMERIC_KEYS <- USFarmSafetyNetLab::FCIP_FORCE_NUMERIC_KEYS
-              dt  <- clean_data(dt)
+              #FCIP_FORCE_NUMERIC_KEYS <- USFarmSafetyNetLab::FCIP_FORCE_NUMERIC_KEYS
+              dt  <- clean_adm_data(dt)
               dt
             }, error = function(e) {NULL})
           }),fill = TRUE)
