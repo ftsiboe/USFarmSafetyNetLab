@@ -136,6 +136,51 @@ locate_download_link <- function(year = 2012,
   
 }
 
+#' Internal helper to download and verify a ZIP file
+#'
+#' Attempts to download a ZIP archive from a given URL up to a specified number of times,
+#' and verifies that it is a valid ZIP by listing its contents. If the download or verification
+#' fails after all attempts, an error is raised.
+#'
+#' @param url A character string giving the URL of the ZIP file to download.
+#' @param destfile A character string giving the path (including filename) where the downloaded
+#'   file should be saved locally.
+#' @param method Optional character string specifying the download method to pass to
+#'   \code{\link[utils]{download.file}} (e.g. "curl", "libcurl", "wget"). If \code{NULL},
+#'   R chooses the default.
+#' @param attempts Integer number of times to retry the download and verification before
+#'   giving up. Defaults to 3.
+#'
+#' @return Invisibly returns \code{TRUE} if the file was successfully downloaded and verified.
+#'   If all attempts fail, the function throws an error.
+#'
+#' @keywords internal
+#' @noRd
+download_and_verify <- function(url, destfile, method = NULL, attempts = 3) {
+  for (i in seq_len(attempts)) {
+    # try a download
+    try(utils::download.file(
+      url, destfile = destfile,
+      mode   = "wb",
+      method = method,
+      quiet  = TRUE
+    ), silent = TRUE)
+    
+    info <- file.info(destfile)
+    # did we at least get a non‐zero file?
+    if (!is.na(info$size) && info$size > 0) {
+      # try listing the zip contents
+      z <- try(utils::unzip(destfile, list = TRUE), silent = TRUE)
+      if (inherits(z, "data.frame") && nrow(z) > 0) {
+        return(invisible(TRUE))
+      }
+    }
+    
+    # otherwise wait a bit and retry
+    Sys.sleep(1)
+  }
+  stop("Failed to download or verify zip from ", url)
+}
 
 #' Apply standardized data cleaning opperations
 #'
