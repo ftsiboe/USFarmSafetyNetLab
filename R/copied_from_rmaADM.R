@@ -167,7 +167,7 @@ download_and_verify <- function(url, destfile, method = NULL, attempts = 3) {
     ), silent = TRUE)
     
     info <- file.info(destfile)
-    # did we at least get a non‐zero file?
+    # did we at least get a non-zero file?
     if (!is.na(info$size) && info$size > 0) {
       # try listing the zip contents
       z <- try(utils::unzip(destfile, list = TRUE), silent = TRUE)

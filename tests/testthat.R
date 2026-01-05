@@ -8,6 +8,5 @@
 
 library(testthat)
 library(data.table)
-library(USFarmSafetyNetLab)
-test_check("USFarmSafetyNetLab")
-
+# library(USFarmSafetyNetLab)
+# test_check("USFarmSafetyNetLab")

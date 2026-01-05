@@ -147,3 +147,10 @@
 #' @source USDA-RMA, Actuarial Data Master supplemented data from legacy ADM files
 #' @usage data(premium_subsidy_schedule)
 "premium_subsidy_schedule"
+#' @name prevented_planting_adm
+#' @title prevented_planting_adm
+#' @description A combined dataset for prevented_planting_adm
+#' @format A data frame with 252605 rows and 10 columns covering 2011-2026.
+#' @source USDA-RMA, Actuarial Data Master supplemented data from legacy ADM files
+#' @usage data(prevented_planting_adm)
+"prevented_planting_adm"
