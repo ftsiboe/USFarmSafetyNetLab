@@ -260,7 +260,7 @@ harmonize_codes_and_names <- function(df){
     df[,unit_structure_rename := factor(
       unit_structure_recode,
       levels = c("OU","BU","EU"),
-      labels = c("Optional Unit (OU)","Basic Unit (BU)","Enterprise/Whole Fram Unit (EU)"))]
+      labels = c("Optional Unit (OU)","Basic Unit (BU)","Enterprise/Whole Farm Unit (EU)"))]
   }
   
   ## Recode insurance plan codes to harmonize similar products
