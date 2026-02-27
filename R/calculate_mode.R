@@ -26,7 +26,7 @@
 #' @export
 calculate_mode <- function(x, na.rm = TRUE) {
   if (na.rm) x <- x[!is.na(x)]
-  if (length(x) == 0) return(NA)
+  if (length(x) == 0) return(NA_character_)  # <-- key fix (typed NA)
   
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
