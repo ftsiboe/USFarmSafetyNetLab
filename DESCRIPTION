@@ -4,16 +4,14 @@ Title: US Farm Safety Net Lab
 Version: 0.0.0.9000
 Author: Francis Tsiboe [aut, cre] (<https://orcid.org/0000-0001-5984-1072>)
 Maintainer: Francis Tsiboe <ftsiboe@hotmail.com>
-Contributor: -
-Reviewer: -
-Creator: Francis Tsiboe
 Description: This repository centralizes research outputs, analytical tools, and
  resources for exploring and evaluating the United States agricultural safety net
  programs. It supports analysis of key programs including the Federal Crop Insurance
  Program (FCIP), the Noninsured Crop Disaster Assistance Program (NAP), Price Loss
  Coverage (PLC), Agricultural Risk Coverage (ARC), and various ad-hoc disaster
  assistance programs.
-License: GPL-3 + file LICENSE
+License: GPL-3
+Copyright: TERRA ANALYTICS LLC (Kansas, USA)
 URL: https://github.com/ftsiboe/USFarmSafetyNetLab
 BugReports: https://github.com/ftsiboe/USFarmSafetyNetLab/issues
 Encoding: UTF-8

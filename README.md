@@ -71,3 +71,16 @@ other pages in this repository
 If you find it useful, please star this project and cite our papers
 found at [Publications co‐authored by
 Contributors](https://github.com/ftsiboe/USFarmSafetyNetLab/wiki/Publications-co%E2%80%90authored-by-Contributors)
+
+------------------------------------------------------------------------
+
+**🤝 Contributing & license** The package is released under [GPL-3](LICENSE). Copyright © 2025–2026 TERRA ANALYTICS LLC (Kansas, USA).
+
+------------------------------------------------------------------------
+
+**💼 Commercial use** GPL-3 is a copyleft license: if you distribute a product that
+incorporates this package, that product must be released under GPL-3 as well.
+If that does not fit your situation, or you need this work built, extended, or
+maintained to your schedule rather than to a research calendar, TERRA ANALYTICS
+LLC licenses it separately and takes on contract work. Write to Francis Tsiboe
+(<ftsiboe@hotmail.com>).

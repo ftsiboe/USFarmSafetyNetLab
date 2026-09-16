@@ -1,0 +1,14 @@
+citHeader(
+  "To cite USFarmSafetyNetLab in publications, please cite the package. It is developed and ",
+  "maintained by TERRA ANALYTICS LLC; citation is how that work stays visible."
+)
+
+bibentry(
+  bibtype = "Manual",
+  title   = "USFarmSafetyNetLab: US Farm Safety Net Lab",
+  author  = person("Francis", "Tsiboe",
+                   comment = c(ORCID = "0000-0001-5984-1072")),
+  year    = "2026",
+  note    = "R package version 0.0.0.9000. Copyright TERRA ANALYTICS LLC (Kansas, USA)",
+  url     = "https://github.com/ftsiboe/USFarmSafetyNetLab"
+)
